@@ -36,13 +36,38 @@
         <div class="col-6" *ngFor="let tarjeta of obtenerTarjetasPaginaActual()">
           <div class="card mb-3 borde_cartas">
             <div class="card-body">
-                <h4 class="card-title mb-3 mt-3 titulo_tarjeta" style="text-align:center;">{{ tarjeta.titulo }}</h4>
+                <h4 class="card-title mb-3 mt-3 titulo_tarjeta">{{ tarjeta.titulo }}</h4>
                 <p class="card-text" style="text-align:center;">{{ truncarTexto(tarjeta.descripcion, 100) }}</p>
                 <div class="container">
                   <div class="d-flex justify-content-center">    
-                    <button class="btn fondo_morado boton_menu w-100">Ver más
+                    <button *ngIf="usuario!='Administrador' && permiso_usuario!='1'; else administrador" class="btn fondo_morado boton_menu w-100" (click)="verMas(tarjeta.id_tarjeta)">Ver más
                       <img src="../../assets/images/ver-lista.png" class="img-fluid" style="max-width: 40px; height:auto; margin-left:5px"/>
-                    </button>  
+                    </button> 
+                    <ng-template #administrador >
+                      <div class="row">
+                          <div class="table-responsive">
+                            <table style="border:0; margin-left:10px;" class="table">
+                              <tr>
+                                <td>
+                                  <button class="btn fondo_morado boton_menu opciones_tabla mb-2" (click)="verMas(tarjeta.id_tarjeta)">Ver más
+                                    <img src="../../assets/images/ver-lista.png" class="img-fluid" style="max-width: 40px; height:auto; margin-left:5px"/>
+                                  </button> 
+                                </td>
+                                <td>
+                                  <button class="btn fondo_morado boton_menu  opciones_tabla mb-2" (click)="editar(tarjeta.id_tarjeta)">Editar
+                                    <img src="../../assets/images/editar.png" class="img-fluid" style="max-width: 40px; height:auto; margin-left:5px"/>
+                                  </button> 
+                                </td>
+                                <td>
+                                  <button class="btn fondo_morado boton_menu  opciones_tabla mb-2" (click)="editar(tarjeta.id_tarjeta)">Eliminar
+                                    <img src="../../assets/images/eliminar.png" class="img-fluid" style="max-width: 40px; height:auto; margin-left:5px"/>
+                                  </button> 
+                                </td>
+                              </tr>
+                            </table>
+                          </div>
+                      </div>
+                    </ng-template>
                   </div>
                 </div>  
             </div>
@@ -74,4 +99,63 @@
   </div>
     </div>
   </div>
-  
+  <!--Ventana de ver más-->
+  <div *ngIf="mostrarVentana" class="modal">
+      <!-- Contenido del modal -->
+      <div class="card card-medium" id="opciones">
+        <div class="row d-flex justify-content-center align-items-center mb-3">
+          <div class="col">
+            <span class="categoria_tarjeta">Categoría(s):</span>
+            <span *ngFor="let categoria of CategoriasPorTarjeta" class="categoria_tarjeta m-2">{{categoria.nombre}}</span>
+          </div>
+        </div>
+        <div class="row d-flex justify-content-center align-items-center">
+          <h3 class="modal-title titulo_tarjeta">{{Tarjeta?.titulo}}</h3>
+          <hr>
+        </div>
+        <div class="row d-flex justify-content-center align-items-center mb-3 mt-3">
+          <p style="text-align:center;">{{Tarjeta?.descripcion}}</p>
+        </div>
+        <div class="row d-flex justify-content-center align-items-center">
+          <button class="btn fondo_morado boton_menu" style="text-decoration: none;" (click)="cerrarMas()">Cerrar</button>
+        </div>
+      </div>
+  </div>
+
+  <div *ngIf="ventana_editar" class="modal">
+    <!-- Contenido del modal -->
+    <div class="card card-medium" id="editar_carta">
+      <div class="row d-flex justify-content-center align-items-center mb-3">
+        <div class="col">
+          <span class="categoria_tarjeta">Categoría(s):</span>
+          <span *ngFor="let categoria of categoria_editar" class="categoria_tarjeta m-2">{{categoria.nombre}}</span>
+        </div>
+      </div>
+      <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-md-3">
+          <h3 class="modal-title titulo_tarjeta">Título:</h3>
+        </div>
+        <div class="col-md-9 d-flex">
+          <textarea
+            [(ngModel)]="titulo"
+            class="areas_editar fs-4"
+            [rows]="calculateRows(titulo)"
+          ></textarea>
+        </div>
+      </div>
+      <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-md-12">
+          <h3 class="modal-title titulo_tarjeta mb-2">Descripción</h3>
+        </div>
+        <div class="col-md-12 d-flex">
+          <textarea
+            [(ngModel)]="descripcion"
+            class="areas_editar"
+            [rows]="calculateRows(descripcion)"
+          ></textarea>
+        </div>
+      </div>
+      <button  id="guardar" class="btn mb-3" style="margin-left: 5px;">Guardar</button>
+      <button class="btn fondo_morado boton_menu" style="text-decoration: none;" (click)="cerrarMas()">Cerrar</button>
+    </div>
+</div>

@@ -32,7 +32,7 @@ export class PreguntasFrecuentesService {
   //Trae todas las tarjetas de preguntas frecuentes
   obtener_tarjetas():Tarjeta[] {
     this.tarjetas = [
-      new Tarjeta(1, 'Un dato totalmente innecesario', 'Bootstrap no aplica bordes directamente a las filas (row). Las filas de Bootstrap son contenedores que ayudan a organizar y distribuir el contenido en columnas. Por defecto, las filas no tienen bordes visibles.Si estás viendo un borde en una fila, es probable que esté siendo causado por algún otro estilo personalizado o regla CSS en tu código. Puedes inspeccionar el elemento en tu navegador web para identificar qué regla CSS está aplicando el borde.Para quitar un borde que esté afectando la fila, puedes hacer lo siguienteVerifica si tienes alguna clase personalizada o regla CSS aplicada a la fila que esté causando el borde no deseado. Si encuentras alguna, puedes ajustar o eliminar esa regla para eliminar el borde.'),
+      new Tarjeta(1, 'Un dato totalmente innecesario xxx', 'Bootstrap no aplica bordes directamente a las filas (row). Las filas de Bootstrap son contenedores que ayudan a organizar y distribuir el contenido en columnas. Por defecto, las filas no tienen bordes visibles.Si estás viendo un borde en una fila, es probable que esté siendo causado por algún otro estilo personalizado o regla CSS en tu código. Puedes inspeccionar el elemento en tu navegador web para identificar qué regla CSS está aplicando el borde.Para quitar un borde que esté afectando la fila, puedes hacer lo siguienteVerifica si tienes alguna clase personalizada o regla CSS aplicada a la fila que esté causando el borde no deseado. Si encuentras alguna, puedes ajustar o eliminar esa regla para eliminar el borde.'),
       new Tarjeta(2, 'Título 2', 'Descripción 2'),
       new Tarjeta(3, 'Título 3', 'Descripción 3'),
       new Tarjeta(4, 'Título 4', 'Descripción 4'),
@@ -49,6 +49,42 @@ export class PreguntasFrecuentesService {
       new Tarjeta(15, 'Título 15', 'Descripción 15'),
     ];
     return this.tarjetas;
+  }
+  //Método que trae las categorías por cada tarjeta
+  obtener_CategoriasPorTarjeta(id_tarjeta:number):Categoria[]{
+    let categorias:Categoria[] = [];
+    /*
+      Aquí se invocaría una consulta la cual traiga las categorías por cada tarjeta
+    */
+    if(id_tarjeta==1){
+      categorias = [
+        new Categoria(1, 'Matemáticas'),
+        new Categoria(5, 'Historia'),
+        new Categoria(10, 'Arte')
+      ];
+    }
+    else{
+      categorias = [
+        new Categoria(5, 'Historia'),
+        new Categoria(6, 'Literatura'),
+        new Categoria(7, 'Geografía'),
+        new Categoria(8, 'Inglés'),
+        new Categoria(9, 'Informática'),
+        new Categoria(10, 'Arte')
+      ];
+
+    }
+    return categorias;
+  }
+  ver_tarjeta(id_tarjeta: number): Tarjeta | null {
+    let tarjeta: Tarjeta | null = null;
+    for (let i = 0; i < this.tarjetas.length; i++) {
+      if (id_tarjeta === this.tarjetas[i].id_tarjeta) {
+        tarjeta = this.tarjetas[i];
+        break;
+      }
+    }
+    return tarjeta;
   }
 
   //Buscar solo por categorias

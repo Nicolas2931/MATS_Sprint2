@@ -45,21 +45,21 @@ export class LoginService {
       //solo si encuentra el usuario le genero token
       this.token = usuario;
       this.tipo_usuario="Estudiante";
-      this.permiso_usuario="Ninguno";
+      this.permiso_usuario="2";
       
     }
     if(usuario=='20202578025' && password=="20202578025"){
       //solo si encuentra el usuario le genero token
       this.token = usuario;
       this.tipo_usuario="Profesor";
-      this.permiso_usuario="Administrativo";
+      this.permiso_usuario="1";
       
     }
     if(usuario=='20202578026' && password=="20202578026"){
       //solo si encuentra el usuario le genero token
       this.token = usuario;
       this.tipo_usuario="Administrador";
-      this.permiso_usuario="Administrativo";
+      this.permiso_usuario="1";
       
     } //En el caso de que no se encuentre el usuario este será de tipo público.
     this.cookies.set("token", this.token);

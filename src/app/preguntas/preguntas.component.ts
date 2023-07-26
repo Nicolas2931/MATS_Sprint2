@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Categoria } from '../categoria.model';
 import { PreguntasFrecuentesService } from '../preguntas-frecuentes.service';
 import { Tarjeta } from '../tarjeta.model';
+import { LoginService } from '../login.service';
 
 @Component({
   selector: 'app-preguntas',
   templateUrl: './preguntas.component.html',
   styleUrls: ['./preguntas.component.css']
 })
-export class PreguntasComponent {
+export class PreguntasComponent{
 //Variable que almacena la busqueda que desea realizar el usuario
 txt_buscar:string;
 //Variable que guarda la cadena con el número de cheboxes activados
@@ -19,15 +20,21 @@ categorias:Categoria[];
 Tarjetas:Tarjeta[];
 //Ocultar o mostrar las opciones de la lista desplegable
 mostrarCheckboxes: boolean = false;
-//
-private id_tarjeta:number;
-
-constructor(private preguntasService: PreguntasFrecuentesService){
+//Ocualta o muestra la ventana emergente
+mostrarVentana:boolean;
+ventana_editar:boolean;
+//Usuario guarda el tipo de usuario que inicio sesión
+usuario:string;
+permiso_usuario:string;
+constructor(private preguntasService: PreguntasFrecuentesService, private loginService: LoginService){
   this.categorias = [];
   this.Tarjetas = []; 
   this.txt_buscar = "";
   this.txt_lista = "";
-  this.id_tarjeta=0;
+  this.mostrarVentana=false;
+  this.ventana_editar=false;
+  this.usuario=this.loginService.getTipoUsuario();
+  this.permiso_usuario=this.loginService.getTipoUsuario();
 }
 //Método para inicializar las variables.
 ngOnInit(): void {
@@ -56,13 +63,6 @@ buscar(){
     //Buscar solo por cadena de texto
   }
 }
-getId_tarjeta(){
-  return this.id_tarjeta;
-}
-setId_tarjeta(id_tarjeta:number){
-  this.id_tarjeta=id_tarjeta;
-}
-
 //Cada vez que se activa un checkbox se ejecuta el filtro
 activar() {
   const checkboxesActivos = this.categorias.filter(categoria => categoria.seleccionado);
@@ -111,10 +111,39 @@ truncarTexto(texto: string, palabrasMaximas: number): string {
     return palabras.slice(0, palabrasMaximas).join(' ') + '...';
   }
 }
-//openModal()
-/*
-abrirModal(content:any,id:number){
-  this.setId_tarjeta(id);
-  this.modalService.open(content);
-}*/
+//
+Tarjeta:Tarjeta | null;
+CategoriasPorTarjeta:Categoria[];
+verMas(tarjetaId: number) {
+  this.CategoriasPorTarjeta=this.preguntasService.obtener_CategoriasPorTarjeta(tarjetaId);
+  this.Tarjeta=this.preguntasService.ver_tarjeta(tarjetaId);
+  this.mostrarVentana = true;
+}
+titulo:string;
+categoria_editar:Categoria[];
+descripcion:string;
+editar(tarjetaId: number){
+  this.categoria_editar=this.preguntasService.obtener_CategoriasPorTarjeta(tarjetaId);
+  this.Tarjeta=this.preguntasService.ver_tarjeta(tarjetaId);
+  if(this.Tarjeta){
+      this.titulo=this.Tarjeta.titulo;
+      this.descripcion=this.Tarjeta.descripcion;
+  }
+  this.ventana_editar=true;
+}  
+
+calculateRows(texto: string): number {
+  // Calcula el número de líneas dividiendo la longitud del texto por el ancho máximo de una línea
+  const maxCharactersPerLine = 50; // Ajusta este valor según el ancho máximo deseado
+  const numberOfLines = Math.ceil(texto.length / maxCharactersPerLine);
+
+  // Devuelve el número de líneas como valor para el atributo rows del <textarea>
+  return Math.max(3, numberOfLines-5); // Establece un mínimo de 3 líneas para evitar que sea muy pequeño
+}
+
+cerrarMas() {
+  this.mostrarVentana= false;
+  this.ventana_editar=false;
+}
+
 }
