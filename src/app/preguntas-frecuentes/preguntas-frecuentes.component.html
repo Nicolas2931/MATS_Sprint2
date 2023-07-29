@@ -1,0 +1,78 @@
+<div class="container mt-2 d-flex justify-content-center align-items-center">
+  <div class="card w-100 mb-3 border-0">
+    <div class="container" id="contenedor_encabezado">
+    <div class="card-body">
+      <h5 class="card-title display-3 mt-5" id="titulo">¿En qué podemos ayudarte?</h5>
+      <div class="row align-items-center mt-5 mb-2">
+        <div class="multiselect">
+          <div class="selectBox mb-1" (click)="showCheckboxes()">
+            <select id="categorias">
+              <option>{{txt_lista}}</option>
+            </select>
+            <div class="overSelect"></div>
+          </div>
+          <div id="checkboxes" class="container-sm" [style.display]="mostrarCheckboxes ? 'block' : 'none'">
+            <div *ngFor="let categoria of categorias" class="form-check">
+              <input type="checkbox" class="form-check-input" [id]="'c' + categoria.id" [(ngModel)]="categoria.seleccionado" (change)="activar()">
+              <label class="form-check-label" [for]="'c' + categoria.id">{{ categoria.nombre }}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+            <input type="text" class="form-control buscar" placeholder="Buscar..." [(ngModel)]="txt_buscar">
+        </div>   
+        <div class="col-auto">
+            <button id="boton_buscar" class="btn text-white boton_buscar" type="button"><img src="../../assets/images/lupa.png" style ="height:2rem;" (click)="buscar()"></button>
+        </div> 
+      </div>
+    </div>
+  </div>
+    <!--Tarjetas-->
+<div class="row">
+  <div class="col-md-12">
+    <div class="row mt-5">
+      <div class="col-6" *ngFor="let tarjeta of obtenerTarjetasPaginaActual()">
+        <div class="card mb-3 borde_cartas">
+          <div class="card-body">
+              <h4 class="card-title mb-3 mt-3 titulo_tarjeta" style="text-align:center;">{{ tarjeta.titulo }}</h4>
+              <p class="card-text" style="text-align:center;">{{ truncarTexto(tarjeta.descripcion, 100) }}</p>
+              <div class="container">
+                <div class="d-flex justify-content-center">    
+                  <button class="btn fondo_morado boton_menu w-100">Ver más
+                    <img src="../../assets/images/ver-lista.png" class="img-fluid" style="max-width: 40px; height:auto; margin-left:5px"/>
+                  </button>  
+                </div>
+              </div>  
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <ul class="pagination justify-content-center align-items-center">
+      <li class="page-item" [ngClass]="{ 'disabled': paginaActual === 1 }">
+        <a class="page-link" (click)="paginaActual = 1">Primera</a>
+      </li>
+      <li class="page-item" [ngClass]="{ 'disabled': paginaActual === 1 }">
+        <a class="page-link" (click)="paginaActual = paginaActual - 1">Anterior</a>
+      </li>
+      <li class="page-item" *ngFor="let pagina of paginas">
+        <a class="page-link" (click)="paginaActual = pagina">{{ pagina }}</a>
+      </li>
+      <li class="page-item" [ngClass]="{ 'disabled': paginaActual === totalPaginas }">
+        <a class="page-link" (click)="paginaActual = paginaActual + 1">Siguiente</a>
+      </li>
+      <li class="page-item" [ngClass]="{ 'disabled': paginaActual === totalPaginas }">
+        <a class="page-link" (click)="paginaActual = totalPaginas">Última</a>
+      </li>
+    </ul>
+  </div>
+</div>
+  </div>
+</div>
+
+
