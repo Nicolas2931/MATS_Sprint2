@@ -11,10 +11,13 @@ export class NoticiasService {
   private noticiasCargadas:boolean;
   //Variable que guarda la pestaña actual del usuario
   private identificador:string;
+  //Variable que guarda el id_noticia
+  private id_noticia:number;
   constructor(private loginService:LoginService/*private http: HttpClient*/) {
     this.noticiasCargadas=false;
     this.identificador='';
     this.noticias=[];
+    this.id_noticia=0;
   }
   noticia1:Noticia =
   new Noticia(1,"Investigadores de la Universidad XYZ descubren posible cura para el cáncer"
@@ -173,6 +176,12 @@ export class NoticiasService {
       // return null; // Si es seguro que 'Noticia' no puede ser null, puedes crear una noticia vacía con un constructor o utilizar 'undefined'.
     }
     return noticia;
+  }
+  getId_noticia(){
+    return this.id_noticia;
+  }
+  setId_noticia(id_noticia:number){
+    this.id_noticia = id_noticia;
   }
   
   //Pasar el archivo PDF al Backend
