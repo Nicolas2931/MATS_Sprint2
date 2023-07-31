@@ -324,6 +324,7 @@ export class NoticiasComponent implements OnInit{
     };
     this.router.navigate(['/noticia', id], queryParams);
   }
+  
   //Método que recorta la descripción para que solo aparezcan las primeras 100 palabras 
   Descripcion(des:string){
     let maxPalabras=100;

@@ -2,7 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import {EventEmitter} from '@angular/core';
 import { Output } from '@angular/core';
 import { LoginService } from '../login.service';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
+import { NoticiasService } from '../noticias.service';
 @Component({
   selector: 'app-filtro-noticias',
   templateUrl: './filtro-noticias.component.html',
@@ -18,7 +19,7 @@ export class FiltroNoticiasComponent implements OnInit{
   @Output() enviarTexto = new EventEmitter<string>();
   @Output() tam = new EventEmitter<string>();
   tipo_usuario:string;
-  constructor(private login:LoginService, private router:Router){}
+  constructor(private login:LoginService, private router:Router, private servicioNoticias:NoticiasService){}
   cargar_cantidad(event:any) {
     const seleccion=event.target.value;
     this.tam.emit(seleccion);
@@ -38,7 +39,10 @@ export class FiltroNoticiasComponent implements OnInit{
     }
   }
   //Método que enruta a la pestaña para subir noticias si se hace click en el botón
-  subir_noticia(){
-    this.router.navigate(['subir_noticia']);
+  subirNoticia(){
+    const queryParams: NavigationExtras = {
+      queryParams: { pagina:this.servicioNoticias.getIdentificador()}
+    };
+    this.router.navigate(['/subir_noticia'], queryParams);
   }
 }

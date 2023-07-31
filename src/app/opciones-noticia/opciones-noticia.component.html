@@ -54,10 +54,10 @@
         </div>
       </div>
       <div class="row mb-3">
+        <!--
         <div class="col">
-          <embed src="../../assets/images/Inscripcion Saber TyT.pdf" type="application/pdf" width="100%" height="600px">
-        </div>
-      </div>
+          <app-pdf-noticia #pdfComponent [opcion]="getOpcion()"></app-pdf-noticia>
+      </div>-->
       <div class="row justify-content-center mb-3 mt-3">
         <h3 class="text-center" *ngIf="error" style="font-size: 20px; color:red;">Por favor, verifique la información ingresada</h3>
       </div>

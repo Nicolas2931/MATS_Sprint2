@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, OnInit} from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { NoticiasService } from '../noticias.service';
 import { Noticia } from '../noticia.model';
 import { LoginService } from '../login.service';
+import { PDFNoticiaComponent } from '../pdf-noticia/pdf-noticia.component';
 @Component({
   selector: 'app-opciones-noticia',
   templateUrl: './opciones-noticia.component.html',
@@ -19,6 +20,7 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
   todos:boolean;
   estudiantes: boolean;
   profesores: boolean;
+  opcion:string;
   constructor(private route: Router, private routerURL: ActivatedRoute, private servicioNoticia: NoticiasService, private loginService: LoginService){
     //Para borrar
     this.estudiantes=false;
@@ -30,7 +32,6 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
   //Varaible que guarda el ID de la noticia
   private id_noticia:number;
   //Variable que guarda ver o editar dependiendo de la opción seleccionada
-  private opcion:string;
   //Varible que guarda error si los datos que se envían están incompletos
   error:boolean;
   //Variable que guarda el titulo y descripción de la noticia
@@ -53,6 +54,21 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
     }
     this.noticias=this.servicioNoticia.getNoticias(this.loginService.getTipoUsuario(),this.pagina);
     this.noticia=this.servicioNoticia.getNoticia(this.id_noticia);
+    //Para cargar los checkboxs
+    const categorias=this.servicioNoticia.getNoticia_Tipo(this.id_noticia);
+    if(this.opcion=="editar" && categorias.length>0){
+      for(var i=0;i<categorias.length;i++){
+        if(categorias[i]==1){
+          this.estudiantes=true;
+        }
+        else if(categorias[i]==2){
+          this.profesores=true;
+        }
+      }
+      if(this.estudiantes==true && this.profesores==true){
+        this.activar_todos();
+      }
+    }  
     this.titulo=this.noticia.titulo;
     this.descripcion=this.noticia.descripcion;
     this.fecha=this.noticia.fecha;
@@ -77,12 +93,26 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
   }
   //Método que guarda la información modificada
   guardar(){
-    if(this.titulo.length > 0 && this.descripcion.length>0 && (this.todos!==false || this.estudiantes!==false || this.profesores!==false)){
+    if(this.titulo.trim().length > 0 && this.descripcion.trim().length>0 && (this.todos!==false || this.estudiantes!==false || this.profesores!==false)){
       this.error=false;
       this.noticia.titulo=this.titulo;
       this.noticia.descripcion=this.descripcion;
       this.noticia.fecha=this.fecha;
-      this.servicioNoticia.editarNoticia(this.noticia.id,this.noticia);
+
+      //Cambiar luego
+      const categorias:number[]=[];
+      if(this.todos==true){
+        categorias[0]=1;
+        categorias[1]=2;
+      }
+      else if(this.estudiantes==true){
+        categorias[0]=1;
+      }
+      else if(this.profesores==true){
+        categorias[1]=2;
+      }  
+      this.servicioNoticia.editarNoticia(this.noticia.id,this.noticia,categorias);
+      //this.guardarPDF();
       this.volver();
     }
     else{
@@ -122,6 +152,19 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;
   }
- 
+  @ViewChild('pdfComponent') pdfComponent!: PDFNoticiaComponent; // Obtener referencia al componente hijo
+
+  guardarPDF() {
+    // Verificar que el PDF esté cargado en el componente hijo antes de enviarlo al backend
+    if (this.pdfComponent.selectedFile) {
+      const pdfFile: File = this.pdfComponent.selectedFile;
+      // Aquí puedes implementar la lógica para enviar el PDF al backend utilizando servicios o HTTP requests
+      // Por ejemplo, puedes llamar a un método en el servicio que envíe el PDF al servidor
+      // this.miServicio.enviarPDFAlBackend(pdfFile).subscribe(...);
+    } else {
+      // Manejo de error si el PDF no está cargado
+      console.log('Error: No se ha seleccionado ningún archivo PDF.');
+    }
+  }
 
 }

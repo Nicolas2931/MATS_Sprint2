@@ -197,6 +197,18 @@ export class NoticiasService {
   setNoticiasCargadas(carga:boolean){
     this.noticiasCargadas=carga;
   }
+  //Función que trae los tipos de usuarios para los cuales esta subida la noticia
+  noticia_tipo: number[] = []; // Inicializar noticia_tipo como un array vacío
+
+  getNoticia_Tipo(id_noticia: number): number[] {
+    this.noticia_tipo=[];
+    if (id_noticia == 1) {
+      this.noticia_tipo[0] = 1;
+      this.noticia_tipo[1] = 2;
+    }
+    return this.noticia_tipo;
+  }
+  
 
   //Método para subir una noticia
   /*
@@ -204,18 +216,26 @@ export class NoticiasService {
     al grupo de noticias correcto.
   */
 
-  subirNoticia(titulo:string,fecha:string,descripcion:string){
+  subirNoticia(titulo:string,fecha:string,descripcion:string,noticia_tipo:number[]){
     let id_random:number;
     id_random= Math.floor(Math.random()*(20-10+1))+10;
     let noticia:Noticia = new Noticia(id_random,titulo,fecha,descripcion,0,'');
     this.noticias.push(noticia);    
+    let id_noticia=1; //Conseguir el id de la noticia para subir sus categorias
+    for(let i=0; i<noticia_tipo.length;i++){
+      console.log(noticia_tipo[i]+"-"+id_noticia);
+    }
   }
-  editarNoticia(id_noticia:number, noticia:Noticia){
+  editarNoticia(id_noticia:number, noticia:Noticia, noticia_tipo:number[]){
     for (let i = 0; i < this.noticias.length; i++) {
       if (id_noticia === this.noticias[i].id) {
         this.noticias[i] = noticia;
         break; // Una vez que se encuentra la noticia, se sale del bucle.
       }
+    }
+    //For para insertar el tipo de noticia a la tabla de noticia
+    for(let i=0; i<noticia_tipo.length;i++){
+      console.log(noticia_tipo[i]+"-"+id_noticia);
     }
   }
   eliminarNoticia(id_noticia:number){
