@@ -320,7 +320,7 @@ export class NoticiasComponent implements OnInit{
   //Método que redirecciona para ver la noticia, enviando el ID por la URL
   opcionNoticia(id:number, opcion: string) {
     const queryParams: NavigationExtras = {
-      queryParams: { opcion: opcion }
+      queryParams: { opcion: opcion, pagina: this.servicioNoticias.getIdentificador()}
     };
     this.router.navigate(['/noticia', id], queryParams);
   }

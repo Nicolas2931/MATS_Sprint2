@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { NoticiasService } from '../noticias.service';
 import { Noticia } from '../noticia.model';
+import { LoginService } from '../login.service';
 @Component({
   selector: 'app-opciones-noticia',
   templateUrl: './opciones-noticia.component.html',
@@ -18,7 +19,7 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
   todos:boolean;
   estudiantes: boolean;
   profesores: boolean;
-  constructor(private route: Router, private routerURL: ActivatedRoute, private servicioNoticia: NoticiasService){
+  constructor(private route: Router, private routerURL: ActivatedRoute, private servicioNoticia: NoticiasService, private loginService: LoginService){
     //Para borrar
     this.estudiantes=false;
     this.profesores=false;
@@ -36,10 +37,13 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
   titulo:string;
   descripcion:string;
   fecha:string;
-  
+  //Para borrar
+  noticias:Noticia[];
+  pagina:string;
   ngOnInit(){
     this.routerURL.queryParams.subscribe(params => {
       this.opcion = params['opcion'];
+      this.pagina= params['pagina'];
     });  
     this.id_noticia = parseInt(this.routerURL.snapshot.params['id']);
     if(this.opcion=="editar"){
@@ -47,6 +51,7 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
     }else if(this.opcion=="ver"){
       this.desactivar=true;
     }
+    this.noticias=this.servicioNoticia.getNoticias(this.loginService.getTipoUsuario(),this.pagina);
     this.noticia=this.servicioNoticia.getNoticia(this.id_noticia);
     this.titulo=this.noticia.titulo;
     this.descripcion=this.noticia.descripcion;
@@ -54,14 +59,13 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
 
   }
   volver(){
-    let identificador=this.servicioNoticia.getIdentificador();
-    if(identificador=="Publico"){
+    if(this.pagina=="Publico"){
       this.route.navigate(['/']);
     }
-    else if(identificador=="UD"){
+    else if(this.pagina=="UD"){
       this.route.navigate(['/Noticias_UD']);
     }
-    else if(identificador=="Interes"){
+    else if(this.pagina="Interes"){
       this.route.navigate(['/Noticias_Interes']);
     }  
   }

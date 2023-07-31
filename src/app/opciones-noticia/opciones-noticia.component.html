@@ -1,4 +1,3 @@
-
 <div class="container align-items-center justify-content-center vh-100" style="margin-top:70px;">
     <div class="card bg-white p-5 rounded-5 text-secondary">
       <div class="row mb-3">
@@ -6,7 +5,7 @@
           <h2 class="letra-morada">Título <span *ngIf="error" style="font-size:20px;">*Obligatorio</span></h2>
         </div>
         <div class="col-md-8">
-          <textarea id="titulo" class="fs-3 form-control borde-morado" type="text" [disabled]="desactivar">{{titulo}}</textarea>
+          <textarea id="titulo" class="fs-3 form-control borde-morado" type="text" [disabled]="desactivar" [(ngModel)]="titulo"></textarea>
         </div>
       </div>
       <div class="row mb-3">
@@ -14,7 +13,7 @@
           <h2 class="letra-morada">Fecha <span *ngIf="error" style="font-size:20px;">Obligatorio</span></h2>
         </div>
         <div class="col-md-8">
-          <input type="date" class="fs-4 form-control borde-morado" [value]="fecha" [disabled]="desactivar">
+          <input type="date" class="fs-4 form-control borde-morado" [(ngModel)]="fecha" [disabled]="desactivar">
         </div>
       </div>
       <div class="row mb-3">
@@ -22,7 +21,7 @@
           <h2 class="letra-morada">Descripción <span *ngIf="error" style="font-size:20px;">Obligatorio</span></h2>
         </div>
         <div class="col-md-8">
-          <textarea id="descripcion" class="form-control borde-morado" placeholder="Título de la noticia" [disabled]="desactivar">{{descripcion}}</textarea>
+          <textarea id="descripcion" class="form-control borde-morado" placeholder="Título de la noticia" [disabled]="desactivar" [(ngModel)]="descripcion"></textarea>
         </div>
       </div>
       <ng-container *ngIf="!desactivar">
@@ -58,6 +57,9 @@
         <div class="col">
           <embed src="../../assets/images/Inscripcion Saber TyT.pdf" type="application/pdf" width="100%" height="600px">
         </div>
+      </div>
+      <div class="row justify-content-center mb-3 mt-3">
+        <h3 class="text-center" *ngIf="error" style="font-size: 20px; color:red;">Por favor, verifique la información ingresada</h3>
       </div>
       
       <button *ngIf="!desactivar" id="guardar" class="btn mb-3" style="margin-left: 5px;" (click)="guardar()">Guardar</button>
