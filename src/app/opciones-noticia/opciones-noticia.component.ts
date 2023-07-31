@@ -18,14 +18,6 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
   todos:boolean;
   estudiantes: boolean;
   profesores: boolean;
-  constructor(private route: Router, private routerURL: ActivatedRoute, private servicioNoticia: NoticiasService){
-    //Para borrar
-    this.estudiantes=false;
-    this.profesores=false;
-    this.todos=false;
-    //
-    this.error = false;
-  }
   //Varaible que guarda el ID de la noticia
   private id_noticia:number;
   //Variable que guarda ver o editar dependiendo de la opción seleccionada
@@ -36,12 +28,25 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
   titulo:string;
   descripcion:string;
   fecha:string;
+  constructor(private route: Router, private routerURL: ActivatedRoute, private servicioNoticia: NoticiasService){
+    //Para borrar
+    this.estudiantes=false;
+    this.profesores=false;
+    this.todos=false;
+    //
+    this.error = false;
+    this.id_noticia=0;
+    this.titulo="";
+    this.descripcion="";
+    this.fecha="";
+  }
   
   ngOnInit(){
     this.routerURL.queryParams.subscribe(params => {
       this.opcion = params['opcion'];
+      this.id_noticia=params['id_noticia'];
     });  
-    this.id_noticia = parseInt(this.routerURL.snapshot.params['id']);
+    console.log(this.opcion, this.id_noticia);
     if(this.opcion=="editar"){
       this.desactivar=false;
     }else if(this.opcion=="ver"){
@@ -55,6 +60,7 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
   }
   volver(){
     let identificador=this.servicioNoticia.getIdentificador();
+    this.servicioNoticia.setId_noticia(0);
     if(identificador=="Publico"){
       this.route.navigate(['/']);
     }

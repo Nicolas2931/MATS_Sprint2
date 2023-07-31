@@ -319,10 +319,11 @@ export class NoticiasComponent implements OnInit{
   }
   //Método que redirecciona para ver la noticia, enviando el ID por la URL
   opcionNoticia(id:number, opcion: string) {
+    this.servicioNoticias.setId_noticia(id);
     const queryParams: NavigationExtras = {
-      queryParams: { opcion: opcion }
+      queryParams: { opcion: opcion,id_noticia: id },
     };
-    this.router.navigate(['/noticia', id], queryParams);
+    this.router.navigate(['/noticia'], queryParams);
   }
   //Método que recorta la descripción para que solo aparezcan las primeras 100 palabras 
   Descripcion(des:string){

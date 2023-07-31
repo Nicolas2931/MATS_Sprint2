@@ -31,7 +31,7 @@ const appRoutes:Routes=[
   {path:'Preguntas_Frecuentes',component: PreguntasComponent,canActivate: [LoginGuardian]},
   {path:'Mesa_Ayuda',component: MesaAyudaComponent, canActivate: [LoginGuardian]},
   {path:'login',component: LoginComponent},
-  {path:'noticia/:id',component: OpcionesNoticiaComponent,canActivate: [LoginGuardian]},
+  {path:'noticia',component: OpcionesNoticiaComponent},
   {path:'subir_noticia',component: SubirNoticiaComponent,canActivate: [LoginGuardian]},
   {path:'**',component: PaginaErrorComponent}
 ];

@@ -162,6 +162,7 @@ export class NoticiasService {
 
   //Método que retorna una notica, es utilizado cuando se quiere ver o editar una noticia
   getNoticia(id_noticia: number) {
+    console.log("Entro con el ID"+id_noticia);
     let noticia: Noticia | undefined; // Usamos el tipo 'Noticia | undefined' para permitir que la variable sea undefined en caso de no encontrar la noticia.
     for (let i = 0; i < this.noticias.length; i++) {
       if (id_noticia === this.noticias[i].id) {
@@ -177,6 +178,7 @@ export class NoticiasService {
     }
     return noticia;
   }
+  //Método set y get del id_noticia
   getId_noticia(){
     return this.id_noticia;
   }
