@@ -6,7 +6,7 @@
         <div class="row align-items-center mt-5 mb-2">
           <div class="multiselect">
             <div class="selectBox mb-1" (click)="showCheckboxes()">
-              <select id="categorias">
+              <select class="categorias">
                 <option>{{txt_lista}}</option>
               </select>
               <div class="overSelect"></div>
@@ -29,7 +29,7 @@
         </div>
       </div>
     </div>
-      <!--Tarjetas-->
+  <!--Tarjetas-->
   <div class="row">
     <div class="col-md-12">
       <div class="row mt-5">
@@ -59,7 +59,7 @@
                                   </button> 
                                 </td>
                                 <td>
-                                  <button class="btn fondo_morado boton_menu  opciones_tabla mb-2" (click)="editar(tarjeta.id_tarjeta)">Eliminar
+                                  <button class="btn fondo_morado boton_menu  opciones_tabla mb-2" (click)="eliminar(tarjeta.id_tarjeta)">Eliminar
                                     <img src="../../assets/images/eliminar.png" class="img-fluid" style="max-width: 40px; height:auto; margin-left:5px"/>
                                   </button> 
                                 </td>
@@ -99,16 +99,11 @@
   </div>
     </div>
   </div>
-  <!--Ventana de ver más-->
+<!--**********************************VER TARJETA**********************************-->
   <div *ngIf="mostrarVentana" class="modal">
       <!-- Contenido del modal -->
       <div class="card card-medium" id="opciones">
-        <div class="row d-flex justify-content-center align-items-center mb-3">
-          <div class="col">
-            <span class="categoria_tarjeta">Categoría(s):</span>
-            <span *ngFor="let categoria of CategoriasPorTarjeta" class="categoria_tarjeta m-2">{{categoria.nombre}}</span>
-          </div>
-        </div>
+        
         <div class="row d-flex justify-content-center align-items-center">
           <h3 class="modal-title titulo_tarjeta">{{Tarjeta?.titulo}}</h3>
           <hr>
@@ -121,14 +116,23 @@
         </div>
       </div>
   </div>
-
+<!--**********************************EDITAR TARJETA**********************************-->
   <div *ngIf="ventana_editar" class="modal">
-    <!-- Contenido del modal -->
     <div class="card card-medium" id="editar_carta">
-      <div class="row d-flex justify-content-center align-items-center mb-3">
-        <div class="col">
-          <span class="categoria_tarjeta">Categoría(s):</span>
-          <span *ngFor="let categoria of categoria_editar" class="categoria_tarjeta m-2">{{categoria.nombre}}</span>
+      <div class="row align-items-center mb-5">
+        <div class="multiselect">
+          <div class="selectBox mb-1" (click)="showCheckboxesEditar()">
+            <select class="categorias">
+              <option>{{txt_listaEditar}}</option>
+            </select>
+            <div class="overSelect"></div>
+          </div>
+          <div id="checkboxes" class="container-sm" [style.display]="mostrarCheckboxesEditar ? 'block' : 'none'">
+            <div *ngFor="let cat of categorias_editar" class="form-check">
+              <input type="checkbox" class="form-check-input" [id]="'c' + cat.id" [(ngModel)]="cat.seleccionado" (change)="activarEditar()">
+              <label class="form-check-label" [for]="'c' + cat.id">{{ cat.nombre }}</label>
+            </div>
+          </div>
         </div>
       </div>
       <div class="row d-flex justify-content-center align-items-center">
@@ -136,11 +140,7 @@
           <h3 class="modal-title titulo_tarjeta">Título:</h3>
         </div>
         <div class="col-md-9 d-flex">
-          <textarea
-            [(ngModel)]="titulo"
-            class="areas_editar fs-4"
-            [rows]="calculateRows(titulo)"
-          ></textarea>
+          <textarea [(ngModel)]="titulo" class="areas_editar fs-4" [rows]="calculateRows(titulo)"></textarea>
         </div>
       </div>
       <div class="row d-flex justify-content-center align-items-center">
@@ -148,14 +148,10 @@
           <h3 class="modal-title titulo_tarjeta mb-2">Descripción</h3>
         </div>
         <div class="col-md-12 d-flex">
-          <textarea
-            [(ngModel)]="descripcion"
-            class="areas_editar"
-            [rows]="calculateRows(descripcion)"
-          ></textarea>
+          <textarea [(ngModel)]="descripcion" class="areas_editar" [rows]="calculateRows(descripcion)"></textarea>
         </div>
       </div>
       <button  id="guardar" class="btn mb-3" style="margin-left: 5px;">Guardar</button>
-      <button class="btn fondo_morado boton_menu" style="text-decoration: none;" (click)="cerrarMas()">Cerrar</button>
+      <button class="btn fondo_morado boton_menu" style="text-decoration: none;" (click)="cerrarEditar()">Cerrar</button>
     </div>
 </div>

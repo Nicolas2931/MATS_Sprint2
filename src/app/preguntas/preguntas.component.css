@@ -112,73 +112,106 @@
 }
 /*Estilo CSS*/
 
-
+/* Estilos para el primer multiselect */
 .multiselect {
-    position:relative;
-}
-
-.selectBox {
     position: relative;
-}
-
-.selectBox select {
+  }
+  
+  .selectBox {
+    position: relative;
+  }
+  
+  .selectBox select {
     width: 100%;
-}
-
-.overSelect {
+  }
+  
+  .overSelect {
     position: absolute;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-}
-.selectBox, #checkboxes {
+  }
+  
+  .selectBox,
+  #checkboxes {
     width: 100%;
-}
-#checkboxes {
+  }
+  
+  #checkboxes {
     display: block;
     border: 1px #dadada solid;
-    position:absolute;
-    background-color:white;
+    position: absolute;
+    background-color: white;
     box-sizing: border-box;
-    overflow-y:auto;
-    max-height:110px;
+    overflow-y: auto;
+    max-height: 110px;
     border-radius: 8px;
     padding: 10px;
     width: 98%;
-}
-#checkboxes.hide {display:none;}
-
-#checkboxes label {
+  }
+  #checkboxes.hide {
+    display: none;
+  }
+  
+  #checkboxes label {
     display: block;
-}
-
-#checkboxes label:hover {
-    background-color:rgb(169, 164, 175);
-}
-.flex-container {
-    display: flex;
-}
-#categorias{
-    color:rgb(78, 5, 121);
+  }
+  
+  #checkboxes label:hover {
+    background-color: rgb(169, 164, 175);
+  }
+  
+  /* Estilos para el segundo multiselect */
+  #checkboxesEditar {
+    display: block;
+    border: 1px #dadada solid;
+    position: absolute;
+    background-color: white;
+    box-sizing: border-box;
+    overflow-y: auto;
+    max-height: 110px;
+    border-radius: 8px;
+    padding: 10px;
+    width: 98%;
+  }
+  #checkboxesEditar.hide {
+    display: none;
+  }
+  
+  #checkboxesEditar label {
+    display: block;
+  }
+  
+  #checkboxesEditar label:hover {
+    background-color: rgb(169, 164, 175);
+  }
+  
+  /* Estilos para los checkboxes */
+  .form-check-input {
+    outline-color: rgb(121, 30, 182);
+    border-color: rgb(121, 30, 182);
+  }
+  
+  .form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(198, 75, 255, 0.25);
+  }
+  
+  .form-check-input:checked {
+    background-color: rgb(121, 30, 182);
+    border-color: rgb(121, 30, 182);
+  }
+  
+  .form-check-input:checked + .form-check-label {
+    color: rgb(121, 30, 182);
+    font-weight: bold;
+  }
+  
+  /* Estilos para las categorías */
+  .categorias {
+    color: rgb(78, 5, 121);
     border-radius: 8px;
     height: 30px;
     text-align: center;
-
-}
-.form-check-input{
-    outline-color:rgb(121, 30, 182);
-    border-color:rgb(121, 30, 182);
-}
-.form-check-input:focus{
-    box-shadow: 0 0 0 0.2rem rgba(198, 75, 255, 0.25);
-}
-.form-check-input:checked {
-    background-color: rgb(121, 30, 182);
-    border-color:rgb(121, 30, 182);
-}
+  }
   
-.form-check-input:checked + .form-check-label {
-    color:rgb(121, 30, 182);
-    font-weight: bold;
-}

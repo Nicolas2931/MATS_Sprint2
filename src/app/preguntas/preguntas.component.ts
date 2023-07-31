@@ -34,7 +34,7 @@ constructor(private preguntasService: PreguntasFrecuentesService, private loginS
   this.mostrarVentana=false;
   this.ventana_editar=false;
   this.usuario=this.loginService.getTipoUsuario();
-  this.permiso_usuario=this.loginService.getTipoUsuario();
+  this.permiso_usuario=this.loginService.getPermisoUsuario();
 }
 //Método para inicializar las variables.
 ngOnInit(): void {
@@ -63,7 +63,7 @@ buscar(){
     //Buscar solo por cadena de texto
   }
 }
-//Cada vez que se activa un checkbox se ejecuta el filtro
+//Esta función cambia el texto de la lista de categorías
 activar() {
   const checkboxesActivos = this.categorias.filter(categoria => categoria.seleccionado);
   const totalCheckboxesActivos = checkboxesActivos.length;
@@ -74,7 +74,7 @@ activar() {
     this.txt_lista="Seleccione las categorías";
   }
 }
-//--------------------------Tarjetas------
+//--------------------------Tarjetas----------------------------------
 itemsPorPagina = 10; // Número de tarjetas a mostrar por página
 paginaActual = 1; // Página actual seleccionada
 
@@ -111,7 +111,7 @@ truncarTexto(texto: string, palabrasMaximas: number): string {
     return palabras.slice(0, palabrasMaximas).join(' ') + '...';
   }
 }
-//
+//--------------------------Ver Más-------------------------------
 Tarjeta:Tarjeta | null;
 CategoriasPorTarjeta:Categoria[];
 verMas(tarjetaId: number) {
@@ -119,18 +119,47 @@ verMas(tarjetaId: number) {
   this.Tarjeta=this.preguntasService.ver_tarjeta(tarjetaId);
   this.mostrarVentana = true;
 }
+//--------------------------Editar-------------------------------
 titulo:string;
-categoria_editar:Categoria[];
+categorias_editar:Categoria[];
 descripcion:string;
-editar(tarjetaId: number){
-  this.categoria_editar=this.preguntasService.obtener_CategoriasPorTarjeta(tarjetaId);
-  this.Tarjeta=this.preguntasService.ver_tarjeta(tarjetaId);
-  if(this.Tarjeta){
-      this.titulo=this.Tarjeta.titulo;
-      this.descripcion=this.Tarjeta.descripcion;
+txt_listaEditar:string;
+editar(tarjetaId: number) {
+  // Copia profunda del arreglo para la lista 2
+  this.categorias_editar = JSON.parse(JSON.stringify(this.categorias));
+  let categorias_editar = this.preguntasService.obtener_CategoriasPorTarjeta(tarjetaId);
+  for (let i = 0; i < this.categorias_editar.length; i++) {
+    // Verificar si la categoría en this.categorias_editar existe en categorias_editar
+    this.categorias_editar[i].seleccionado = categorias_editar.some(
+      (categoria) => categoria.id === this.categorias_editar[i].id && categoria.seleccionado
+    );
   }
-  this.ventana_editar=true;
-}  
+  this.activarEditar();
+  this.Tarjeta = this.preguntasService.ver_tarjeta(tarjetaId);
+  if (this.Tarjeta) {
+    this.titulo = this.Tarjeta.titulo;
+    this.descripcion = this.Tarjeta.descripcion;
+  }
+  this.ventana_editar = true;
+}
+activarEditar() {
+  const checkboxesActivos = this.categorias_editar.filter(categoria => categoria.seleccionado);
+  const totalCheckboxesActivos = checkboxesActivos.length;
+  if(totalCheckboxesActivos > 0) {
+    this.txt_listaEditar = `Categorías seleccionadas (${totalCheckboxesActivos})`;
+  }
+  else{
+    this.txt_listaEditar="Seleccione las categorías";
+  }
+}
+mostrarCheckboxesEditar:boolean = false;
+showCheckboxesEditar() {
+  this.mostrarCheckboxesEditar= !this.mostrarCheckboxesEditar;
+}
+//--------------------------Eliminar-------------------------------
+eliminar(tarjetaId:number){
+
+}
 
 calculateRows(texto: string): number {
   // Calcula el número de líneas dividiendo la longitud del texto por el ancho máximo de una línea
@@ -143,6 +172,8 @@ calculateRows(texto: string): number {
 
 cerrarMas() {
   this.mostrarVentana= false;
+}
+cerrarEditar(){
   this.ventana_editar=false;
 }
 
