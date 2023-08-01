@@ -76,6 +76,19 @@ export class PreguntasFrecuentesService {
     }
     return categorias;
   }
+  //Método que obtiene los id de los tipo de usuario que podran ver la tarjeta
+  getID_usuario_Tarjeta(id_tarjeta:number):number[]{
+    const id_tipo:number[]=[];
+    if(id_tarjeta==1){
+      id_tipo[0]=2;
+      id_tipo[1]=3;
+    }
+    else{
+      id_tipo[0]=2;
+    }
+    return id_tipo;
+  }
+
   ver_tarjeta(id_tarjeta: number): Tarjeta | null {
     let tarjeta: Tarjeta | null = null;
     for (let i = 0; i < this.tarjetas.length; i++) {
@@ -85,6 +98,9 @@ export class PreguntasFrecuentesService {
       }
     }
     return tarjeta;
+  }
+  editar_tarjeta(titulo:string,descripcion:string,id_usuario:number[], categorias:Categoria[]):Boolean{
+    return true;
   }
 
   //Buscar solo por categorias

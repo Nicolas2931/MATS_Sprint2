@@ -59,14 +59,15 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
     if(this.opcion=="editar" && categorias.length>0){
       for(var i=0;i<categorias.length;i++){
         if(categorias[i]==1){
+          this.todos=true;
+          break;
+        }
+        if(categorias[i]==3){
           this.estudiantes=true;
         }
         else if(categorias[i]==2){
           this.profesores=true;
         }
-      }
-      if(this.estudiantes==true && this.profesores==true){
-        this.activar_todos();
       }
     }  
     this.titulo=this.noticia.titulo;
@@ -127,8 +128,6 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
       this.todos=true;
     }
     else{
-      this.estudiantes=false;
-      this.profesores=false;
       this.todos=false;
     }
   }

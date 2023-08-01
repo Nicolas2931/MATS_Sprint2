@@ -39,7 +39,7 @@ constructor(private preguntasService: PreguntasFrecuentesService, private loginS
 //Método para inicializar las variables.
 ngOnInit(): void {
   this.txt_lista="Seleccione las categorías";
-  this.categorias = this.preguntasService.obtener_categorias();
+  this.categorias= this.preguntasService.obtener_categorias();
   this.Tarjetas=this.preguntasService.obtener_tarjetas();
 }
 //Método para buscar entre las tarjetas la que se adecue a lo ingresado por el usuario
@@ -119,18 +119,73 @@ verMas(tarjetaId: number) {
   this.Tarjeta=this.preguntasService.ver_tarjeta(tarjetaId);
   this.mostrarVentana = true;
 }
+//---------------------------------------EDITAR TARJETA--------------------
 titulo:string;
+txt_editar:string;
 categoria_editar:Categoria[];
 descripcion:string;
-editar(tarjetaId: number){
-  this.categoria_editar=this.preguntasService.obtener_CategoriasPorTarjeta(tarjetaId);
-  this.Tarjeta=this.preguntasService.ver_tarjeta(tarjetaId);
-  if(this.Tarjeta){
-      this.titulo=this.Tarjeta.titulo;
-      this.descripcion=this.Tarjeta.descripcion;
+estudiantes:boolean=false;
+profesores:boolean=false;
+error_editar:boolean=false;
+editar(tarjetaId: number) {
+  /*Primero verifica los usuarios a los que pertenece la tarjeta*/
+  let id_tipo:number[]=[];
+  id_tipo=this.preguntasService.getID_usuario_Tarjeta(tarjetaId);
+  if(id_tipo[0]==2){
+    this.profesores=true;
   }
-  this.ventana_editar=true;
-}  
+  if(id_tipo[1]==3){
+    this.estudiantes=true;
+  }
+  this.categoria_editar=this.preguntasService.obtener_categorias();
+  const cat=this.preguntasService.obtener_CategoriasPorTarjeta(tarjetaId);
+  for(var i=0;i<this.categoria_editar.length;i++){
+    for(var j=0;j<cat.length;j++){
+      if(this.categoria_editar[i].id==cat[j].id){
+        this.categoria_editar[i].seleccionado=true;
+        break;
+      }
+    }  
+  }
+  const checkboxesActivos = this.categoria_editar.filter(categoria => categoria.seleccionado);
+  const totalCheckboxesActivos = checkboxesActivos.length;
+  this.txt_editar = `Categorías seleccionadas (${totalCheckboxesActivos})`;
+
+  this.Tarjeta = this.preguntasService.ver_tarjeta(tarjetaId);
+  if (this.Tarjeta) {
+    this.titulo = this.Tarjeta.titulo;
+    this.descripcion = this.Tarjeta.descripcion;
+  }
+
+  this.ventana_editar = true;
+}
+activar_editar(){
+  const checkboxesActivos = this.categoria_editar.filter(categoria => categoria.seleccionado);
+  const totalCheckboxesActivos = checkboxesActivos.length;
+  if(totalCheckboxesActivos > 0) {
+    this.txt_editar = `Categorías seleccionadas (${totalCheckboxesActivos})`;
+  }
+  else{
+    this.txt_editar="Seleccione las categorías";
+  }
+}
+//Verifica y guarda los cambios de la tarjeta
+guardar(){
+  let id_usuario:number[]=[];
+  if(this.profesores){
+    id_usuario[0] =2;
+  }
+  if(this.estudiantes){
+    id_usuario[1]=3
+  }
+  if(this.titulo.trim().length > 0 && this.descripcion.trim().length > 0 && this.categoria_editar.length>0 && id_usuario.length>0) {
+    this.error_editar=false;
+  }
+  else{
+    alert("Por favor, verifique la información ingresada");
+    this.error_editar=true;
+  }
+}
 
 calculateRows(texto: string): number {
   // Calcula el número de líneas dividiendo la longitud del texto por el ancho máximo de una línea
@@ -143,6 +198,8 @@ calculateRows(texto: string): number {
 
 cerrarMas() {
   this.mostrarVentana= false;
+}
+cerrarEditar(){
   this.ventana_editar=false;
 }
 

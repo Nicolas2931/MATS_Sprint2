@@ -121,41 +121,65 @@
         </div>
       </div>
   </div>
-
+  <!-- **********************EDITAR********************** -->
   <div *ngIf="ventana_editar" class="modal">
-    <!-- Contenido del modal -->
+
     <div class="card card-medium" id="editar_carta">
-      <div class="row d-flex justify-content-center align-items-center mb-3">
-        <div class="col">
-          <span class="categoria_tarjeta">Categoría(s):</span>
-          <span *ngFor="let categoria of categoria_editar" class="categoria_tarjeta m-2">{{categoria.nombre}}</span>
+      <div class="row mb-3">
+        <span *ngIf="error_editar" class="requisito">*Debe seleccionar al menos una categoría</span><br>
+        <span class="categoria_tarjeta mb-2">{{ txt_editar }}:</span>
+        <div class="d-flex flex-wrap">
+          <div *ngFor="let cat of categoria_editar" class="mr-3">
+            <div class="col md-2">
+              <input class="form-check-input" type="checkbox" [(ngModel)]="cat.seleccionado" [id]="'chk_' + cat.id" (change)="activar_editar()">
+              <label class="form-check-label" style="margin-left: 5px; margin-right: 10px;" [for]="'chk_' + cat.id">
+                {{ cat.nombre }} <span categoria_tarjeta>|</span>
+              </label>
+            </div>
+          </div>
         </div>
       </div>
+      <hr>
+      <span *ngIf="error_editar" class="requisito">*Debe seleccionar al menos un tipo de usuario</span><br>
+      <span class="categoria_tarjeta mb-2" >Usuarios que podrán ver la tarjeta:</span>
+      <div class="row mb-3">
+        <div class="col-md-8">
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="estudiantes" [(ngModel)]="estudiantes">
+            <label class="form-check-label" for="estudiantes">Estudiantes | </label>
+          </div>
+          
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="profesores" [(ngModel)]="profesores">
+            <label class="form-check-label" for="profesores">Profesores</label>
+          </div>
+          <br>
+        </div>
+      </div>
+      <hr>
       <div class="row d-flex justify-content-center align-items-center">
+        <p *ngIf="error_editar" class="requisito">*Obligatorio</p><br>
         <div class="col-md-3">
           <h3 class="modal-title titulo_tarjeta">Título:</h3>
         </div>
         <div class="col-md-9 d-flex">
-          <textarea
-            [(ngModel)]="titulo"
-            class="areas_editar fs-4"
-            [rows]="calculateRows(titulo)"
-          ></textarea>
+          <textarea [(ngModel)]="titulo" class="areas_editar fs-4" [rows]="calculateRows(titulo)"></textarea>
         </div>
       </div>
+      <hr>
       <div class="row d-flex justify-content-center align-items-center">
+        <span *ngIf="error_editar" class="requisito">*Obligatorio</span><br>
         <div class="col-md-12">
           <h3 class="modal-title titulo_tarjeta mb-2">Descripción</h3>
         </div>
         <div class="col-md-12 d-flex">
-          <textarea
-            [(ngModel)]="descripcion"
-            class="areas_editar"
-            [rows]="calculateRows(descripcion)"
-          ></textarea>
+          <textarea [(ngModel)]="descripcion" class="areas_editar" [rows]="calculateRows(descripcion)"></textarea>
         </div>
       </div>
-      <button  id="guardar" class="btn mb-3" style="margin-left: 5px;">Guardar</button>
-      <button class="btn fondo_morado boton_menu" style="text-decoration: none;" (click)="cerrarMas()">Cerrar</button>
+      <div class="row justify-content-center mb-3 mt-3">
+        <p class="requisito" *ngIf="error_editar">Por favor, verifique la información ingresada</p>
+      </div>
+      <button  id="guardar" class="btn mb-3" style="margin-left: 5px;" (click)="guardar()">Guardar</button>
+      <button class="btn fondo_morado boton_menu" style="text-decoration: none;" (click)="cerrarEditar()">Cerrar</button>
     </div>
 </div>
