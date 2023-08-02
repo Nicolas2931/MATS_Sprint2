@@ -4,12 +4,20 @@ import { Noticia } from '../noticia.model';
 import { NoticiasService } from '../noticias.service';
 import { Router } from '@angular/router';
 import { NavigationExtras } from '@angular/router';
+<<<<<<< HEAD
+=======
+import { ServicioBackService } from '../servicio-back.service';
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
 @Component({
   selector: 'app-noticias',
   templateUrl: './noticias.component.html',
   styleUrls: ['./noticias.component.scss']
 })
 export class NoticiasComponent implements OnInit{
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
   //Variable que guardan la ruta de la imagen
   private imagenActual:string;
   private imagenNueva:string;
@@ -29,6 +37,10 @@ export class NoticiasComponent implements OnInit{
   private inicio:number;
   private fin:number;
   
+<<<<<<< HEAD
+=======
+  
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
   //Palancas que activas las opciones de paginacións según el número de páginas.
   activar1: boolean;
   activar2: boolean;
@@ -40,7 +52,15 @@ export class NoticiasComponent implements OnInit{
 
   //Variables para borrar
   texto:string;
+<<<<<<< HEAD
   
+=======
+
+  //Variables para no borrar (IMPORTANTES)
+  permiso_usuario: string;
+  token: string;
+  id_usuario: string;
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
 
 
   /*Método constructor
@@ -50,13 +70,23 @@ export class NoticiasComponent implements OnInit{
   -servicioNoticias: Se usa para obtener las noticias según el tipo de usuario.
   -router: Se usa para redireccionar la página de acuerdo a las opciones de las noticias
   */
+<<<<<<< HEAD
   constructor(private loginService:LoginService, private servicioNoticias:NoticiasService, private router:Router){
+=======
+  constructor(private loginService:LoginService, private servicioNoticias:NoticiasService, private router:Router, private servicioBackService: ServicioBackService){
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
     this.imagenActual = '';
     this.imagenNueva = '';
     this.imagenOriginal = '';
     this.identificador='';
     this.num_pag='';
     this.usuario=='';
+<<<<<<< HEAD
+=======
+    this.permiso_usuario=='';
+    this.token=='';
+    this.id_usuario=='';
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
 
     this.cantidad_noticias=0;
     this.inicio=0;
@@ -81,6 +111,7 @@ export class NoticiasComponent implements OnInit{
     this.imagenActual = '../../assets/images/estrella.png';
     this.imagenNueva = '../../assets/images/estrella_activa.png';
     this.imagenOriginal = '../../assets/images/estrella.png';
+<<<<<<< HEAD
 
     this.identificador=this.servicioNoticias.getIdentificador();
     this.noticias = this.servicioNoticias.getNoticias(this.getTipoUsuario(),this.identificador);
@@ -103,6 +134,41 @@ export class NoticiasComponent implements OnInit{
       this.setFin(9);
     }
     this.setPagina('1');
+=======
+    this.permiso_usuario = this.loginService.getPermisoUsuario();
+    this.token = this.loginService.getToken();
+    this.id_usuario = this.loginService.getIdUsuario();
+    
+
+    this.identificador=this.servicioNoticias.getIdentificador();
+    this.servicioNoticias.getNoticias(this.getTipoUsuario(),this.identificador, this.permiso_usuario).then((data) =>{
+      this.noticias = data;
+      
+      //Carga inicial de la cantidad de noticias, si es menor a 50 ese será el tamaño, sino el tamaño será 50
+      if(this.noticias.length<=50){
+        this.cantidad_noticias=this.noticias.length;
+      }
+      else{
+        this.setCantidadNoticias('50');
+      }
+      this.cargarImagenes(/*this.noticias*/);
+      this.cargarPaginacion();
+
+      //Inicialización de los rangos de las noticias que se mostraran. Así como del número de página.
+      this.setInicio(0);
+      if(this.cantidad_noticias<=9){
+        this.setFin(this.cantidad_noticias);
+      }
+      else{
+        this.setFin(9);
+      }
+      this.setPagina('1');
+
+      console.log(this.noticias);
+    });
+
+    
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
     
   }
 
@@ -134,16 +200,32 @@ export class NoticiasComponent implements OnInit{
   /*Se obtiene la ruta de la imagen actual para cada botón
     Si el elemento está en el arreglo de imagenes se devuelve su valor, si no la imagen base.
   */
+<<<<<<< HEAD
   apoyar(indice: number) {
     if (this.imagenes[indice] === this.imagenOriginal) {
       this.imagenes[indice] = this.imagenNueva;
+=======
+  apoyar(indice: number, id_noticia: number) {
+    //console.log(id_noticia);
+    if (this.imagenes[indice] === this.imagenOriginal) {
+      this.imagenes[indice] = this.imagenNueva;
+      this.servicioBackService.Apoyo(this.id_usuario, id_noticia).subscribe((data) => {
+        console.log(data);
+      });
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
       /*
         Además, se deberá agregar el método de apoyar del servicio, para sumar +1 a los likes de la noticia
       */
     } else {
+<<<<<<< HEAD
       /*
         Se restará -1 al total de likes de la noticia.
       */
+=======
+      this.servicioBackService.DesApoyo(this.id_usuario, id_noticia).subscribe((data) => {
+        console.log(data);
+      });
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
       this.imagenes[indice] = this.imagenOriginal;
     }
   }
@@ -153,7 +235,12 @@ export class NoticiasComponent implements OnInit{
   */
   cargarImagenes(){
     for (let i = 0; i < this.noticias.length; i++) {
+<<<<<<< HEAD
       if(this.noticias[i].apoyado=='Apoyado'){
+=======
+      console.log(this.noticias[i].apoyado);
+      if(this.noticias[i].apoyado == true){
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
         this.imagenes[i]=this.imagenNueva;
       }
       else{
@@ -319,6 +406,7 @@ export class NoticiasComponent implements OnInit{
   //Método que redirecciona para ver la noticia, enviando el ID por la URL
   opcionNoticia(id:number, opcion: string) {
     const queryParams: NavigationExtras = {
+<<<<<<< HEAD
       queryParams: { opcion: opcion, pagina: this.servicioNoticias.getIdentificador()}
     };
     this.router.navigate(['/noticia', id], queryParams);
@@ -326,6 +414,14 @@ export class NoticiasComponent implements OnInit{
   
   //Método que recorta la descripción para que solo aparezcan las primeras 100 palabras 
   Descripcion(des:string){
+=======
+      queryParams: { opcion: opcion, pagina: this.servicioNoticias.getIdentificador() }
+    };
+    this.router.navigate(['/noticia', id], queryParams);
+  }
+  //Método que recorta la descripción para que solo aparezcan las primeras 100 palabras 
+  Descripcion(des:string): string{
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
     let maxPalabras=100;
     let descripcionCompleta=des;
     const palabras = descripcionCompleta.split(' ');
@@ -341,4 +437,8 @@ export class NoticiasComponent implements OnInit{
     this.cantidad_noticias=this.noticias.length;
   }
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0

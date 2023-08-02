@@ -1,16 +1,27 @@
 import { Injectable } from '@angular/core';
 import { Noticia } from './noticia.model';
 import { LoginService } from './login.service';
+<<<<<<< HEAD
+=======
+import { ServicioBackService } from './servicio-back.service';
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
 //import { HttpClient } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })
+<<<<<<< HEAD
+=======
+
+//rubio puto
+
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
 export class NoticiasService {
   private noticias:Noticia[];
   //Variable que guarda si las noticias ya fueron cargadas en la pestaña o no.
   private noticiasCargadas:boolean;
   //Variable que guarda la pestaña actual del usuario
   private identificador:string;
+<<<<<<< HEAD
   //Variable que guarda el id_noticia
   private id_noticia:number;
   constructor(private loginService:LoginService/*private http: HttpClient*/) {
@@ -56,12 +67,23 @@ export class NoticiasService {
   noticia11:Noticia=new Noticia(11,"Estudiantes de la Universidad Santo Tomas obtienen becas para estudiar en el extranjero",
   "2023-02-11",
   "Atención, varios estudiantes destacados de la Universidad ABC han sido seleccionados para recibir becas que les permitirán realizar estudios en el extranjero durante el próximo año académico. Esta oportunidad les brindará una experiencia educativa internacional y les abrirá nuevas puertas en sus carreras.",250,'');
+=======
+  private noticia_tipo: number[];
+
+  constructor(private loginService:LoginService/*private http: HttpClient*/, private servicioBackService: ServicioBackService) {
+    this.noticiasCargadas=false;
+    this.identificador='';
+    this.noticias=[];
+    this.noticia_tipo = [];
+  }
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
   /*
     Modificar de acuerdo a las noticias
     que se obtendran.
   */
   getNoticiasGenerales(){
     //Pasar 1
+<<<<<<< HEAD
     let noticiasGenerales:Noticia[] = [];
     return noticiasGenerales;
   }
@@ -73,6 +95,56 @@ export class NoticiasService {
   getNoticiasInteres(tipo_usuario:string){
     let noticiasInteres:Noticia[] = [];
     return noticiasInteres;
+=======
+    return new Promise<any>((resolve, reject) => {
+      this.servicioBackService.getNoticiasGenerales().subscribe((data) => {
+        resolve(data);
+      })
+    }).then((data) =>{
+      /* for(const noticia of data.data.noticias){
+        this.noticias.push(new Noticia(noticia.id, noticia.titulo, noticia.fecha, noticia.descripcion, noticia.archivo, noticia.likes, ''));
+      } */
+      this.noticias = data.data.noticias;
+    });
+  }
+  getNoticiasUD(token:string){
+    //Paso 2 o 3
+    return new Promise<any>((resolve, reject) => {
+      this.servicioBackService.getNoticiasUD(token).subscribe((data) => {
+        resolve(data.data.noticias);
+      });
+    }).then((data) => {
+      this.noticias = data;
+    });    
+  }
+  getNoticiasInteres(token:string){
+    return new Promise<any>((resolve, reject) => {
+      this.servicioBackService.getNoticiasInteres(token).subscribe((data) => {
+        resolve(data.data.noticias);
+      });
+    }).then((data) => {
+      this.noticias = data;
+    });
+  }
+
+  getAllNoticiasUD(){
+    return new Promise<any>((resolve, reject) => {
+      this.servicioBackService.getAllNoticiasUD().subscribe((data) => {
+        resolve(data.data);
+      });
+    }).then((data) => {
+      this.noticias = data;
+    });
+  }
+  getAllNoticiasInteres(){
+    return new Promise<any>((resolve, reject) => {
+      this.servicioBackService.getAllNoticiasInteres().subscribe((data) => {
+        resolve(data.data);
+      });
+    }).then((data) => {
+      this.noticias = data;
+    });
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
   }
   getIdentificador(){
     return this.identificador;
@@ -81,7 +153,11 @@ export class NoticiasService {
     this.identificador = identificador;
   }
   //Método que obtiene las noticias según la pestaña en la cual se encuentrá el usuario
+<<<<<<< HEAD
   getNoticias(usuario:string, identificador:string){
+=======
+  async getNoticias(usuario:string, identificador:string, permiso:string){
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
     /*
       if(identificador=="generales"){
         this.noticias=this.getNoticiasGenerales();
@@ -97,6 +173,7 @@ export class NoticiasService {
       this.noticiasCargadas=true;
       if(identificador=="Publico"){
         //En publico se traen las noticias de tipo publico
+<<<<<<< HEAD
         /*
           this.noticias=this.getNoticiasGenerales();
         */
@@ -160,6 +237,44 @@ export class NoticiasService {
     return this.noticias;
   }
 
+=======
+        
+        await this.getNoticiasGenerales();
+        
+       
+        /* this.noticias.push(this.noticia1);
+        this.noticias.push(this.noticia2); */
+      }
+      
+        /*
+          Dependiendo de la pestaña traera unas noticias distintas al usuario
+        */
+      else if(identificador=="UD" && usuario != 'administrador'){
+        await this.getNoticiasUD(this.loginService.getToken());
+      }
+      else if(identificador=="Interes" && usuario != 'administrador'){
+        await this.getNoticiasInteres(this.loginService.getToken());
+      }
+      else if(identificador=="UD" && (usuario == 'administrador' || permiso == '1')){
+        await this.getAllNoticiasUD();
+      } 
+      else if(identificador=="Interes" && (usuario == 'administrador' || permiso == '1')){
+        await this.getAllNoticiasInteres();
+      }
+    }
+    return this.noticias;
+  }
+
+  getNoticia_Tipo(id_noticia: number): number[] {
+    this.noticia_tipo=[];
+    if (id_noticia == 1) {
+      this.noticia_tipo[0] = 1;
+      this.noticia_tipo[1] = 2;
+    }
+    return this.noticia_tipo;
+  }
+
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
   //Método que retorna una notica, es utilizado cuando se quiere ver o editar una noticia
   getNoticia(id_noticia: number) {
     let noticia: Noticia | undefined; // Usamos el tipo 'Noticia | undefined' para permitir que la variable sea undefined en caso de no encontrar la noticia.
@@ -177,12 +292,15 @@ export class NoticiasService {
     }
     return noticia;
   }
+<<<<<<< HEAD
   getId_noticia(){
     return this.id_noticia;
   }
   setId_noticia(id_noticia:number){
     this.id_noticia = id_noticia;
   }
+=======
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
   
   //Pasar el archivo PDF al Backend
   /*enviarArchivo(archivo: File) {
@@ -197,6 +315,7 @@ export class NoticiasService {
   setNoticiasCargadas(carga:boolean){
     this.noticiasCargadas=carga;
   }
+<<<<<<< HEAD
   //Función que trae los tipos de usuarios para los cuales esta subida la noticia
   noticia_tipo: number[] = []; // Inicializar noticia_tipo como un array vacío
 
@@ -209,6 +328,8 @@ export class NoticiasService {
     return this.noticia_tipo;
   }
   
+=======
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
 
   //Método para subir una noticia
   /*
@@ -219,13 +340,22 @@ export class NoticiasService {
   subirNoticia(titulo:string,fecha:string,descripcion:string,noticia_tipo:number[]){
     let id_random:number;
     id_random= Math.floor(Math.random()*(20-10+1))+10;
+<<<<<<< HEAD
     let noticia:Noticia = new Noticia(id_random,titulo,fecha,descripcion,0,'');
+=======
+    let noticia:Noticia = new Noticia(id_random,titulo,fecha,descripcion,'',0,false);
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
     this.noticias.push(noticia);    
     let id_noticia=1; //Conseguir el id de la noticia para subir sus categorias
     for(let i=0; i<noticia_tipo.length;i++){
       console.log(noticia_tipo[i]+"-"+id_noticia);
+<<<<<<< HEAD
     }
   }
+=======
+    }
+  }
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
   editarNoticia(id_noticia:number, noticia:Noticia, noticia_tipo:number[]){
     for (let i = 0; i < this.noticias.length; i++) {
       if (id_noticia === this.noticias[i].id) {
@@ -236,8 +366,13 @@ export class NoticiasService {
     //For para insertar el tipo de noticia a la tabla de noticia
     for(let i=0; i<noticia_tipo.length;i++){
       console.log(noticia_tipo[i]+"-"+id_noticia);
+<<<<<<< HEAD
     }
   }
+=======
+    }
+  }
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
   eliminarNoticia(id_noticia:number){
     for (let i = 0; i < this.noticias.length; i++) {
       if (id_noticia === this.noticias[i].id) {

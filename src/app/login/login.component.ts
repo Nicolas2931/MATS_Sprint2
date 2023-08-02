@@ -19,12 +19,25 @@ export class LoginComponent {
   login(form:NgForm){
     const usuario=form.value.usuario;
     const password=form.value.password;
+<<<<<<< HEAD
     if(this.loginService.login(usuario,password)!=''){
       this.router.navigate(['/Noticias_UD']);
     }
     else{
       this.setError(true);
     }
+=======
+    this.loginService.login(usuario,password).then((token) => {
+      //alert(token);
+      if(token !=''){
+        this.router.navigate(['/Noticias_UD']);
+      }
+      else{
+        this.setError(true);
+      }
+    });
+    
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
   }
   getError(){
     return this.error;

@@ -3,6 +3,11 @@ import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 //Módulo usado para realizar solicitudes HTTP al Backend
 //import { HttpClient } from '@angular/common/http';
+<<<<<<< HEAD
+=======
+import { Observable } from 'rxjs';
+import { ServicioBackService } from './servicio-back.service';
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
 @Injectable({
   providedIn: 'root'
 })
@@ -11,6 +16,7 @@ export class LoginService {
   private token:string;
   //Corresponde al tipo de usuario: Estudiante, Profesor, Administrador
   //Variable usada para la obtención de noticias
+<<<<<<< HEAD
   private tipo_usuario:string;
   //Permisos de el usuario: Variable usada para saber si el usuario podrá
   //subir,editar y eliminar noticias.
@@ -63,6 +69,58 @@ export class LoginService {
     this.cookies.set("token", this.token);
     this.cookie_usuario.set("tipo_usuario",this.tipo_usuario);
     this.cookie_permiso.set("permiso_usuario",this.permiso_usuario);
+=======
+  private tipo_usuario:any;
+  //Permisos de el usuario: Variable usada para saber si el usuario podrá
+  //subir,editar y eliminar noticias.
+  private permiso_usuario: number;
+
+  private data: any;
+  private id: number;
+
+  constructor(private route:Router, private cookies:CookieService, private cookie_usuario:CookieService, private cookie_permiso:CookieService, private servicioBackService: ServicioBackService, private cookie_id:CookieService) {
+    this.token="";
+    this.tipo_usuario={};
+    this.permiso_usuario=0;
+  }
+  //Variable que tiene la URL del Backend
+  //***private apiUrl = environment.apiUrl;
+
+  recolectar(usuario:string, password:string){
+    return new Promise<void>((resolve, reject) => {
+      this.servicioBackService.getUsuario(usuario, password).subscribe((data) => {
+        this.data = data;
+        resolve();
+      });
+    }).then(() => {
+      console.log(this.data);
+
+      if(this.data.message == "ok"){
+        this.cookie_id.set('id_usuario', usuario);
+        console.log(this.getIdUsuario());
+        this.token = this.data.token;
+        this.tipo_usuario = this.data.tipo_usuario;
+        this.permiso_usuario = this.data.permiso;
+      }else{
+        console.log('pailas mi loco');
+        this.token = '';
+      }
+
+      this.cookies.set("token", this.token);
+      this.cookie_usuario.set("tipo_usuario",this.tipo_usuario.perfil);
+      this.cookie_permiso.set("permiso_usuario", this.permiso_usuario.toString());
+    })
+  }
+
+  getIdUsuario(){
+    return this.cookie_id.get('id_usuario');
+  }
+
+  async login(usuario:string, password:string){
+
+    const promesa = await this.recolectar(usuario, password);
+
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
     return this.cookies.get("token");
   }
   //Esto debería volver la cookie
@@ -73,9 +131,17 @@ export class LoginService {
   estaLogueado(){
     return this.cookies.get("token");
   }
+<<<<<<< HEAD
   getToken(){
     return this.cookies.get("token");
   }
+=======
+
+  getToken(){
+    return this.cookies.get("token");
+  }
+  
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
   //Retorna el tipo de permiso del usuario
   getPermisoUsuario(){
     return this.cookie_permiso.get("permiso_usuario");
@@ -91,6 +157,7 @@ export class LoginService {
   logout(){
     this.token="";
     this.tipo_usuario="";
+<<<<<<< HEAD
     this.permiso_usuario="";
     this.cookies.set("token",this.token);
     this.cookie_usuario.set("tipo_usuario",this.tipo_usuario);
@@ -99,3 +166,13 @@ export class LoginService {
     location.reload();
   }
 }
+=======
+    this.permiso_usuario=0;
+    this.cookies.set("token",this.token);
+    this.cookie_usuario.set("tipo_usuario",this.tipo_usuario);
+    this.cookie_permiso.set("permiso_usuario", "");
+    this.route.navigate(['/']);
+    location.reload();
+  }
+}
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0

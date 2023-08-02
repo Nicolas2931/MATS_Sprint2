@@ -18,8 +18,16 @@ import { NoticiasUdComponent } from './noticias-ud/noticias-ud.component';
 import { NoticiasInteresComponent } from './noticias-interes/noticias-interes.component';
 import { MesaAyudaComponent } from './mesa-ayuda/mesa-ayuda.component';
 import { OpcionesNoticiaComponent } from './opciones-noticia/opciones-noticia.component';
+<<<<<<< HEAD
 import { PdfNoticiaComponent } from './pdf-noticia/pdf-noticia.component';
 import { SubirNoticiaComponent } from './subir-noticia/subir-noticia.component';
+=======
+import { PDFNoticiaComponent } from './pdf-noticia/pdf-noticia.component';
+import { SubirNoticiaComponent } from './subir-noticia/subir-noticia.component';
+import { HttpClientModule } from '@angular/common/http';
+import { NoticiasService } from './noticias.service';
+
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
 const appRoutes:Routes=[
   {path: '',component: NoticiasGeneralesComponent},
   {path:'Noticias_UD',component: NoticiasUdComponent,canActivate: [LoginGuardian]},
@@ -44,16 +52,27 @@ const appRoutes:Routes=[
     NoticiasInteresComponent,
     MesaAyudaComponent,
     OpcionesNoticiaComponent,
+<<<<<<< HEAD
     PdfNoticiaComponent,
+=======
+    PDFNoticiaComponent,
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
     SubirNoticiaComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     RouterModule.forRoot(appRoutes),
+<<<<<<< HEAD
     FormsModule
   ],
   providers: [LoginService,CookieService,PreguntasFrecuentesService,LoginGuardian],
+=======
+    FormsModule,
+    HttpClientModule
+  ],
+  providers: [LoginService,CookieService,PreguntasFrecuentesService,LoginGuardian,NoticiasService],
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
   bootstrap: [AppComponent]
 })
 export class AppModule { }

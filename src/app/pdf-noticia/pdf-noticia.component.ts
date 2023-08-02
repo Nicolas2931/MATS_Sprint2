@@ -5,12 +5,20 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   templateUrl: './pdf-noticia.component.html',
   styleUrls: ['./pdf-noticia.component.scss']
 })
+<<<<<<< HEAD
 export class PdfNoticiaComponent {
+=======
+export class PDFNoticiaComponent {
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
   @Input() opcion: string | null;
   selectedFile: File | null = null;
   pdfURL:string | null = null;
   constructor(private http: HttpClient){}
+<<<<<<< HEAD
   /*
+=======
+  
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
   cargarArchivoDesdeBackend() {
     // Si la opción es "editar", realizar la solicitud para obtener el archivo PDF del Backend
     if (this.opcion === 'editar' || this.opcion=='ver') {
@@ -23,7 +31,11 @@ export class PdfNoticiaComponent {
           if (response.status === 200) {
             // Crear una URL del objeto Blob recibido
             const blob = new Blob([response.body as BlobPart], { type: 'application/pdf' });
+<<<<<<< HEAD
             this.pdfUrl = URL.createObjectURL(blob);
+=======
+            this.pdfURL = URL.createObjectURL(blob);
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
           }
         }, (error) => {
           // Manejar el error si la solicitud no se pudo completar
@@ -31,8 +43,12 @@ export class PdfNoticiaComponent {
         });
     }
   }
+<<<<<<< HEAD
 }
 */
+=======
+
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
   //Función que resalta el áre de arrastrar y soltar
   onDragOver(event: DragEvent) {
     event.preventDefault();
@@ -75,6 +91,12 @@ export class PdfNoticiaComponent {
   }
 
   eliminarArchivo() {
+<<<<<<< HEAD
     this.selectedFile = null;
   }
 }
+=======
+    this.selectedFile = null;
+  }
+}
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0

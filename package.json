@@ -22,7 +22,10 @@
     "ngx-cookie-service": "^16.0.0",
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.7.20",
+<<<<<<< HEAD
     "tslib": "^2.3.0",
+=======
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
     "zone.js": "~0.13.0"
   },
   "devDependencies": {
@@ -36,6 +39,10 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
+<<<<<<< HEAD
+=======
+    "tslib": "^2.6.1",
+>>>>>>> 1ad3f51743e0b61bafd513abca7a085611b038c0
     "typescript": "~5.0.2"
   }
 }
