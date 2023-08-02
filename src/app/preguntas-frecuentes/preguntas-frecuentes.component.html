@@ -126,7 +126,7 @@
 
     <div class="card card-medium" id="editar_carta">
       <div class="row mb-3">
-        <span *ngIf="error_editar" class="requisito">*Debe seleccionar al menos una categoría</span><br>
+        <span *ngIf="error_editar" class="requisito" style="text-align:left;">*Debe seleccionar al menos una categoría</span><br>
         <span class="categoria_tarjeta mb-2">{{ txt_editar }}:</span>
         <div class="d-flex flex-wrap">
           <div *ngFor="let cat of categoria_editar" class="mr-3">
@@ -140,7 +140,7 @@
         </div>
       </div>
       <hr>
-      <span *ngIf="error_editar" class="requisito">*Debe seleccionar al menos un tipo de usuario</span><br>
+      <span *ngIf="error_editar" class="requisito" style="text-align:left;">*Debe seleccionar al menos un tipo de usuario</span><br>
       <span class="categoria_tarjeta mb-2" >Usuarios que podrán ver la tarjeta:</span>
       <div class="row mb-3">
         <div class="col-md-8">
@@ -158,26 +158,23 @@
       </div>
       <hr>
       <div class="row d-flex justify-content-center align-items-center">
-        <p *ngIf="error_editar" class="requisito">*Obligatorio</p><br>
-        <div class="col-md-3">
+        <div class="col-md-5">
           <h3 class="modal-title titulo_tarjeta">Título:</h3>
+          <p *ngIf="error_editar" class="requisito">*Obligatorio</p><br>
         </div>
-        <div class="col-md-9 d-flex">
+        <div class="col-md-7 d-flex">
           <textarea [(ngModel)]="titulo" class="areas_editar fs-4" [rows]="calculateRows(titulo)"></textarea>
         </div>
       </div>
       <hr>
       <div class="row d-flex justify-content-center align-items-center">
-        <span *ngIf="error_editar" class="requisito">*Obligatorio</span><br>
-        <div class="col-md-12">
-          <h3 class="modal-title titulo_tarjeta mb-2">Descripción</h3>
+        <div class="col-md-5">
+          <h3 class="modal-title titulo_tarjeta mb-2">Descripción <span  *ngIf="error_editar" class="requisito" style="font-size:17px;  font-weight: normal;">*Obligatorio</span></h3>
+          
         </div>
         <div class="col-md-12 d-flex">
           <textarea [(ngModel)]="descripcion" class="areas_editar" [rows]="calculateRows(descripcion)"></textarea>
         </div>
-      </div>
-      <div class="row justify-content-center mb-3 mt-3">
-        <p class="requisito" *ngIf="error_editar">Por favor, verifique la información ingresada</p>
       </div>
       <button  id="guardar" class="btn mb-3" style="margin-left: 5px;" (click)="guardar()">Guardar</button>
       <button class="btn fondo_morado boton_menu" style="text-decoration: none;" (click)="cerrarEditar()">Cerrar</button>
