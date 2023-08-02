@@ -48,6 +48,7 @@ export class NoticiasComponent implements OnInit{
   permiso_usuario: string;
   token: string;
   id_usuario: string;
+  cantNoticias: number;
 
 
   /*Método constructor
@@ -121,7 +122,10 @@ export class NoticiasComponent implements OnInit{
       this.setPagina('1');
 
       console.log(this.noticias);
+
+      this.servicioNoticias.setCantidadNoticias(this.noticias.length);
     });
+    
 
     
     

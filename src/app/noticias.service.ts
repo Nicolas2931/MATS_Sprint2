@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Noticia } from './noticia.model';
 import { LoginService } from './login.service';
 import { ServicioBackService } from './servicio-back.service';
+import { BehaviorSubject, Observable } from 'rxjs';
 //import { HttpClient } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class NoticiasService {
   //Variable que guarda la pestaña actual del usuario
   private identificador:string;
   private noticia_tipo: number[];
+  private cantNoticias: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   constructor(private loginService:LoginService/*private http: HttpClient*/, private servicioBackService: ServicioBackService) {
     this.noticiasCargadas=false;
@@ -27,10 +29,11 @@ export class NoticiasService {
     Modificar de acuerdo a las noticias
     que se obtendran.
   */
-  getNoticiasGenerales(){
+  getNoticiasGenerales(usuario: string){
     //Pasar 1
     return new Promise<any>((resolve, reject) => {
-      this.servicioBackService.getNoticiasGenerales().subscribe((data) => {
+      console.log(this.loginService.getToken(), usuario);
+      this.servicioBackService.getNoticiasGenerales(usuario, this.loginService.getToken()).subscribe((data) => {
         resolve(data);
       })
     }).then((data) =>{
@@ -38,6 +41,7 @@ export class NoticiasService {
         this.noticias.push(new Noticia(noticia.id, noticia.titulo, noticia.fecha, noticia.descripcion, noticia.archivo, noticia.likes, ''));
       } */
       this.noticias = data.data.noticias;
+      console.log(this.noticias);
     });
   }
   getNoticiasUD(token:string){
@@ -102,7 +106,7 @@ export class NoticiasService {
       if(identificador=="Publico"){
         //En publico se traen las noticias de tipo publico
         
-        await this.getNoticiasGenerales();
+        await this.getNoticiasGenerales(this.loginService.getTipoUsuario());
         
        
         /* this.noticias.push(this.noticia1);
@@ -126,6 +130,14 @@ export class NoticiasService {
       }
     }
     return this.noticias;
+  }
+
+  getCantidadNoticias(): Observable<any>{
+    return this.cantNoticias.asObservable();
+  }
+
+  setCantidadNoticias(cantidad: number){
+    this.cantNoticias.next(cantidad);
   }
 
   getNoticia_Tipo(id_noticia: number): number[] {
@@ -152,6 +164,7 @@ export class NoticiasService {
       // O, en lugar de lanzar una excepción, podrías devolver un valor predeterminado:
       // return null; // Si es seguro que 'Noticia' no puede ser null, puedes crear una noticia vacía con un constructor o utilizar 'undefined'.
     }
+    console.log('id_noticia',id_noticia);
     return noticia;
   }
   

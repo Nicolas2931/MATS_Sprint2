@@ -47,8 +47,12 @@ export class ServicioBackService {
     return this.http.post<any>(this.urlApi + '/login', form);
   }
 
-  public getNoticiasGenerales(){
-    return this.http.get<any>(this.urlApi + '/v1/tipo_usuario/1');
+  public getNoticiasGenerales(usuario: string, token: string){
+    if(usuario == 'administrador'){
+      return this.http.get<any>(this.urlApi + '/v1/tipo_usuario/1');
+    }
+
+    return this.http.get<any>(this.urlApi + '/v1/tipo_usuario/1?usuario=' + token);
   }
 
   public getNoticiasUD(token: string): Observable<any>{

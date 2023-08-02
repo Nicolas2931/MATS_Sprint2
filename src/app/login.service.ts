@@ -5,6 +5,8 @@ import { CookieService } from 'ngx-cookie-service';
 //import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ServicioBackService } from './servicio-back.service';
+import Swal from 'sweetalert2';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -34,6 +36,13 @@ export class LoginService {
       this.servicioBackService.getUsuario(usuario, password).subscribe((data) => {
         this.data = data;
         resolve();
+      }, error => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Datos erróneos',
+        });
+        console.log(error.status);
       });
     }).then(() => {
       console.log(this.data);

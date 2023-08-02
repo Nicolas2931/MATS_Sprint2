@@ -13,6 +13,7 @@ export class FiltroNoticiasComponent implements OnInit{
   cantidad_noticias:number[] = [];
 
   @Input() total_noticias:number;
+  cantNoticias: number;
 
   desactivar:boolean[];
   txt_buscar:string;
@@ -20,7 +21,7 @@ export class FiltroNoticiasComponent implements OnInit{
   @Output() tam = new EventEmitter<string>();
   tipo_usuario:string;
   permiso_usuario:string;
-  constructor(private login:LoginService, private router:Router){}
+  constructor(private login:LoginService, private router:Router, private servicioNoticias:NoticiasService){}
   cargar_cantidad(event:any) {
     const seleccion=event.target.value;
     this.tam.emit(seleccion);
@@ -37,6 +38,14 @@ export class FiltroNoticiasComponent implements OnInit{
     
   }
   generarOpcionesSelect(): void {
+    this.servicioNoticias.getCantidadNoticias().subscribe((data) => {
+      this.cantNoticias = data;
+      const rangoMaximo = Math.ceil(this.cantNoticias / 5) * 5;
+      console.log('cantidad', this.cantNoticias);
+      for (let i = 5; i <= rangoMaximo; i += 5) {
+        this.cantidad_noticias.push(i);
+      }
+    });
     const rangoMaximo = Math.ceil(this.total_noticias / 5) * 5;
     console.log(this.cantidad_noticias);
     for (let i = 5; i <= rangoMaximo; i += 5) {
