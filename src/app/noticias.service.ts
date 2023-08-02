@@ -6,6 +6,9 @@ import { ServicioBackService } from './servicio-back.service';
 @Injectable({
   providedIn: 'root'
 })
+
+//rubio puto
+
 export class NoticiasService {
   private noticias:Noticia[];
   //Variable que guarda si las noticias ya fueron cargadas en la pestaña o no.
