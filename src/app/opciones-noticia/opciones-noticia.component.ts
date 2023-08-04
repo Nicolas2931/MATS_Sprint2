@@ -6,6 +6,7 @@ import { Noticia } from '../noticia.model';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { LoginService } from '../login.service';
 import { PDFNoticiaComponent } from '../pdf-noticia/pdf-noticia.component';
+import { ServicioBackService } from '../servicio-back.service';
 @Component({
   selector: 'app-opciones-noticia',
   templateUrl: './opciones-noticia.component.html',
@@ -26,7 +27,7 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
 
   public pdfUrl: string = `http://localhost:8000/api/v1/archivo/`;
 
-  constructor(private route: Router, private routerURL: ActivatedRoute, private servicioNoticia: NoticiasService, private sanitizer: DomSanitizer, private loginService: LoginService){
+  constructor(private route: Router, private routerURL: ActivatedRoute, private servicioNoticia: NoticiasService, private sanitizer: DomSanitizer, private loginService: LoginService, private servicioBackService: ServicioBackService){
     //Para borrar
     this.estudiantes=false;
     this.profesores=false;
@@ -172,14 +173,15 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
     // Verificar que el PDF esté cargado en el componente hijo antes de enviarlo al backend
     if (this.pdfComponent.selectedFile) {
       const pdfFile: File = this.pdfComponent.selectedFile;
+      this.servicioBackService.setPDF(pdfFile, this.id_noticia);
       // Aquí puedes implementar la lógica para enviar el PDF al backend utilizando servicios o HTTP requests
       // Por ejemplo, puedes llamar a un método en el servicio que envíe el PDF al servidor
       // this.miServicio.enviarPDFAlBackend(pdfFile).subscribe(...);
     } else {
       // Manejo de error si el PDF no está cargado
       console.log('Error: No se ha seleccionado ningún archivo PDF.');
-    }
-  }
+    }
+  }
 
 }
 

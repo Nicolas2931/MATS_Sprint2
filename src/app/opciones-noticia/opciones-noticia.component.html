@@ -59,6 +59,9 @@
       <div class="col">
         <app-pdf-noticia #pdfComponent [opcion]="getOpcion()" [id_noticia]="id_noticia"></app-pdf-noticia>
       </div>
+      <div class="col">
+        <embed [src]="getPDF(id_noticia)" type="application/pdf" width="100%" height="600px">
+      </div>
     </div>
 
 

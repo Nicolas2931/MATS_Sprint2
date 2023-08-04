@@ -74,4 +74,17 @@ export class ServicioBackService {
 
     return this.http.get(this.urlApi + '/v1/users?noticias=true&orden=likes', { headers });
   }
+
+  public setPDF(archivo: File, id_noticia: number){
+    const form = new FormData();
+    form.append('archivo', archivo);
+
+    return this.http.post<any>(this.urlApi + '/v1/archivo/' + id_noticia, form).subscribe(
+      response => {
+        alert('archivo subido con exito '/* , response */);
+      }, error => {
+        alert('error al subir el archivo '/* , error */);
+      }
+    );
+  }
 }
