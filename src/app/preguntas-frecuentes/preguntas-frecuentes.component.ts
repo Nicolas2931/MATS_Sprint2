@@ -23,6 +23,9 @@ export class PreguntasFrecuentesComponent {
   //Ocualta o muestra la ventana emergente
   mostrarVentana:boolean;
   ventana_editar:boolean;
+  ventana_subir:boolean;
+  ventanaCat_subir:boolean;
+  ventanaCat_editar:boolean;
   //Usuario guarda el tipo de usuario que inicio sesión
   usuario:string;
   permiso_usuario:string;
@@ -33,8 +36,9 @@ export class PreguntasFrecuentesComponent {
     this.txt_lista = "";
     this.mostrarVentana=false;
     this.ventana_editar=false;
+    this.ventana_subir=false;
     this.usuario=this.loginService.getTipoUsuario();
-    this.permiso_usuario=this.loginService.getTipoUsuario();
+    this.permiso_usuario=this.loginService.getPermisoUsuario();
   }
   //Método para inicializar las variables.
   ngOnInit(): void {
@@ -119,7 +123,216 @@ export class PreguntasFrecuentesComponent {
     this.Tarjeta=this.preguntasService.ver_tarjeta(tarjetaId);
     this.mostrarVentana = true;
   }
+  //---------------------------------------LISTA DE CATEGORIAS--------------------
+  /*ventanaCat_subir:boolean;
+  ventanaCat_editar:boolean;*/
+  error_categoria:boolean;
+  nombre_cat:string;
+  cat_CRUD:Categoria;
+  editarCategoria(categoria:Categoria) {
+    this.error_categoria=false;
+    this.ventanaCat_editar=true;
+    this.nombre_cat=categoria.nombre;
+    this.cat_CRUD=categoria;
+    // Lógica para editar la categoría en el componente padre
+  }
+  cerrarCat_Editar(){
+    this.ventanaCat_editar=false;
+  }
+  eliminarCategoria(categoria: any) {
+    this.error_categoria=false;
+    Swal.fire({
+      title: '¿Está seguro que quiere eliminar la categoría?',
+      showConfirmButton:false,
+      showCancelButton: true,
+      showDenyButton:true,
+      denyButtonText: 'Sí, eliminar',
+      cancelButtonText:'Cancelar'
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isDenied) {
+        //Invoca el método de editar y verifica si no hubo error
+        this.error_categoria=this.preguntasService.eliminar_categoria(categoria.id);
+        if(this.error_categoria==false){
+          //Se recargan las tarjetas de nuevo
+          Swal.fire('La categoría se ha eliminado!', '', 'success')
+        }
+        else{
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Ha ocurrido un error al eliminar la categoría',
+          })
+        }
+        
+      }
+    })
+  }
+  subirCategoria() {
+    this.error_categoria=false;
+    this.ventanaCat_subir=true;
+    this.nombre_cat="";
+    // Lógica para subir una nueva categoría en el componente padre
+  }
+  agregar_cat(){
+    this.error_categoria=false;
+    if(this.nombre_cat.trim().length>0){
+      Swal.fire({
+        title: '¿Está seguro que desea subir la categoría?',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Confimar',
+        cancelButtonText:'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.error_categoria=this.preguntasService.subir_categoria(this.nombre_cat);
+          if(this.error_categoria==false) {
+            Swal.fire('Se ha subido correctamente la categoria!', '', 'success')
+            this.ventanaCat_subir=false;
+          }
+          else{
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Ha ocurrido un error al subir la categoria',
+            })
+          }
+        }
+      })
+    }
+    else{
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Por favor, verifique que la información ingresada sea la adecuada',
+      })
+      this.error_categoria=true;
+    }
+  }
+  editar_cat(){
+    this.error_categoria=false;
+    if(this.nombre_cat.trim().length>0){
+      Swal.fire({
+        title: '¿Está seguro que quiere guardar los cambios?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Guardar',
+        denyButtonText: `No guardar`,
+        cancelButtonText:'Cancelar'
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+          //Invoca el método de editar y verifica si no hubo error
+          this.error_categoria=this.preguntasService.editar_categoria(this.cat_CRUD.id, this.nombre_cat);
+          if(this.error_categoria==false){
+            Swal.fire('Los cambios han sido guardados!', '', 'success')
+            //Se recargan las tarjetas de nuevo
+            this.categorias=this.preguntasService.obtener_categorias();
+            this.ventanaCat_editar=false;
+          }
+          else{
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Ha ocurrido un error al guardar los cambios',
+            })
+          }  
+        } else if (result.isDenied) {
+          Swal.fire('Los cambios no han sido guardados', '', 'info')
+        }
+      })
+    }
+    else{
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Por favor, verifique que la información ingresada sea la adecuada',
+      })
+      this.error_categoria=true;
+    }
+  }
+  cerrarCat_Subir(){
+    this.ventanaCat_subir=false;
+  }
+
+
+  //---------------------------------------SUBIR TARJETA--------------------
+  titulo_subir:string;
+  txt_subir:string;
+  categorias_subir:Categoria[];
+  descripcion_subir:string;
+  estudiantes_subir:boolean=false;
+  profesores_subir:boolean=false;
+  error_subir:boolean=false;
+  subir_tarjeta():void{
+    this.categorias_subir=this.preguntasService.obtener_categorias();
+    this.txt_subir="Seleccione las categorías";
+    this.titulo_subir="";
+    this.descripcion_subir="";
+    this.estudiantes_subir=false;
+    this.profesores_subir=false;
+    this.ventana_subir=true;
+  }
+  agregar(){
+    let id_usuario:number[]=[];
+    if(this.profesores_subir){
+      id_usuario[0] =2;
+    }
+    if(this.estudiantes_subir){
+      id_usuario[1]=3
+    }
+    if(this.titulo_subir.trim().length > 0 && this.descripcion_subir.trim().length > 0 && this.categorias_subir.length>0 && id_usuario.length>0) {
+      Swal.fire({
+        title: '¿Está seguro que desea subir la pregunta frecuente?',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Confirmar',
+        cancelButtonText:'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+            this.error_subir=this.preguntasService.subir_tarjeta(this.titulo_subir,this.descripcion_subir,id_usuario,this.categorias_subir);
+            if(this.error_subir==false) {
+              Swal.fire('Se ha creado la pregunta frecuente!', '', 'success')
+              //Se recargan las tarjetas de nuevo
+              this.Tarjetas=this.preguntasService.obtener_tarjetas();
+              this.ventana_subir=false; 
+            }
+            else{
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Por favor, verifique que la información ingresada sea la adecuada',
+              })
+            }  
+        }
+      })  
+    }
+    else{
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Por favor, verifique que la información ingresada sea la adecuada',
+      })
+      this.error_subir=true;
+    }
+  }
+  activar_subir(){
+    const checkboxesActivos = this.categorias_subir.filter(categoria => categoria.seleccionado);
+    const totalCheckboxesActivos = checkboxesActivos.length;
+    if(totalCheckboxesActivos > 0) {
+      this.txt_subir = `Categorías seleccionadas (${totalCheckboxesActivos})`;
+    }
+    else{
+      this.txt_subir="Seleccione las categorías";
+    }
+  } 
+
   //---------------------------------------EDITAR TARJETA--------------------
+  tarjetaID:number;
   titulo:string;
   txt_editar:string;
   categoria_editar:Categoria[];
@@ -128,7 +341,8 @@ export class PreguntasFrecuentesComponent {
   profesores:boolean=false;
   error_editar:boolean=false;
   editar(tarjetaId: number) {
-    /*Primero verifica los usuarios a los que pertenece la tarjeta*/
+    this.tarjetaID=tarjetaId;
+    /Primero verifica los usuarios a los que pertenece la tarjeta/
     let id_tipo:number[]=[];
     id_tipo=this.preguntasService.getID_usuario_Tarjeta(tarjetaId);
     if(id_tipo[0]==2){
@@ -179,21 +393,48 @@ export class PreguntasFrecuentesComponent {
       id_usuario[1]=3
     }
     if(this.titulo.trim().length > 0 && this.descripcion.trim().length > 0 && this.categoria_editar.length>0 && id_usuario.length>0) {
+      //Verificar si la información ta bien
       this.error_editar=false;
-      Swal.fire({
-        title: '¿Está seguro que quiere guardar los cambios?',
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: 'Guardar',
-        denyButtonText: `No guardar`,
-      }).then((result) => {
-        /* Read more about isConfirmed, isDenied below */
-        if (result.isConfirmed) {
-          Swal.fire('Guardado!', '', 'success')
-        } else if (result.isDenied) {
-          Swal.fire('Los cambios no han sido guardados', '', 'info')
-        }
-      })
+      if(this.error_editar==false){
+        Swal.fire({
+          title: '¿Está seguro que quiere guardar los cambios?',
+          showDenyButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Guardar',
+          denyButtonText: `No guardar`,
+          cancelButtonText:'Cancelar'
+        }).then((result) => {
+          /* Read more about isConfirmed, isDenied below */
+          if (result.isConfirmed) {
+            //Invoca el método de editar y verifica si no hubo error
+            this.error_editar=this.preguntasService.editar_tarjeta(this.tarjetaID,this.titulo,this.descripcion,id_usuario,this.categoria_editar);
+            if(this.error_editar==false){
+              Swal.fire('Los cambios han sido guardados!', '', 'success')
+              //Se recargan las tarjetas de nuevo
+              this.Tarjetas=this.preguntasService.obtener_tarjetas();
+              this.ventana_editar=false;
+            }
+            else{
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...No se ha podido guardar la información',
+                text: 'Por favor, verifique que la información ingresada sea la adecuada',
+              })
+            }  
+          } else if (result.isDenied) {
+            Swal.fire('Los cambios no han sido guardados', '', 'info')
+          }
+        })
+      }
+      else{
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...No se ha podido guardar la información',
+          text: 'Por favor, verifique que la información ingresada sea la adecuada',
+        })
+        this.error_editar=true;
+      }
+      
     }
     else{
       Swal.fire({
@@ -204,7 +445,38 @@ export class PreguntasFrecuentesComponent {
       this.error_editar=true;
     }
   }
+  //---------------------------------------ELIMINAR TARJETA--------------------
+  eliminar(id_tarjeta:number){
+    let error_eliminar:boolean = false;
+    Swal.fire({
+      title: '¿Está seguro que quiere eliminar la pregunta frecuente?',
+      showConfirmButton:false,
+      showCancelButton: true,
+      showDenyButton:true,
+      denyButtonText: 'Sí,eliminar',
+      cancelButtonText:'Cancelar'
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isDenied) {
+        //Invoca el método de editar y verifica si no hubo error
+        error_eliminar=this.preguntasService.eliminar_tarjeta(id_tarjeta);
+        if(error_eliminar==false){
+          //Se recargan las tarjetas de nuevo
+          Swal.fire('La tarjeta se ha eliminado!', '', 'success')
+        }
+        else{
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Ha ocurrido un error al eliminar la tarjeta',
+          })
+        }
+        
+      }
+    })
+  }
 
+  //--------------------------------------------------------------------------
   calculateRows(texto: string): number {
     // Calcula el número de líneas dividiendo la longitud del texto por el ancho máximo de una línea
     const maxCharactersPerLine = 50; // Ajusta este valor según el ancho máximo deseado
@@ -221,5 +493,8 @@ export class PreguntasFrecuentesComponent {
     this.ventana_editar=false;
 
   }
-}
+  cerrarSubir(){
+    this.ventana_subir=false;
 
+  }
+}

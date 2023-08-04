@@ -22,6 +22,7 @@ import { PDFNoticiaComponent } from './pdf-noticia/pdf-noticia.component';
 import { SubirNoticiaComponent } from './subir-noticia/subir-noticia.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NoticiasService } from './noticias.service';
+import { ListaCategoriasComponent } from './lista-categorias/lista-categorias.component';
 
 const appRoutes:Routes=[
   {path: '',component: NoticiasGeneralesComponent},
@@ -48,7 +49,8 @@ const appRoutes:Routes=[
     MesaAyudaComponent,
     OpcionesNoticiaComponent,
     PDFNoticiaComponent,
-    SubirNoticiaComponent
+    SubirNoticiaComponent,
+    ListaCategoriasComponent
   ],
   imports: [
     BrowserModule,

@@ -1,6 +1,23 @@
+.cat{
+    color:rgb(121, 30, 182);
+}
+.form-control:focus{
+    outline-color:rgb(121, 30, 182);
+    border-color:rgb(121, 30, 182);
+    box-shadow: 0 0 0 0.2rem rgba(198, 75, 255, 0.25);
+}
 .requisito{
     color:rgb(201, 40, 40);
     text-align: center;
+}
+#subir{
+    color:rgb(121, 30, 182);
+    outline-color:rgb(121, 30, 182);
+    border-color:rgb(121, 30, 182);
+}
+#subir:hover{
+    box-shadow: 0 0 0 0.2rem rgba(198, 75, 255, 0.25);
+    background-color:rgb(238, 238, 238);
 }
 #guardar{
     color:rgb(121, 30, 182);
@@ -11,7 +28,6 @@
     box-shadow: 0 0 0 0.2rem rgba(198, 75, 255, 0.25);
     background-color:rgb(238, 238, 238);
 }
-
 .categoria_tarjeta{
     color:rgb(76, 6, 122);
 }
@@ -107,6 +123,10 @@
     color: rgb(76, 6, 122);
     border-color: rgb(76, 6, 122);
 }
+.borde-morado:hover{
+    background-color: rgb(76, 6, 122);
+    color:white;
+}
 .boton_buscar{
     background-color: rgb(78, 5, 121);
     border-color:rgb(62, 10, 75);
@@ -114,7 +134,6 @@
 .boton_buscar:hover{
     background-color: rgb(135, 38, 190);
 }
-/*Estilo CSS*/
 
 
 .multiselect {

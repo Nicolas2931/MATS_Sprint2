@@ -8,9 +8,11 @@ import { Tarjeta } from './tarjeta.model';
 export class PreguntasFrecuentesService {
   private categorias: Categoria[];
   private tarjetas: Tarjeta[];
+  private error_CRUD:boolean;
   constructor() {
     this.categorias = [];
     this.tarjetas = [];
+    this.error_CRUD = false;
   }
   //Método que obtiene todas las categorías
   obtener_categorias():Categoria[]{
@@ -88,7 +90,7 @@ export class PreguntasFrecuentesService {
     }
     return id_tipo;
   }
-
+  //Función que retorna una tarjeta según su ID
   ver_tarjeta(id_tarjeta: number): Tarjeta | null {
     let tarjeta: Tarjeta | null = null;
     for (let i = 0; i < this.tarjetas.length; i++) {
@@ -99,10 +101,80 @@ export class PreguntasFrecuentesService {
     }
     return tarjeta;
   }
-  editar_tarjeta(titulo:string,descripcion:string,id_usuario:number[], categorias:Categoria[]):Boolean{
-    return true;
+  //Metodos que retornan si hubo un error al realizar alguna función CRUD
+  setError(error:boolean):void{
+    this.error_CRUD=error;
   }
-
+  getError():boolean{
+    return this.error_CRUD;
+  }
+  
+  subir_tarjeta(titulo:string,descripcion:string,id_usuario:number[], categorias:Categoria[]):boolean{
+    //Se filtra para saber cuales categorias fueron seleccionadas
+    const categorias_ID = categorias.filter(categoria => categoria.seleccionado);
+    console.log("Titulo",titulo);
+    console.log("Descripción",descripcion);
+    console.log("Id_usuario",id_usuario);
+    console.log("Categoria",categorias_ID);
+    this.setError(false);
+    return this.getError();
+  }
+  //Edita una tarjeta según los datos recibidos
+  //Enviar un error igual a TRUE en caso de que ocurra algo inesperado.
+  editar_tarjeta(id_tarjeta:number,titulo:string,descripcion:string,id_usuario:number[], categorias:Categoria[]):boolean{
+    //Se filtra para saber cuales categorias fueron seleccionadas
+    const categorias_ID = categorias.filter(categoria => categoria.seleccionado);
+    console.log("id_tarjeta",id_tarjeta);
+    console.log("Titulo",titulo);
+    console.log("Descripción",descripcion);
+    console.log("Id_usuario",id_usuario);
+    console.log("Categoria",categorias_ID);
+    this.setError(false);
+    return this.getError();
+  }
+  //Eliminar tarjeta según el ID seleccionado
+  eliminar_tarjeta(id_tarjeta:number):boolean {
+    console.log("Id de la tarjeta a eliminar: " + id_tarjeta);
+    for(var i = 0; i < this.tarjetas.length; i++) {
+      if(this.tarjetas[i].id_tarjeta==id_tarjeta){
+        this.tarjetas.splice(i, 1);
+        this.setError(false);
+        break;
+      }
+      else{
+        this.setError(true);
+      }
+    }  
+    return this.getError();
+  }  
+  //Subir categoria
+  subir_categoria(nombre:string):boolean {
+    console.log("El nombre de la categoria es:"+nombre);
+    this.setError(false);
+    return this.getError();
+  }
+  //Editar categoria
+  editar_categoria(id_categoria:number,nombre:string):boolean{
+    console.log("Id de la categoría"+id_categoria)
+    console.log("Nombre"+nombre);
+    this.setError(false);
+    return this.getError();
+  }
+  //Eliminar categoria
+  eliminar_categoria(id_categoria:number):boolean {
+    console.log("Id de la categoría"+id_categoria)
+    for(var i = 0; i < this.categorias.length; i++) {
+      if(this.categorias[i].id==id_categoria){
+        this.categorias.splice(i, 1);
+        this.setError(false);
+        break;
+      }
+      else{
+        this.setError(true);
+      }
+    }  
+    return this.getError();
+  }
   //Buscar solo por categorias
   buscar_categoria(id_categoria:number):Tarjeta[]{
     return this.tarjetas;
