@@ -205,6 +205,15 @@ export class NoticiasService {
         break; // Una vez que se encuentra la noticia, se sale del bucle.
       }
     }
+
+    const datos = {
+      "noticia": noticia,
+      "noticia_tipo": noticia_tipo
+    }
+    this.servicioBackService.setNoticia(datos, id_noticia).subscribe((data) => {
+      console.log(data);
+    });    
+
     //For para insertar el tipo de noticia a la tabla de noticia
     for(let i=0; i<noticia_tipo.length;i++){
       console.log(noticia_tipo[i]+"-"+id_noticia);

@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Noticia } from './noticia.model';
 
 @Injectable({
   providedIn: 'root'
@@ -86,5 +87,16 @@ export class ServicioBackService {
         alert('error al subir el archivo '/* , error */);
       }
     );
+  }
+
+  public setNoticia(datos: {noticia: Noticia, noticia_tipo: number[]}, id_noticia: number){
+    console.log('primeros datos', datos);
+    const envDatos = {
+      "titulo": datos.noticia.titulo,
+      "fecha": datos.noticia.fecha,
+      "descripcion": datos.noticia.descripcion,
+      "noticiaTipo": datos.noticia_tipo
+    }
+    return this.http.put(this.urlApi + '/v1/noticias/' + id_noticia, envDatos);
   }
 }

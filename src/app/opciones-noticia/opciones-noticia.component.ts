@@ -24,6 +24,7 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
   profesores: boolean;
   noticias:Noticia[];
   pagina:string;
+  opciones: string[];
 
   public pdfUrl: string = `http://localhost:8000/api/v1/archivo/`;
 
@@ -32,6 +33,7 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
     this.estudiantes=false;
     this.profesores=false;
     this.todos=false;
+    this.opciones = [];
     //
     this.error = false;
   }
@@ -47,6 +49,7 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
   fecha:string;
   
   ngOnInit(){
+    console.log(this.opciones);
     this.routerURL.queryParams.subscribe(params => {
       this.opcion = params['opcion'];
       this.pagina= params['pagina'];
@@ -137,6 +140,7 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
   }
   //Método usado para activar todos los checkbox en caso de que se seleccione la opción de "Todos"
   activar_todos(){
+
     if(this.todos==false){
       this.estudiantes=true;
       this.profesores=true;
@@ -181,6 +185,10 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
       // Manejo de error si el PDF no está cargado
       console.log('Error: No se ha seleccionado ningún archivo PDF.');
     }
+  }
+
+  enviarDatos(){
+    
   }
 
 }

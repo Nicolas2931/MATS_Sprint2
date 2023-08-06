@@ -1,4 +1,5 @@
 
+<form (ngSubmit)="enviarDatos()">
 <div class="container align-items-center justify-content-center vh-100" style="margin-top:70px;">
   <div class="card bg-white p-5 rounded-5 text-secondary">
     <div class="row mb-3">
@@ -6,7 +7,7 @@
         <h2 class="letra-morada">Título <span *ngIf="error" style="font-size:20px;">*Obligatorio</span></h2>
       </div>
       <div class="col-md-8">
-        <textarea id="titulo" class="fs-3 form-control borde-morado" type="text" [disabled]="desactivar">{{titulo}}</textarea>
+        <textarea id="titulo" [(ngModel)]="titulo" name="titulo" class="fs-3 form-control borde-morado" type="text" [disabled]="desactivar">{{titulo}}</textarea>
       </div>
     </div>
     <div class="row mb-3">
@@ -14,7 +15,7 @@
         <h2 class="letra-morada">Fecha <span *ngIf="error" style="font-size:20px;">Obligatorio</span></h2>
       </div>
       <div class="col-md-8">
-        <input type="date" class="fs-4 form-control borde-morado" [value]="fecha" [disabled]="desactivar">
+        <input type="date" [(ngModel)]="fecha" name="fecha" class="fs-4 form-control borde-morado" [value]="fecha" [disabled]="desactivar">
       </div>
     </div>
     <div class="row mb-3">
@@ -22,7 +23,7 @@
         <h2 class="letra-morada">Descripción <span *ngIf="error" style="font-size:20px;">Obligatorio</span></h2>
       </div>
       <div class="col-md-8">
-        <textarea id="descripcion" class="form-control borde-morado" placeholder="Título de la noticia" [disabled]="desactivar">{{descripcion}}</textarea>
+        <textarea id="descripcion" [(ngModel)]="descripcion" name="descripcion" class="form-control borde-morado" placeholder="Título de la noticia" [disabled]="desactivar">{{descripcion}}</textarea>
       </div>
     </div>
     <ng-container *ngIf="!desactivar">
@@ -32,17 +33,17 @@
         </div>
         <div class="col-md-8">
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="todos" [(ngModel)]="todos" (click)="activar_todos()">
+            <input class="form-check-input" type="checkbox" id="todos" [(ngModel)]="todos" name="todos" (click)="activar_todos()">
             <label class="form-check-label" for="todos">Todos</label>
           </div>
           <br/>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="estudiantes" [(ngModel)]="estudiantes">
+            <input class="form-check-input" type="checkbox" id="estudiantes" [(ngModel)]="estudiantes" name="estudiantes">
             <label class="form-check-label" for="estudiantes">Estudiantes</label>
           </div>
           <br>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="profesores" [(ngModel)]="profesores">
+            <input class="form-check-input" type="checkbox" id="profesores" [(ngModel)]="profesores" name="profesores">
             <label class="form-check-label" for="profesores">Profesores</label>
           </div>
           <br>
@@ -71,9 +72,10 @@
       </div>
     </div>
     
-    <button *ngIf="!desactivar" id="guardar" class="btn mb-3" style="margin-left: 5px;" (click)="guardar()">Guardar</button>
+    <button *ngIf="!desactivar" id="guardar" class="btn mb-3" style="margin-left: 5px;" (click)="guardar()" type="submit">Guardar</button>
     <button class="btn custom-bg-purple sombreado" style="margin-left: 5px;" (click)="volver()">
       <span id="volver">Volver</span>
     </button>
   </div>
 </div>
+</form>
