@@ -51,7 +51,7 @@ export class SubirNoticiaComponent{
   /*
     Invocar el método de subir noticia por cada tipo de usuario
   */
-    subir_noticia(){
+  subir_noticia(){
       if(this.titulo.length > 0 && this.descripcion.length>0 && (this.todos!==false || this.estudiantes!==false || this.profesores!==false)){
         this.error=false;
         let fecha:string;
@@ -61,14 +61,16 @@ export class SubirNoticiaComponent{
         if(this.todos==true){
           categorias[0]=1;
           categorias[1]=2;
+          categorias[2]=3;
         }
-        else if(this.estudiantes==true){
-          categorias[0]=1;
+        else{
+          if(this.estudiantes==true){
+            categorias.push(3);
+          }
+          if(this.profesores==true){
+            categorias.push(2);
+          }  
         }
-        else if(this.profesores==true){
-          categorias[1]=2;
-        }  
-  
         this.servicioNoticia.subirNoticia(this.titulo,fecha,this.descripcion,categorias);
   
         //this.guardarPDF();
@@ -77,7 +79,7 @@ export class SubirNoticiaComponent{
       else{
         this.error=true;
       }  
-    }
+  }
   //Méotodo que enruta devuelta a noticias_generales
   volver(){
     if(this.pagina=="Publico"){

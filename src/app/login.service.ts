@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-//Módulo usado para realizar solicitudes HTTP al Backend
-//import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { ServicioBackService } from './servicio-back.service';
 import Swal from 'sweetalert2';
 

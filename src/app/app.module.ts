@@ -23,6 +23,11 @@ import { SubirNoticiaComponent } from './subir-noticia/subir-noticia.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NoticiasService } from './noticias.service';
 import { ListaCategoriasComponent } from './lista-categorias/lista-categorias.component';
+import { ListaSolicitudesComponent } from './mesa-ayuda/lista-solicitudes/lista-solicitudes.component';
+import { CRUDTicketsComponent } from './mesa-ayuda/crud-tickets/crud-tickets.component';
+import { InformacionUsuarioComponent } from './mesa-ayuda/informacion-usuario/informacion-usuario.component';
+import { FiltrosTicketsComponent } from './mesa-ayuda/filtros-tickets/filtros-tickets.component';
+import { MesaAyudaService } from './mesa-ayuda/mesa-ayuda.service';
 
 const appRoutes:Routes=[
   {path: '',component: NoticiasGeneralesComponent},
@@ -50,7 +55,11 @@ const appRoutes:Routes=[
     OpcionesNoticiaComponent,
     PDFNoticiaComponent,
     SubirNoticiaComponent,
-    ListaCategoriasComponent
+    ListaCategoriasComponent,
+    ListaSolicitudesComponent,
+    CRUDTicketsComponent,
+    InformacionUsuarioComponent,
+    FiltrosTicketsComponent
   ],
   imports: [
     BrowserModule,
@@ -59,7 +68,7 @@ const appRoutes:Routes=[
     FormsModule,
     HttpClientModule
   ],
-  providers: [LoginService,CookieService,PreguntasFrecuentesService,LoginGuardian,NoticiasService],
+  providers: [LoginService,CookieService,PreguntasFrecuentesService,LoginGuardian,NoticiasService,MesaAyudaService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,0 +1,16 @@
+<div class="filtros-container">
+    <select class="form-select borde-morado" [(ngModel)]="prioridadSeleccionada">
+        <option selected value="null">Prioridad</option>
+        <option value="1">Baja</option>
+        <option value="2">Media</option>
+        <option value="3">Alta</option>
+    </select>
+    
+    <select class="form-select borde-morado" [(ngModel)]="estadoSeleccionado">
+        <option selected value="null">Estado</option>
+        <option value="1">Pendiente</option>
+        <option value="2">En proceso</option>
+        <option value="3">Completada</option>
+    </select>
+    <button class="btn boton-morado" (click)="filtrar()">FILTRAR</button>
+</div>
