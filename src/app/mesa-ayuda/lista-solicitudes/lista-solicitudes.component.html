@@ -6,12 +6,14 @@
         </div>
         <div class="row mb-5">
             <div class="col-md-6 mb-3">
-                <app-filtros-tickets></app-filtros-tickets>
+              <app-filtros-tickets (filtrosAplicados)="aplicarFiltros($event)"></app-filtros-tickets>
             </div>
             <div class="col-md-6">
                 <button class="btn btn-primary" (click)="crear()" style="width:100%">CREAR TICKET</button>
                 <!--Aquí se llaman las ventanas emergentes-->
-                <app-crud-tickets [crear_ticket]="crear_ticket"></app-crud-tickets>
+                <app-crud-tickets [crear_ticket]="crear_ticket" [idTicket]="id_ticket" [ventana_editarTicket]="ventana_editarTicket"
+                    (ventanaEditCerrada)="CierreVentanaEdit()" (ventanaCrearCerrada)="CierreVentanaCrear()">
+                </app-crud-tickets>
             </div>
         </div>
         
@@ -60,7 +62,7 @@
                     <td *ngIf="tipo_usuario=='administrador' ||permiso_usuario=='1'">
                       <div class="row">
                         <div class="col">
-                          <button class="btn opciones-admin">Editar</button>
+                          <button class="btn opciones-admin" (click)="editar_ticket(ticket.token)">Editar</button>
                           <button class="btn opciones-admin">Eliminar</button>
                         </div>
                       </div>

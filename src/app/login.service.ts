@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { ServicioBackService } from './servicio-back.service';
-import Swal from 'sweetalert2';
+import { MensajesService } from './mensajes.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class LoginService {
   private data: any;
   private id: number;
 
-  constructor(private route:Router, private cookies:CookieService, private cookie_usuario:CookieService, private cookie_permiso:CookieService, private servicioBackService: ServicioBackService, private cookie_id:CookieService) {
+  constructor(private route:Router, private cookies:CookieService, private cookie_usuario:CookieService, private cookie_permiso:CookieService, private servicioBackService: ServicioBackService, private cookie_id:CookieService, private mensajes_servicio:MensajesService) {
     this.token="";
     this.tipo_usuario={};
     this.permiso_usuario=0;
@@ -34,11 +34,7 @@ export class LoginService {
         this.data = data;
         resolve();
       }, error => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Datos erróneos',
-        });
+        this.mensajes_servicio.msj_datosErroneos();
         console.log(error.status);
       });
     }).then(() => {
@@ -51,7 +47,7 @@ export class LoginService {
         this.tipo_usuario = this.data.tipo_usuario;
         this.permiso_usuario = this.data.permiso;
       }else{
-        console.log('pailas mi loco');
+        this.mensajes_servicio.msj_informar('pailas mi loco');
         this.token = '';
       }
 

@@ -3,7 +3,7 @@ import { Categoria } from '../categoria.model';
 import { PreguntasFrecuentesService } from '../preguntas-frecuentes.service';
 import { Tarjeta } from '../tarjeta.model';
 import { LoginService } from '../login.service';
-import Swal from 'sweetalert2';
+import { MensajesService } from '../mensajes.service';
 @Component({
   selector: 'app-preguntas-frecuentes',
   templateUrl: './preguntas-frecuentes.component.html',
@@ -29,7 +29,7 @@ export class PreguntasFrecuentesComponent {
   //Usuario guarda el tipo de usuario que inicio sesión
   usuario:string;
   permiso_usuario:string;
-  constructor(private preguntasService: PreguntasFrecuentesService, private loginService: LoginService){
+  constructor(private preguntasService: PreguntasFrecuentesService, private loginService: LoginService, private mensajes_servicio:MensajesService){
     this.categorias = [];
     this.Tarjetas = []; 
     this.txt_buscar = "";
@@ -139,125 +139,75 @@ export class PreguntasFrecuentesComponent {
   cerrarCat_Editar(){
     this.ventanaCat_editar=false;
   }
-  eliminarCategoria(categoria: any) {
+  //Método para lieminar una categoría
+  async eliminarCategoria(categoria: any) {
     this.error_categoria=false;
-    Swal.fire({
-      title: '¿Está seguro que quiere eliminar la categoría?',
-      showConfirmButton:false,
-      showCancelButton: true,
-      showDenyButton:true,
-      denyButtonText: 'Sí, eliminar',
-      cancelButtonText:'Cancelar'
-    }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
-      if (result.isDenied) {
-        //Invoca el método de editar y verifica si no hubo error
-        this.error_categoria=this.preguntasService.eliminar_categoria(categoria.id);
-        if(this.error_categoria==false){
-          //Se recargan las tarjetas de nuevo
-          Swal.fire('La categoría se ha eliminado!', '', 'success')
-        }
-        else{
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Ha ocurrido un error al eliminar la categoría',
-          })
-        }
-        
+    if(await this.mensajes_servicio.msj_confirmar('¿Está seguro que quiere eliminar la categoría?','Sí, eliminar','Cancelar')){
+      this.error_categoria=this.preguntasService.eliminar_categoria(categoria.id);
+      if(this.error_categoria==false){
+        //Se recargan las tarjetas de nuevo
+        this.mensajes_servicio.msj_exito('La categoría se ha eliminado!');
       }
-    })
+      else{
+        this.mensajes_servicio.msj_errorPersonalizado('Ha ocurrido un error al eliminar la categoría');
+      }
+    }  
+    
   }
+  //Método que abre la ventana emergente para subir una nueva cateogría
   subirCategoria() {
     this.error_categoria=false;
     this.ventanaCat_subir=true;
     this.nombre_cat="";
-    // Lógica para subir una nueva categoría en el componente padre
   }
-  agregar_cat(){
+  //Método para subir una categoría
+  async agregar_cat(){
     this.error_categoria=false;
     if(this.nombre_cat.trim().length>0){
-      Swal.fire({
-        title: '¿Está seguro que desea subir la categoría?',
-        icon: 'info',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Confimar',
-        cancelButtonText:'Cancelar'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.error_categoria=this.preguntasService.subir_categoria(this.nombre_cat);
-          if(this.error_categoria==false) {
-            Swal.fire('Se ha subido correctamente la categoria!', '', 'success')
-            this.ventanaCat_subir=false;
-          }
-          else{
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Ha ocurrido un error al subir la categoria',
-            })
-          }
+      if(await this.mensajes_servicio.msj_confirmar('¿Está seguro que desea subir la categoría?','Confimar','Cancelar')){
+        this.error_categoria=this.preguntasService.subir_categoria(this.nombre_cat);
+        if(this.error_categoria==false) {
+          this.mensajes_servicio.msj_exito('Se ha subido correctamente la categoria!');
+          this.ventanaCat_subir=false;
         }
-      })
+        else{
+          this.mensajes_servicio.msj_errorPersonalizado('Ha ocurrido un error al subir la categoria');
+        }
+      }  
+      
     }
     else{
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Por favor, verifique que la información ingresada sea la adecuada',
-      })
+      this.mensajes_servicio.msj_datosErroneos();
       this.error_categoria=true;
     }
   }
-  editar_cat(){
+  async editar_cat(){
     this.error_categoria=false;
     if(this.nombre_cat.trim().length>0){
-      Swal.fire({
-        title: '¿Está seguro que quiere guardar los cambios?',
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: 'Guardar',
-        denyButtonText: `No guardar`,
-        cancelButtonText:'Cancelar'
-      }).then((result) => {
-        /* Read more about isConfirmed, isDenied below */
-        if (result.isConfirmed) {
-          //Invoca el método de editar y verifica si no hubo error
-          this.error_categoria=this.preguntasService.editar_categoria(this.cat_CRUD.id, this.nombre_cat);
+      if(await this.mensajes_servicio.msj_confirmar('¿Está seguro que quiere guardar los cambios?','Guardar',`No guardar`)){
+        this.error_categoria=this.preguntasService.editar_categoria(this.cat_CRUD.id, this.nombre_cat);
           if(this.error_categoria==false){
-            Swal.fire('Los cambios han sido guardados!', '', 'success')
+            this.mensajes_servicio.msj_exito('Los cambios han sido guardados!');
             //Se recargan las tarjetas de nuevo
             this.categorias=this.preguntasService.obtener_categorias();
             this.ventanaCat_editar=false;
           }
           else{
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Ha ocurrido un error al guardar los cambios',
-            })
-          }  
-        } else if (result.isDenied) {
-          Swal.fire('Los cambios no han sido guardados', '', 'info')
-        }
-      })
+            this.mensajes_servicio.msj_errorPersonalizado('Ha ocurrido un error al guardar los cambios');
+          } 
+      }
+      else{
+        this.mensajes_servicio.msj_informar('Los cambios no han sido guardados');
+      }
     }
     else{
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Por favor, verifique que la información ingresada sea la adecuada',
-      })
+      this.mensajes_servicio.msj_datosErroneos();
       this.error_categoria=true;
     }
   }
   cerrarCat_Subir(){
     this.ventanaCat_subir=false;
   }
-
-
   //---------------------------------------SUBIR TARJETA--------------------
   titulo_subir:string;
   txt_subir:string;
@@ -275,7 +225,7 @@ export class PreguntasFrecuentesComponent {
     this.profesores_subir=false;
     this.ventana_subir=true;
   }
-  agregar(){
+  async agregar(){
     let id_usuario:number[]=[];
     if(this.profesores_subir){
       id_usuario[0] =2;
@@ -284,39 +234,21 @@ export class PreguntasFrecuentesComponent {
       id_usuario[1]=3
     }
     if(this.titulo_subir.trim().length > 0 && this.descripcion_subir.trim().length > 0 && this.categorias_subir.length>0 && id_usuario.length>0) {
-      Swal.fire({
-        title: '¿Está seguro que desea subir la pregunta frecuente?',
-        icon: 'info',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Confirmar',
-        cancelButtonText:'Cancelar'
-      }).then((result) => {
-        if (result.isConfirmed) {
-            this.error_subir=this.preguntasService.subir_tarjeta(this.titulo_subir,this.descripcion_subir,id_usuario,this.categorias_subir);
-            if(this.error_subir==false) {
-              Swal.fire('Se ha creado la pregunta frecuente!', '', 'success')
-              //Se recargan las tarjetas de nuevo
-              this.Tarjetas=this.preguntasService.obtener_tarjetas();
-              this.ventana_subir=false; 
-            }
-            else{
-              Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Por favor, verifique que la información ingresada sea la adecuada',
-              })
-            }  
+      if(await this.mensajes_servicio.msj_confirmar('¿Está seguro que desea subir la pregunta frecuente?','Confirmar',`No guardar`)){
+        this.error_subir=this.preguntasService.subir_tarjeta(this.titulo_subir,this.descripcion_subir,id_usuario,this.categorias_subir);
+        if(this.error_subir==false) {
+          this.mensajes_servicio.msj_exito('Se ha creado la pregunta frecuente!');
+          //Se recargan las tarjetas de nuevo
+          this.Tarjetas=this.preguntasService.obtener_tarjetas();
+          this.ventana_subir=false; 
         }
-      })  
+        else{
+          this.mensajes_servicio.msj_datosErroneos();
+        }  
+      }  
     }
     else{
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Por favor, verifique que la información ingresada sea la adecuada',
-      })
+      this.mensajes_servicio.msj_datosErroneos();
       this.error_subir=true;
     }
   }
@@ -342,7 +274,7 @@ export class PreguntasFrecuentesComponent {
   error_editar:boolean=false;
   editar(tarjetaId: number) {
     this.tarjetaID=tarjetaId;
-    /Primero verifica los usuarios a los que pertenece la tarjeta/
+    //Primero verificar los usuarios a los que pertenece la tarjeta
     let id_tipo:number[]=[];
     id_tipo=this.preguntasService.getID_usuario_Tarjeta(tarjetaId);
     if(id_tipo[0]==2){
@@ -384,7 +316,7 @@ export class PreguntasFrecuentesComponent {
     }
   }
   //Verifica y guarda los cambios de la tarjeta
-  guardar(){
+  async guardar(){
     let id_usuario:number[]=[];
     if(this.profesores){
       id_usuario[0] =2;
@@ -396,84 +328,48 @@ export class PreguntasFrecuentesComponent {
       //Verificar si la información ta bien
       this.error_editar=false;
       if(this.error_editar==false){
-        Swal.fire({
-          title: '¿Está seguro que quiere guardar los cambios?',
-          showDenyButton: true,
-          showCancelButton: true,
-          confirmButtonText: 'Guardar',
-          denyButtonText: `No guardar`,
-          cancelButtonText:'Cancelar'
-        }).then((result) => {
-          /* Read more about isConfirmed, isDenied below */
-          if (result.isConfirmed) {
+        if(await this.mensajes_servicio.msj_confirmar('¿Está seguro que quiere guardar los cambios?','Guardar',`No guardar`)){
             //Invoca el método de editar y verifica si no hubo error
             this.error_editar=this.preguntasService.editar_tarjeta(this.tarjetaID,this.titulo,this.descripcion,id_usuario,this.categoria_editar);
             if(this.error_editar==false){
-              Swal.fire('Los cambios han sido guardados!', '', 'success')
+              this.mensajes_servicio.msj_exito('Los cambios han sido guardados!');
               //Se recargan las tarjetas de nuevo
               this.Tarjetas=this.preguntasService.obtener_tarjetas();
               this.ventana_editar=false;
             }
             else{
-              Swal.fire({
-                icon: 'error',
-                title: 'Oops...No se ha podido guardar la información',
-                text: 'Por favor, verifique que la información ingresada sea la adecuada',
-              })
+              this.mensajes_servicio.msj_datosErroneos();
             }  
-          } else if (result.isDenied) {
-            Swal.fire('Los cambios no han sido guardados', '', 'info')
-          }
-        })
+        }
+        else{
+          this.mensajes_servicio.msj_informar('Los cambios no han sido guardados');
+        }
       }
       else{
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...No se ha podido guardar la información',
-          text: 'Por favor, verifique que la información ingresada sea la adecuada',
-        })
+        this.mensajes_servicio.msj_datosErroneos();
         this.error_editar=true;
       }
       
     }
     else{
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Por favor, verifique que la información ingresada sea la adecuada',
-      })
+      this.mensajes_servicio.msj_datosErroneos();
       this.error_editar=true;
     }
   }
   //---------------------------------------ELIMINAR TARJETA--------------------
-  eliminar(id_tarjeta:number){
+  async eliminar(id_tarjeta:number){
     let error_eliminar:boolean = false;
-    Swal.fire({
-      title: '¿Está seguro que quiere eliminar la pregunta frecuente?',
-      showConfirmButton:false,
-      showCancelButton: true,
-      showDenyButton:true,
-      denyButtonText: 'Sí,eliminar',
-      cancelButtonText:'Cancelar'
-    }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
-      if (result.isDenied) {
-        //Invoca el método de editar y verifica si no hubo error
-        error_eliminar=this.preguntasService.eliminar_tarjeta(id_tarjeta);
-        if(error_eliminar==false){
-          //Se recargan las tarjetas de nuevo
-          Swal.fire('La tarjeta se ha eliminado!', '', 'success')
-        }
-        else{
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Ha ocurrido un error al eliminar la tarjeta',
-          })
-        }
-        
+    if(await this.mensajes_servicio.msj_confirmar('¿Está seguro que quiere eliminar la pregunta frecuente?','Sí,eliminar','Cancelar')){
+      error_eliminar=this.preguntasService.eliminar_tarjeta(id_tarjeta);
+      if(error_eliminar==false){
+        //Se recargan las tarjetas de nuevo
+        this.mensajes_servicio.msj_exito('La tarjeta se ha eliminado!');
       }
-    })
+      else{
+        this.mensajes_servicio.msj_errorPersonalizado('Ha ocurrido un error al eliminar la tarjeta');
+      }
+    }  
+
   }
 
   //--------------------------------------------------------------------------

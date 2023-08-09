@@ -1,14 +1,92 @@
 <div *ngIf="crear_ticket" class="modal">
     <div class="card card-medium">
       <div class="row mb-3">
-        <div class="row">
+        <div class="col-md-12">
+          <h5 class="titulo fs-3">NUEVO TICKET</h5>
+          <hr/>
+      </div>
+      </div>
+      <div *ngIf="getCategorias()!=null; else sincategorias ">
+        <div class="row mb-3">
           <div class="col-md-4">
-            <h5 for="nombreUsuario" class="cat">Nombre de la categoría:</h5>
+            <label>Seleccione la categoría:<span *ngIf="error_crear" class="obligatorio">* Seleccione al menos una categoría </span></label>
           </div>
+          <div class="col-md-8">
+            <select [ngClass]="{'borde-rojo': error_crear}" class="form-select borde-morado" (change)="cargar_categoria($event)">
+              <option selected value="null">Lista de categorías</option>
+              <ng-container *ngFor="let categoria of categorias">
+                <option [value]="categoria.id_categoria">{{ categoria.nombre }}</option>
+              </ng-container>
+            </select>
+          </div>
+        </div>
+        <div *ngIf="mostrar_items">
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <label>Seleccione el item: <span *ngIf="error_crear" class="obligatorio">* Obligatorio </span></label>
+            </div>
+            <div class="col-md-8">
+              <select [ngClass]="{'borde-rojo': error_crear}" class="form-select borde-morado" (change)="cargar_item($event)">
+                <option selected value="null">Item</option>
+                <option *ngFor="let item of itemsPorCategoria" [value]="item.id_item">{{item.nombre}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label for="asunto">Asunto: <span *ngIf="error_crear" class="obligatorio">* Obligatorio </span></label>
+          </div>
+          <div class="col-md-8">
+            <input [ngClass]="{'borde-rojo': error_crear}" type="text" class="form-control" placeholder="Ingrese el asunto del Ticket" [(ngModel)]="asunto">
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label for="descripcion">Descripción: <span *ngIf="error_crear" class="obligatorio">* Obligatorio </span></label>
+          </div>
+          <div class="col-md-8">
+            <textarea [ngClass]="{'borde-rojo': error_crear}" type="text" class="form-control" placeholder="Ingrese la descripción del Ticket" [(ngModel)]="descripcion"></textarea>
+          </div>
+        </div>   
       </div>
+      <ng-template #sincategorias>
+        <div class="row">
+          <div class="col d-flex flex-column align-items-center justify-content-center text-center">
+            <h5 class="fs-3 text-muted">Debe existir al menos una categoría registrada para crear un ticket</h5>
+            <img src="../../../assets/images/advertencia.png" alt="Advertencia" class="img-fluid" style="max-width: 100px;">
+          </div>
+        </div>
+      </ng-template>
+      <div class="card-footer mt-auto">
+        <div class="row">
+          <div class="col">
+            <button  id="subir" class="btn borde-morado mt-3" style="width:100%;" (click)="crear()">CREAR TICKET</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <button class="btn boton_morado mt-3" style="width:100%" (click)="cerrar_crearTicket()">CERRAR</button>
+          </div>
+        </div> 
       </div>
-      <hr>
-      <button  id="subir" class="btn mb-3" style="margin-left: 5px;">Agregar categoria</button>
-      <button class="btn fondo_morado boton_menu" style="text-decoration: none;" (click)="cerrar()">Cerrar</button>
     </div>
+</div>
+
+ <!-- VENTANA DE EDITAR UN TICKET-->
+ <div *ngIf="ventana_editarTicket" class="modal">
+  <div class="card card-medium">
+    <div class="row mb-3">
+      <div class="row">
+        <div class="col-md-4">
+          <h5 for="nombreUsuario" class="cat">El ID es {{idTicket}}</h5>
+        </div>
+    </div>
+    </div>
+    <hr>
+    <button  id="subir" class="btn borde-morado mb-3" style="margin-left: 5px;">GUARDAR</button>
+    <button class="btn boton_morado" style="text-decoration: none;" (click)="cerrar_editarTicket()">CERRAR</button>
   </div>
+</div> 

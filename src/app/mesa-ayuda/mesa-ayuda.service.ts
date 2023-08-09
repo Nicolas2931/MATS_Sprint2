@@ -1,14 +1,27 @@
 import { Injectable } from '@angular/core';
 import { LoginService } from '../login.service';
 import { Ticket } from './modelo-ticket';
+import { Categoria } from './modelo-categoriaMA';
+import { Item } from './modelo-item';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MesaAyudaService {
+  //Variable que guarda los tickets
   tickets:Ticket[] | null;
+  //variable que guarda la categoría
+  categorias:Categoria[] | null;
+  //Variable que guarda los items de las categorías
+  items:Item[] | null;
   constructor(private loginservice:LoginService) {
     this.tickets=null;
+    this.categorias=null;
+    this.items=null;
+  }
+  //Método que retorna la fecha actual del sistemas
+  getFechaActual():Date{
+    return new Date();
   }
   //Función que trae todos los tickets del usuario
   getTickets():Ticket[]|null{
@@ -25,7 +38,56 @@ export class MesaAyudaService {
     ];
     return this.tickets;
   }
-
+  //Método que retorna las categorías seleccionadas
+  getCategorias():Categoria[] | null{
+    this.categorias=[new Categoria(1,"Solicitud"), new Categoria(2,"Quejas"), new Categoria(3,"Documentos"),new Categoria(4,"Está no tiene items :v")];
+    return this.categorias;
+  }
+  //Método que retorna todos los items registrados
+  getItems(){
+    this.items = [
+      new Item(1, "Cambio de grupo", 1),
+      new Item(2, "Problema de acceso", 1),
+      new Item(3, "Revisión de contrato", 1),
+      new Item(4, "Falla en el servicio", 2),
+      new Item(5, "Retraso en la entrega", 2),
+      new Item(6, "Facturación incorrecta", 2),
+      new Item(7, "Envío de informe", 3),
+      new Item(8, "Solicitud de certificado", 3),
+      new Item(9, "Revisión de documento", 3)
+    ];
+  }
+  //Método que trae los items según el ID de la categoría
+  getItemsPorCategoria(id_categoria: number): Item[] | null {
+    if(id_categoria == 1){
+      this.items = [
+        new Item(1, "Cambio de grupo", 1),
+        new Item(2, "Problema de acceso", 1),
+        new Item(3, "Revisión de contrato", 1)
+      ];
+      return this.items;
+    }
+    else if(id_categoria==2){
+      this.items = [
+        new Item(4, "Falla en el servicio", 2),
+        new Item(5, "Retraso en la entrega", 2),
+        new Item(6, "Facturación incorrecta", 2)
+      ];
+      return this.items;
+    }
+    else if(id_categoria==3){
+      this.items = [
+        new Item(7, "Envío de informe", 3),
+        new Item(8, "Solicitud de certificado", 3),
+        new Item(9, "Revisión de documento", 3)
+      ];
+      return this.items;
+    }
+    else{
+      return null;
+    }
+    
+  }  
   //Método que trae el nombre del usuario para la información personal
   getNombre_usuario():string{
     //Buscar el nombre del usuario según el método
@@ -44,8 +106,22 @@ export class MesaAyudaService {
 
   }*/
   //Método que retorna unos tickets según los filtros aplicados
-  filtrar(estado:number, prioridad:number):Ticket[] | null{
-    return null;
+  filtrar(filtros: any):Ticket[] | null{
+    let filtrosSeleccionados = filtros;
+    if(filtrosSeleccionados.prioridad!="null" || filtrosSeleccionados.estado!="null"){
+      console.log("El ID prioridad es:"+filtrosSeleccionados.prioridad);
+      console.log("El ID estado es:"+filtrosSeleccionados.estado);
+      //Retornar los tickets este es un ejemplo
+      let tickets=  [
+        new Ticket(1, 101, 1, 1, 'Problema de red', 'No se puede acceder a la red', null, new Date('2023-08-01'), null, 1, 2),
+        new Ticket(2, 102, 2, 3, 'Error en la aplicación', 'La aplicación se bloquea al iniciar', 201, new Date('2023-08-02'), new Date('2023-08-10'), 2, 1),
+        new Ticket(3, 103, 1, 2, 'Solicitud de hardware', 'Necesito una nueva computadora', 202, new Date('2023-08-03'), null, 1, 3)];
+      return tickets;
+    }
+    else{
+      return null;
+    }
+    
   }
   //Métodos que cambian los ID por los nombre
   getNombre_ID(id:number):string{
@@ -158,6 +234,25 @@ getPrioridad_ID(id: number | null): string | null {
     }
     return prioridad;
 }
-
+//----------------------CRUD TICKETS------------------------
+crear_ticket(id_categoria:number,id_item:number | null,asunto:string,descripcion:string):boolean{
+  //1.El Token no se tiene, porque se esta creando hasta el momento el ticket
+  //2.Id_usuario-Invocar el método de conseguir ID usuario según el correo
+  //3. Id_categoria,id_item,asunto y descripcion si se tienen
+  //4. ID de responsable inicia siendo null
+  /*
+  5.Ya se tiene el método de conseguir la fecha actual
+  6.la fecha limite empiza siendo null
+  7.El ID del estado empieza siendo "1" (pendiente)
+  8.El ID de la prioridad inicia como null
+  */
+  //Variable estática
+  console.log("ID de la categoría",id_categoria);
+  console.log("ID del item",id_item);
+  console.log("Asunto",asunto);
+  console.log("Descripcion",descripcion);
+  console.log("Fecha:",this.getFechaActual());
+  return false;
+}
   
 }
