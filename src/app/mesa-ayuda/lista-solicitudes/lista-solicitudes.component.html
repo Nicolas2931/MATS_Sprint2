@@ -12,7 +12,7 @@
                 <button class="btn btn-primary" (click)="crear()" style="width:100%">CREAR TICKET</button>
                 <!--Aquí se llaman las ventanas emergentes-->
                 <app-crud-tickets [crear_ticket]="crear_ticket" [idTicket]="id_ticket" [ventana_editarTicket]="ventana_editarTicket"
-                    (ventanaEditCerrada)="CierreVentanaEdit()" (ventanaCrearCerrada)="CierreVentanaCrear()">
+                    (ventanaEditCerrada)="CierreVentanaEdit()" (ventanaCrearCerrada)="CierreVentanaCrear()" [ventana_VerTicket]="ventana_verTicket" (ventanaVerCerrada)="CierreVentanaVer()">
                 </app-crud-tickets>
             </div>
         </div>
@@ -56,14 +56,19 @@
                         Seleccione primero la prioridad
                       </ng-template>
                     </td>
-                    <td>{{ estadosID[i] }}</td>
+                    <td><span style="font-weight:bold;">{{ estadosID[i] }}</span><br/>
+
+                      <img *ngIf="estadosID[i]=='Pendiente'" src="../../../assets/images/reloj.png" class="img-fluid" style="max-width: 40px;">
+                      <img *ngIf="estadosID[i]=='En proceso'" src="../../../assets/images/trabajo-en-progreso.png" class="img-fluid" style="max-width: 40px;">
+                      <img *ngIf="estadosID[i]=='Completada'" src="../../../assets/images/correcto.png" class="img-fluid" style="max-width: 40px;">
+                    </td>
                     <td>
-                      {{ prioridadesID[i]}}
+                      <span style="font-weight:bold;">{{ prioridadesID[i]}}</span><br/>
                       <img *ngIf="prioridadesID[i]=='Baja'" src="../../../assets/images/relajarse.png" class="img-fluid" style="max-width: 40px;">
                       <img *ngIf="prioridadesID[i]=='Media'" src="../../../assets/images/advertencia.png" class="img-fluid" style="max-width: 40px;">
                       <img *ngIf="prioridadesID[i]=='Alta'" src="../../../assets/images/alerta.png" class="img-fluid" style="max-width: 40px;">
                     </td>
-                    <td><button class="btn btn-primary">Ver detalles</button></td>
+                    <td><button class="btn btn-primary" (click)="ver_ticket(ticket.token)">Ver detalles</button></td>
                     <td *ngIf="tipo_usuario=='administrador' ||permiso_usuario=='1'">
                       <div class="row">
                         <div class="col">

@@ -1,3 +1,4 @@
+<!-- VENTANA DE CREAR UN TICKET-->
 <div *ngIf="crear_ticket" class="modal">
     <div class="card card-medium">
       <div class="row mb-3">
@@ -8,7 +9,7 @@
       </div>
       <div *ngIf="getCategorias()!=null; else sincategorias ">
         <div class="row mb-3">
-          <div class="col-md-4">
+          <div class="col-md-4 mb-3">
             <label>Seleccione la categoría:<span *ngIf="error_crear" class="obligatorio">* Seleccione al menos una categoría </span></label>
           </div>
           <div class="col-md-8">
@@ -22,7 +23,7 @@
         </div>
         <div *ngIf="mostrar_items">
           <div class="row mb-3">
-            <div class="col-md-4">
+            <div class="col-md-4 mb-3">
               <label>Seleccione el item: <span *ngIf="error_crear" class="obligatorio">* Obligatorio </span></label>
             </div>
             <div class="col-md-8">
@@ -39,7 +40,7 @@
             <label for="asunto">Asunto: <span *ngIf="error_crear" class="obligatorio">* Obligatorio </span></label>
           </div>
           <div class="col-md-8">
-            <input [ngClass]="{'borde-rojo': error_crear}" type="text" class="form-control" placeholder="Ingrese el asunto del Ticket" [(ngModel)]="asunto">
+            <textarea [ngClass]="{'borde-rojo': error_crear}" type="text" class="form-control" placeholder="Ingrese el asunto del Ticket" [(ngModel)]="asunto"></textarea>
           </div>
         </div>
 
@@ -75,18 +76,227 @@
     </div>
 </div>
 
- <!-- VENTANA DE EDITAR UN TICKET-->
+
+
+
+<!--****************************** VENTANA DE VER UN TICKET******************************-->
+<div *ngIf="ventana_VerTicket" class="modal">
+  <div class="card card-medium">
+    <div class="row mb-3">
+      <!--Cargar el Ticket-->
+      {{getTicket()}}
+        <div class="col-md-12">
+          <h5 class="titulo fs-3">DETALLES DEL TICKET </h5>
+          <hr/>
+        </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <h5 class="letra-morada">Token:</h5>
+      </div>
+      <div class="col-md-8">
+        <label>{{ticket?.token}}</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <h5 class="letra-morada">Fecha:</h5>
+      </div>
+      <div class="col-md-8">
+        <label>{{fecha}}</label>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4">
+        <h5 class="letra-morada">Fecha límite de respuesta:</h5>
+      </div>
+      <div class="col-md-8">
+        <label>{{fecha_limite}}</label>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4">
+        <h5 class="letra-morada">Remitente:</h5>
+      </div>
+      <div class="col-md-8">
+        <label>{{nombre}}<span class="separador"> | </span> buscarcorreoxd@gmail.com</label>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-4">
+        <h5 class="letra-morada">Categoría del Ticket:</h5>
+      </div>
+      <div class="col-md-8">
+        <label>{{categoria}}</label>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4">
+        <h5 class="letra-morada">Item:</h5>
+      </div>
+      <div class="col-md-8">
+        <label>{{item}}</label>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4">
+        <h5 class="letra-morada">Responsable: </h5>
+      </div>
+      <div class="col-md-8">
+        <label>{{responsable}}</label>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4">
+        <h5 class="letra-morada">Estado:</h5>
+      </div>
+      <div class="col-md-8">
+        <label>{{estado}}</label>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <h5 class="letra-morada">Prioridad: </h5>
+      </div>
+      <div class="col-md-8">
+        <label>{{prioridad}}</label>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-12">
+        <h3 class="letra-morada" style="text-align:center;">Asunto:</h3><br/>
+      </div>
+      <div class="col-md-12">
+        <textarea style="text-align:center;"  type="text" class="form-control ver" disabled="true">{{ticket?.asunto}}</textarea>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-12">
+        <h3 class="letra-morada" style="text-align:center;">Descripción:</h3><br/>
+      </div>
+      <div class="col-md-12">
+        <textarea style="text-align:center;"   type="text" class="form-control ver" disabled="true">{{ticket?.descripcion}}</textarea>
+      </div>
+    </div>
+    <div class="card-footer mt-auto">
+      <div class="row">
+        <div class="col">
+          <button class="btn boton_morado mt-3" style="text-decoration: none; width:100%;" (click)="cerrar_verTicket()">CERRAR</button>
+        </div>
+      </div> 
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<!-- ************VENTANA DE EDITAR UN TICKET**********************-->
  <div *ngIf="ventana_editarTicket" class="modal">
   <div class="card card-medium">
     <div class="row mb-3">
-      <div class="row">
-        <div class="col-md-4">
-          <h5 for="nombreUsuario" class="cat">El ID es {{idTicket}}</h5>
+      <!--Cargar el Ticket-->
+      {{getTicket()}}
+        <div class="col-md-12">
+          <h5 class="titulo fs-3">DETALLES DEL TICKET </h5>
+          <hr/>
         </div>
     </div>
+    <div class="row">
+      <div class="col-md-4">
+        <h5 class="letra-morada">Token:</h5>
+      </div>
+      <div class="col-md-8">
+        <label>{{ticket?.token}}</label>
+      </div>
     </div>
-    <hr>
-    <button  id="subir" class="btn borde-morado mb-3" style="margin-left: 5px;">GUARDAR</button>
-    <button class="btn boton_morado" style="text-decoration: none;" (click)="cerrar_editarTicket()">CERRAR</button>
+    <div class="row">
+      <div class="col-md-4">
+        <h5 class="letra-morada">Remitente:</h5>
+      </div>
+      <div class="col-md-8">
+        <label>{{nombre}}<span class="separador"> | </span> buscarcorreoxd@gmail.com</label>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <h5 class="letra-morada">Categoría:</h5>
+      </div>
+      <div class="col-md-8">
+        <select [ngClass]="{'borde-rojo': error_crear}" class="form-select borde-morado" (change)="cargar_categoria($event)">
+          <option selected value="null">Lista de categorías</option>
+          <ng-container *ngFor="let cat of categorias">
+            <option [value]="cat.id_categoria" [selected]="cat.id_categoria==id_categoriaSeleccionada">{{cat.nombre}}</option>
+          </ng-container>
+        </select>
+      </div>
+    </div>
+    <div *ngIf="mostrar_items">
+      <div class="row mb-3">
+        <div class="col-md-4 mb-3">
+          <h5 class="letra-morada">Item:</h5>
+        </div>
+        <div class="col-md-8">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <h5 class="letra-morada">Responsable: </h5>
+      </div>
+      <div class="col-md-8">
+        <label>{{responsable}}</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <h5 class="letra-morada">Estado:</h5>
+      </div>
+      <div class="col-md-8">
+        <label>{{estado}}</label>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <h5 class="letra-morada">Prioridad: </h5>
+      </div>
+      <div class="col-md-8">
+        <label>{{prioridad}}</label>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-12">
+        <h3 class="letra-morada" style="text-align:center;">Asunto:</h3><br/>
+      </div>
+      <div class="col-md-12">
+        <textarea  type="text" class="form-control" disabled="true">{{ticket?.asunto}}</textarea>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-12">
+        <h3 class="letra-morada" style="text-align:center;">Descripción:</h3><br/>
+      </div>
+      <div class="col-md-12">
+        <textarea  type="text" class="form-control" disabled="true">{{ticket?.descripcion}}</textarea>
+      </div>
+    </div>
+    <div class="card-footer mt-auto">
+      <div class="row">
+        <div class="col">
+          <button class="btn boton_morado mt-3" style="text-decoration: none; width:100%;" (click)="cerrar_editarTicket()">CERRAR</button>
+        </div>
+      </div> 
+    </div>
   </div>
 </div> 

@@ -12,6 +12,9 @@ export class ListaSolicitudesComponent  implements OnInit{
   crear_ticket:boolean = false;
   cantidad_tickets:number | null;
   tickets:Ticket[] | null;
+  id_ticket:number;
+  ventana_editarTicket:boolean=false;
+  ventana_verTicket:boolean=false;
   //------Variables de los Tickets----
   categoriasID: string[] = [];
   estadosID: string[] = [];
@@ -70,8 +73,11 @@ export class ListaSolicitudesComponent  implements OnInit{
       this.servicio_mensajes.msj_informar('No ha seleccionado ningún filtro')
     }
   }
-  id_ticket:number;
-  ventana_editarTicket:boolean=false;
+  ver_ticket(id_ticket:number):void {
+    this.id_ticket=id_ticket;
+    this.ventana_verTicket=true;
+  }
+  
   editar_ticket(id_ticket:number):void {
     this.id_ticket=id_ticket;
     this.ventana_editarTicket=true;
@@ -81,6 +87,9 @@ export class ListaSolicitudesComponent  implements OnInit{
   }
   CierreVentanaCrear(): void {
     this.crear_ticket = false;
+  }
+  CierreVentanaVer(): void {
+    this.ventana_verTicket = false;
   }
   //Método que abre la ventana para crear un ticket
   crear(){
