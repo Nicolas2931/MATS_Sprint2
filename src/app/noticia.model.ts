@@ -6,6 +6,7 @@ export class Noticia{
     archivo: string;
     likes:number;
     apoyado:boolean;
+    tipo_usuario = [];
     constructor(id:number, titulo:string, fecha:string, descripcion:string, archivo:string, likes:number, apoyado:boolean){
         this.id=id;
         this.titulo = titulo;

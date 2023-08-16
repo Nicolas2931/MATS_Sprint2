@@ -49,6 +49,9 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
   fecha:string;
   
   ngOnInit(){
+    this.todos=false;
+    this.estudiantes = false;
+    this.profesores = false;
     console.log(this.opciones);
     this.routerURL.queryParams.subscribe(params => {
       this.opcion = params['opcion'];
@@ -66,17 +69,19 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
       this.noticia=this.servicioNoticia.getNoticia(this.id_noticia);
       console.log(this.noticia);
       //Para cargar los checkboxs
-      const categorias=this.servicioNoticia.getNoticia_Tipo(this.id_noticia);
+      const categorias=this.servicioNoticia.getNoticia_Tipo(this.noticia);
       if(this.opcion=="editar" && categorias.length>0){
         for(var i=0;i<categorias.length;i++){
           if(categorias[i]==1){
             this.todos=true;
+            this.estudiantes = true;
+            this.profesores = true;
             break;
           }
           if(categorias[i]==3){
             this.estudiantes=true;
           }
-          else if(categorias[i]==2){
+          if(categorias[i]==2){
             this.profesores=true;
           }
         }
@@ -122,22 +127,28 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
       const categorias:number[]=[];
       if(this.todos==true){
         categorias[0]=1;
-        categorias[1]=2;
+        /* categorias[1]=2;
+        categorias[2]=3; */
       }
-      else if(this.estudiantes==true){
-        categorias[0]=1;
+      if(this.estudiantes==true){
+        categorias.push(3);
       }
-      else if(this.profesores==true){
-        categorias[1]=2;
+      if(this.profesores==true){
+        categorias.push(2);
       }  
-      this.servicioNoticia.editarNoticia(this.noticia.id,this.noticia,categorias);
+      this.servicioNoticia.editarNoticia(this.noticia.id,this.noticia,categorias).subscribe(async (data) => {
+        console.log(data);
+        console.log('desde noticiaservice: ', this.noticia);
+        location.reload();
+        alert(data.mensaje);
+      });
       this.guardarPDF();
       this.volver();
     }
     else{
       this.error=true;
-    }
-  }
+    }
+  }
   //Método usado para activar todos los checkbox en caso de que se seleccione la opción de "Todos"
   activar_todos(){
 

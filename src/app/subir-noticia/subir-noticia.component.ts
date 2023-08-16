@@ -1,6 +1,8 @@
-import { Component} from '@angular/core';
+import { Component, ViewChild} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NoticiasService } from '../noticias.service';
+import { PDFNoticiaComponent } from '../pdf-noticia/pdf-noticia.component';
+import { ServicioBackService } from '../servicio-back.service';
 
 @Component({
   selector: 'app-subir-noticia',
@@ -20,7 +22,7 @@ export class SubirNoticiaComponent{
 
   //Variable que guarda
   error:boolean;
-  constructor(private router: Router,private servicioNoticia:NoticiasService, private routerURL: ActivatedRoute){
+  constructor(private router: Router,private servicioNoticia:NoticiasService, private routerURL: ActivatedRoute, private servicioBackService: ServicioBackService){
     this.estudiantes=false;
     this.profesores=false;
     this.todos=false;
@@ -56,7 +58,6 @@ export class SubirNoticiaComponent{
         this.error=false;
         let fecha:string;
         fecha=this.getFecha();
-  
         const categorias:number[]=[];
         if(this.todos==true){
           categorias[0]=1;
@@ -71,15 +72,28 @@ export class SubirNoticiaComponent{
             categorias.push(2);
           }  
         }
-        this.servicioNoticia.subirNoticia(this.titulo,fecha,this.descripcion,categorias);
-  
-        //this.guardarPDF();
-        this.volver();
+        this.servicioNoticia.subirNoticia(this.titulo,fecha,this.descripcion,categorias).subscribe((data: any) => {
+          console.log(data);
+          this.guardarPDF(data.noticia.id);
+          this.volver();
+        });
       }
       else{
         this.error=true;
-      }  
+      }
   }
+
+  @ViewChild('pdfComponent') pdfComponent!: PDFNoticiaComponent; // Obtener referencia al componente hijo
+
+  guardarPDF(id_noticia: number) {
+    if (this.pdfComponent.selectedFile) {
+      const pdfFile: File = this.pdfComponent.selectedFile;
+      this.servicioBackService.setPDF(pdfFile, id_noticia);
+    } else {
+      console.log('Error: No se ha seleccionado ningún archivo PDF.');
+    }
+  }
+
   //Méotodo que enruta devuelta a noticias_generales
   volver(){
     if(this.pagina=="Publico"){

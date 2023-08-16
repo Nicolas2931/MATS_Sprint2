@@ -97,6 +97,47 @@ export class ServicioBackService {
       "descripcion": datos.noticia.descripcion,
       "noticiaTipo": datos.noticia_tipo
     }
-    return this.http.put(this.urlApi + '/v1/noticias/' + id_noticia, envDatos);
+    return this.http.put<any>(this.urlApi + '/v1/noticias/' + id_noticia, envDatos);
   }
+
+  public createNoticia(form: any){
+    return this.http.post<any>(this.urlApi + '/v1/noticias/', form);
+  }
+
+  public deleteNoticia(id: number){
+    return this.http.delete<any>(this.urlApi + '/v1/noticias/' + id);
+  }
+
+  public getCategorias(): Observable<any>{
+    return this.http.get<any>(this.urlApi + '/v1/categorias');
+  }
+
+  public createCategoria(nombre: string){
+    const form = new FormData();
+    form.append("nombre", nombre);
+    return this.http.post<any>(this.urlApi + '/v1/categorias', form);
+  }
+
+  public editCategoria(){
+
+  }
+
+  public deleteCategoria(){
+
+  }
+
+  public getPreguntas(tipo_usuario: string, categoria: string): Observable<any>{
+    if(tipo_usuario != "" && categoria != ""){
+      return this.http.get<any>(this.urlApi + '/v1/tarjetas' + '?tipoUsuario=' + tipo_usuario + '&categoria=' + categoria);
+    }
+    else if(tipo_usuario != ""){
+      return this.http.get<any>(this.urlApi + '/v1/tarjetas' + '?tipoUsuario=' + tipo_usuario);
+    }
+    else if(categoria != ""){
+      return this.http.get<any>(this.urlApi + '/v1/tarjetas' + '?categoria=' + categoria);
+    }
+    return this.http.get<any>(this.urlApi + '/v1/tarjetas');
+  }
+
+
 }

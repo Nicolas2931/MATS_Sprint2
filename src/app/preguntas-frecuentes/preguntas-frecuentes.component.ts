@@ -43,8 +43,14 @@ export class PreguntasFrecuentesComponent {
   //Método para inicializar las variables.
   ngOnInit(): void {
     this.txt_lista="Seleccione las categorías";
-    this.categorias= this.preguntasService.obtener_categorias();
-    this.Tarjetas=this.preguntasService.obtener_tarjetas();
+    this.preguntasService.obtener_categorias().then((data) => {
+      this.categorias = data;
+      this.preguntasService.obtener_tarjetas().then(data => {
+        this.Tarjetas = data;
+      });
+      console.log(data);
+    });
+    
   }
   //Método para buscar entre las tarjetas la que se adecue a lo ingresado por el usuario
   buscar(){
@@ -229,8 +235,10 @@ export class PreguntasFrecuentesComponent {
           if(this.error_categoria==false){
             Swal.fire('Los cambios han sido guardados!', '', 'success')
             //Se recargan las tarjetas de nuevo
-            this.categorias=this.preguntasService.obtener_categorias();
-            this.ventanaCat_editar=false;
+            this.preguntasService.obtener_categorias().then(data => {
+              this.categorias = data;
+              this.ventanaCat_editar=false;
+            });
           }
           else{
             Swal.fire({
@@ -267,13 +275,15 @@ export class PreguntasFrecuentesComponent {
   profesores_subir:boolean=false;
   error_subir:boolean=false;
   subir_tarjeta():void{
-    this.categorias_subir=this.preguntasService.obtener_categorias();
-    this.txt_subir="Seleccione las categorías";
-    this.titulo_subir="";
-    this.descripcion_subir="";
-    this.estudiantes_subir=false;
-    this.profesores_subir=false;
-    this.ventana_subir=true;
+    this.preguntasService.obtener_categorias().then(data => {
+      this.categorias_subir = data;
+      this.txt_subir="Seleccione las categorías";
+      this.titulo_subir="";
+      this.descripcion_subir="";
+      this.estudiantes_subir=false;
+      this.profesores_subir=false;
+      this.ventana_subir=true;
+    });
   }
   agregar(){
     let id_usuario:number[]=[];
@@ -298,7 +308,9 @@ export class PreguntasFrecuentesComponent {
             if(this.error_subir==false) {
               Swal.fire('Se ha creado la pregunta frecuente!', '', 'success')
               //Se recargan las tarjetas de nuevo
-              this.Tarjetas=this.preguntasService.obtener_tarjetas();
+              this.preguntasService.obtener_tarjetas().then(data => {
+                this.Tarjetas = data;
+              });
               this.ventana_subir=false; 
             }
             else{
@@ -351,27 +363,30 @@ export class PreguntasFrecuentesComponent {
     if(id_tipo[1]==3){
       this.estudiantes=true;
     }
-    this.categoria_editar=this.preguntasService.obtener_categorias();
-    const cat=this.preguntasService.obtener_CategoriasPorTarjeta(tarjetaId);
-    for(var i=0;i<this.categoria_editar.length;i++){
-      for(var j=0;j<cat.length;j++){
-        if(this.categoria_editar[i].id==cat[j].id){
-          this.categoria_editar[i].seleccionado=true;
-          break;
-        }
-      }  
-    }
-    const checkboxesActivos = this.categoria_editar.filter(categoria => categoria.seleccionado);
-    const totalCheckboxesActivos = checkboxesActivos.length;
-    this.txt_editar = `Categorías seleccionadas (${totalCheckboxesActivos})`;
+    this.preguntasService.obtener_categorias().then(data => {
+      this.categoria_editar = data;  
+      const cat=this.preguntasService.obtener_CategoriasPorTarjeta(tarjetaId);
+      for(var i=0;i<this.categoria_editar.length;i++){
+        for(var j=0;j<cat.length;j++){
+          if(this.categoria_editar[i].id==cat[j].id){
+            this.categoria_editar[i].seleccionado=true;
+            break;
+          }
+        }  
+      }
+      const checkboxesActivos = this.categoria_editar.filter(categoria => categoria.seleccionado);
+      const totalCheckboxesActivos = checkboxesActivos.length;
+      this.txt_editar = `Categorías seleccionadas (${totalCheckboxesActivos})`;
 
-    this.Tarjeta = this.preguntasService.ver_tarjeta(tarjetaId);
-    if (this.Tarjeta) {
-      this.titulo = this.Tarjeta.titulo;
-      this.descripcion = this.Tarjeta.descripcion;
-    }
+      this.Tarjeta = this.preguntasService.ver_tarjeta(tarjetaId);
+      if (this.Tarjeta) {
+        this.titulo = this.Tarjeta.titulo;
+        this.descripcion = this.Tarjeta.descripcion;
+      }
 
-    this.ventana_editar = true;
+      this.ventana_editar = true;
+    });
+    
   }
   activar_editar(){
     const checkboxesActivos = this.categoria_editar.filter(categoria => categoria.seleccionado);
@@ -403,7 +418,7 @@ export class PreguntasFrecuentesComponent {
           confirmButtonText: 'Guardar',
           denyButtonText: `No guardar`,
           cancelButtonText:'Cancelar'
-        }).then((result) => {
+        }).then((result) => {       //<====================== AQUI HAY UNA FUNCUIÓN ASÍNCRONAAAA
           /* Read more about isConfirmed, isDenied below */
           if (result.isConfirmed) {
             //Invoca el método de editar y verifica si no hubo error
@@ -411,7 +426,9 @@ export class PreguntasFrecuentesComponent {
             if(this.error_editar==false){
               Swal.fire('Los cambios han sido guardados!', '', 'success')
               //Se recargan las tarjetas de nuevo
-              this.Tarjetas=this.preguntasService.obtener_tarjetas();
+              this.preguntasService.obtener_tarjetas().then(data => {
+                this.Tarjetas = data;
+              });
               this.ventana_editar=false;
             }
             else{
@@ -495,6 +512,5 @@ export class PreguntasFrecuentesComponent {
   }
   cerrarSubir(){
     this.ventana_subir=false;
-
-  }
+  }
 }

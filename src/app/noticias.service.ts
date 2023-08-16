@@ -140,11 +140,25 @@ export class NoticiasService {
     this.cantNoticias.next(cantidad);
   }
 
-  getNoticia_Tipo(id_noticia: number): number[] {
-    this.noticia_tipo=[];
-    if (id_noticia == 1) {
-      this.noticia_tipo[0] = 1;
-      this.noticia_tipo[1] = 2;
+  getNoticia_Tipo(noticia: Noticia): number[] {
+    try{
+    noticia.tipo_usuario.forEach(tipo => {
+      switch(tipo){
+        case "publico": {
+          this.noticia_tipo.push(1);
+          this.noticia_tipo.push(2);
+          this.noticia_tipo.push(3);
+          break;
+        }
+        case "profesor": this.noticia_tipo.push(2); break;
+        case "estudiante": this.noticia_tipo.push(3); break;
+        default: this.noticia_tipo = [];
+      }
+    });
+    }catch(err){
+      this.noticia_tipo.push(1);
+      this.noticia_tipo.push(2);
+      this.noticia_tipo.push(3);
     }
     return this.noticia_tipo;
   }
@@ -189,15 +203,16 @@ export class NoticiasService {
   */
 
   subirNoticia(titulo:string,fecha:string,descripcion:string,noticia_tipo:number[]){
-    let id_random:number;
-    id_random= Math.floor(Math.random()*(20-10+1))+10;
-    let noticia:Noticia = new Noticia(id_random,titulo,fecha,descripcion,'',0,false);
-    this.noticias.push(noticia);    
-    let id_noticia=1; //Conseguir el id de la noticia para subir sus categorias
-    for(let i=0; i<noticia_tipo.length;i++){
-      console.log(noticia_tipo[i]+"-"+id_noticia);
-    }
-  }
+    const form = {
+      "titulo": titulo,
+      "descripcion": descripcion,
+      "noticiaTipo": noticia_tipo
+    }
+
+    console.log('form ', form);
+
+    return this.servicioBackService.createNoticia(form);
+  }
   editarNoticia(id_noticia:number, noticia:Noticia, noticia_tipo:number[]){
     for (let i = 0; i < this.noticias.length; i++) {
       if (id_noticia === this.noticias[i].id) {
@@ -205,21 +220,28 @@ export class NoticiasService {
         break; // Una vez que se encuentra la noticia, se sale del bucle.
       }
     }
-
+    console.log('categoría', noticia_tipo);
     const datos = {
       "noticia": noticia,
       "noticia_tipo": noticia_tipo
     }
-    this.servicioBackService.setNoticia(datos, id_noticia).subscribe((data) => {
-      console.log(data);
-    });    
 
     //For para insertar el tipo de noticia a la tabla de noticia
     for(let i=0; i<noticia_tipo.length;i++){
       console.log(noticia_tipo[i]+"-"+id_noticia);
-    }
-  }
+    }
+    this.getNoticias(this.loginService.getTipoUsuario(), this.identificador, this.loginService.getPermisoUsuario()).then((data) => {
+      this.noticias = data;
+    });
+
+    return this.servicioBackService.setNoticia(datos, id_noticia)    
+  }
   eliminarNoticia(id_noticia:number){
+    console.log("el id: ", id_noticia);
+    this.servicioBackService.deleteNoticia(id_noticia).subscribe(data => {
+      alert(data.mensaje);
+    });
+
     for (let i = 0; i < this.noticias.length; i++) {
       if (id_noticia === this.noticias[i].id) {
         this.noticias.splice(i, 1);

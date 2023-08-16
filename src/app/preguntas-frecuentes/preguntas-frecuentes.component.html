@@ -42,7 +42,7 @@
     </div>
   </div>
     <!--Tarjetas-->
-<div class="row">
+<div class="row mt-5">
   <div class="col-md-12">
     <div class="row mt-2">
       <div class="col-6" *ngFor="let tarjeta of obtenerTarjetasPaginaActual()">
@@ -288,10 +288,10 @@
       <div class="col-md-8">
         <input type="text" id="nombreUsuario" class="form-control" [(ngModel)]="nombre_cat" placeholder="Nombre categoría">
       </div>    
-  </div>
+    </div>
   </div>
   <hr>
   <button  id="subir" class="btn mb-3" style="margin-left: 5px;" (click)="editar_cat()">Agregar categoria</button>
   <button class="btn fondo_morado boton_menu" style="text-decoration: none;" (click)="cerrarCat_Editar()">Cerrar</button>
-  </div>
+  </div>
 </div>
