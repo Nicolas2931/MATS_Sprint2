@@ -1,0 +1,122 @@
+<!-- VENTANA DE VER LA LISTA DE ÍTEMS-->
+<div *ngIf="ver_items" class="modal">
+    <div class="card card-medium">
+        <div class="row mt-3 mb-3">
+            <h5 class="letra-morada fs-4" style="text-align:center;">LISTA DE ÍTEMS</h5>
+            <hr/>
+        </div>
+        <div class="row mb-3">
+            <button type="button" class="btn borde-morado" style="width:100%;" (click)="mostrarAgregar()">Agregar Ítem</button>
+        </div>
+        <div class="row justify-content-center mb-3">
+            <div class="table-container">
+                <table class="table tabla-categorias">
+                    <tr>
+                        <th class="encabezado-morado">ID</th>
+                        <th class="encabezado-morado">Nombre</th>
+                        <th class="encabezado-morado">Categoría</th>
+                        <th class="encabezado-morado">Opciones</th>
+                    </tr>
+                    <tr *ngFor="let item of items">
+                        <td>{{item.id_item}}</td>
+                        <td>{{item.nombre}}</td>
+                        <td>{{txt_categoria(item.id_categoria)}}</td>
+                        <td>
+                            <div class="row">
+                                <div class="col">
+                                  <button class="btn boton-tabla" (click)="mostrar_editar(item)">Editar</button>
+                                </div>
+                                <div class="col">
+                                    <button class="btn boton-tabla" (click)="eliminar(item)">Eliminar</button>
+                                  </div>
+                              </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer mt-auto">
+            <button type="button" class="btn btn-danger" (click)="cerrar()" style="width:100%;">Cerrar</button>
+        </div>
+    </div>
+</div>  
+<!-- VENTANA DE EDITAR UN ÍTEM-->
+<div *ngIf="editar_item" class="modal">
+    <div class="card card-little">
+        <div class="row mt-3 mb-3">
+            <h5 class="letra-morada fs-4" style="text-align:center;">DATOS DEl ÍTEM</h5>
+            <hr/>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label>ID</label>
+            </div>
+            <div class="col-md-9">
+                <input disabled="true" class="form-control" [value]="item?.id_item">
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label>Nombre *</label>
+            </div>
+            <div class="col-md-9">
+                <input type="text" class="form-control" [(ngModel)]="txt_item" placeholder="Nombre del ítem..."/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label>Seleccione la categoría del ítem: *</label>
+              </div>
+              <div class="col-md-8">
+                <select class="form-select borde-morado" (change)="cargar_categoria($event)">
+                    <option value="null">Lista de categorías</option>
+                    <ng-container *ngFor="let categoria of categorias">
+                        <option [value]="categoria.id_categoria" [selected]="categoria.id_categoria === item?.id_categoria">
+                            {{ categoria.nombre }}
+                        </option>
+                    </ng-container>
+                </select>
+              </div>
+        </div>
+        <div class="card-footer mt-auto">
+            <button type="button" class="btn borde-morado mb-3" (click)="editar()" style="width:100%;">Guardar</button>
+            <button type="button" class="btn boton_morado" (click)="cerrar_editar()" style="width:100%;">Cerrar</button>
+        </div>
+    </div>
+</div> 
+<!-- VENTANA PARA AGREGAR UN ÍTEM-->
+<div *ngIf="mostrar_agregar" class="modal">
+    <div class="card card-little">
+        <div class="row mt-3 mb-3">
+            <h5 class="letra-morada fs-4" style="text-align:center;">REGISTRAR ÍTEM</h5>
+            <hr/>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label>Nombre *</label>
+            </div>
+            <div class="col-md-9">
+                <input type="text" class="form-control" placeholder="Nombre del Ítem..." #nombre/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label>Seleccione la categoría del ítem: *</label>
+              </div>
+              <div class="col-md-8">
+                <select class="form-select borde-morado" (change)="cargar_categoria($event)">
+                    <option value="null" selected>Lista de categorías</option>
+                    <ng-container *ngFor="let categoria of categorias">
+                        <option [value]="categoria.id_categoria">
+                            {{ categoria.nombre }}
+                        </option>
+                    </ng-container>
+                </select>
+              </div>
+        </div>
+        <div class="card-footer mt-auto">
+            <button type="button" class="btn borde-morado mb-3" (click)="agregar(nombre.value)" style="width:100%;">Guardar</button>
+            <button type="button" class="btn boton_morado" (click)="cerrarAgregar()" style="width:100%;">Cerrar</button>
+        </div>
+    </div>
+</div>       

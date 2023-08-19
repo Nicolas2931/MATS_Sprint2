@@ -2,7 +2,7 @@ export class Ticket{
     token:number;
     id_usuario:number;
     id_categoria:number;
-    id_item:number;
+    id_item:number | null;
     asunto:string;
     descripcion:string;
     id_responsable:number | null;
@@ -10,7 +10,7 @@ export class Ticket{
     fecha_limite:Date | null;
     id_estado:number;
     id_prioridad:number | null;
-    constructor(token: number,id_usuario: number,id_categoria: number,id_item: number,asunto: string,descripcion: string,id_responsable: number | null,fecha_solicitud: Date,fecha_limite: Date | null,id_estado: number,id_prioridad: number | null) {
+    constructor(token: number,id_usuario: number,id_categoria: number,id_item: number | null,asunto: string,descripcion: string,id_responsable: number | null,fecha_solicitud: Date,fecha_limite: Date | null,id_estado: number,id_prioridad: number | null) {
         this.token = token;
         this.id_usuario = id_usuario;
         this.id_categoria = id_categoria;

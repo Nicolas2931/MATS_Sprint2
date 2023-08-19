@@ -1,0 +1,92 @@
+<!-- VENTANA DE VER LA LISTA DE CATEGORÍAS-->
+<div *ngIf="ver_categorias" class="modal">
+    <div class="card card-medium">
+        <div class="row mt-3 mb-3">
+            <h5 class="letra-morada fs-4" style="text-align:center;">LISTA DE CATEGORÍAS</h5>
+            <hr/>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <button class="btn borde-morado" style="width:100%;" (click)="mostrarAgregar()">Agregar categoría</button>
+            </div>
+        </div>
+        <div class="row justify-content-center mb-3">
+            <div class="table-container">
+                <table class="table tabla-categorias">
+                    <tr>
+                        <th class="encabezado-morado">ID</th>
+                        <th class="encabezado-morado">Nombre</th>
+                        <th class="encabezado-morado">Opciones</th>
+                    </tr>
+                    <tr *ngFor="let categoria of categorias_MA">
+                        <td>{{categoria.id_categoria}}</td>
+                        <td>{{categoria.nombre}}</td>
+                        <td>
+                            <div class="row">
+                                <div class="col">
+                                  <button class="btn boton-tabla" (click)="mostrar_editar(categoria)">Editar</button>
+                                </div>
+                                <div class="col">
+                                    <button class="btn boton-tabla" (click)="eliminar(categoria)">Eliminar</button>
+                                  </div>
+                              </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer mt-auto">
+            <button type="button" class="btn btn-danger" (click)="cerrar()" style="width:100%;">Cerrar</button>
+        </div>
+    </div>
+</div>  
+<!-- VENTANA DE EDITAR UNA CATEGORÍA-->
+<div *ngIf="editar_categoria" class="modal">
+    <div class="card card-little">
+        <div class="row mt-3 mb-3">
+            <h5 class="letra-morada fs-4" style="text-align:center;">DATOS DE LA CATEGORÍA</h5>
+            <hr/>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label>ID</label>
+            </div>
+            <div class="col-md-9">
+                <input disabled="true" class="form-control" [value]="categoria?.id_categoria">
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label>Nombre *</label>
+            </div>
+            <div class="col-md-9">
+                <input type="text" class="form-control" [(ngModel)]="txt_nombreCat" placeholder="Nombre de la categoría..."/>
+            </div>
+        </div>
+        <div class="card-footer mt-auto">
+            <button type="button" class="btn borde-morado mb-3" (click)="editar()" style="width:100%;">Guardar</button>
+            <button type="button" class="btn boton_morado" (click)="cerrar_editar()" style="width:100%;">Cerrar</button>
+        </div>
+    </div>
+</div>  
+<!-- VENTANA DE AGREGAR UNA CATEGORÍA-->
+<div *ngIf="mostrar_agregar" class="modal">
+    <div class="card card-little">
+        <div class="row mt-3 mb-3">
+            <h5 class="letra-morada fs-4" style="text-align:center;">REGISTRAR CATEGORÍA</h5>
+            <hr/>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label>Ingrese el nombre de la nueva categoría:</label>
+            </div>
+            <div class="col-md-6">
+                <input type="text" class="form-control" placeholder="Nombre de la categoría..." #nombre>
+            </div>
+        </div>  
+        <div class="card-footer mt-auto">
+            <button type="button" class="btn borde-morado mb-3" (click)="agregar(nombre.value)" style="width:100%;">Agregar</button>
+            <button type="button" class="btn boton_morado" (click)="cerrarAgregar()" style="width:100%;">Cerrar</button>
+        </div>
+    </div>
+</div>    

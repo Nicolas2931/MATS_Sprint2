@@ -1,0 +1,86 @@
+.letra-morada{
+    color:rgb(76, 6, 122); 
+}
+.carta{
+    border:0;
+    padding: 20px;
+}
+.btn-primary{
+    width: 100%;
+    height: 100%;
+}
+#titulo{
+    color:white; 
+    text-align: center;
+}
+.contenedor-encabezado {
+    background-image: url('../../../assets/images/encabezado.png');
+    background-size: cover;
+    background-position: center center;
+    border-radius: 8px;
+}
+.form-control:focus{
+    box-shadow: 0 0 0 0.2rem rgba(198, 75, 255, 0.25);
+    border-color: rgb(101, 35, 145); 
+}
+.borde-morado:focus{
+    box-shadow: 0 0 0 0.2rem rgba(198, 75, 255, 0.25);
+    border-color: rgb(101, 35, 145); 
+}
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    //align-items: center;
+}
+.card-medium {
+    width: 700px; /* Ajusta el ancho según tus necesidades */
+    margin: 0 auto; /* Centrar horizontalmente */
+    padding: 20px; /* Añade un espacio interno para mejorar el aspecto */
+    overflow-y:auto;
+    height: 470px;
+    max-height: 90%;
+    margin-top: 3%;
+}
+.card-larga {
+    width: 700px; /* Ajusta el ancho según tus necesidades */
+    margin: 0 auto; /* Centrar horizontalmente */
+    padding: 20px; /* Añade un espacio interno para mejorar el aspecto */
+    overflow-y:auto;
+    height: 530px;
+    max-height: 90%;
+    margin-top: 3%;
+}
+.borde-morado{
+    border-color: rgb(76, 6, 122);
+    color: rgb(76, 6, 122);
+    background-color: white;
+}
+.borde-morado:hover{
+    background-color: rgb(206, 203, 207);
+    box-shadow: 0 0 0 0.2rem rgba(198, 75, 255, 0.25);
+}
+#buscar{
+    border-color: rgb(76, 6, 122);
+    background-color: white;
+}
+#buscar:focus{
+    box-shadow: 0 0 0 0.2rem rgba(198, 75, 255, 0.25);
+}
+.boton_morado{
+    background-color:rgb(76, 6, 122);
+    color: white;
+}
+.boton_morado:hover{
+    box-shadow: 0 0 0 0.2rem rgba(198, 75, 255, 0.25);
+    background-color: rgb(101, 35, 145); 
+}
+.imagen-mediana {
+    max-width: 100px; /* Ajusta el valor según el tamaño deseado */
+    height: auto;
+  }

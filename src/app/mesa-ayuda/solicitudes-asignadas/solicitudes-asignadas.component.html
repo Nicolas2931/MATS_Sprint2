@@ -9,7 +9,7 @@
         (ventanaVerCerrada)="CierreVentanaVer()">
       </app-crud-tickets>
         <div class="row mb-3 mt-5">
-            <h5 class="letra-morada mb-2 mt-2 fs-3">LISTA DE SOLICITUDES</h5>
+            <h5 class="letra-morada mb-2 mt-2 fs-3">LISTA DE SOLICITUDES ASIGNADAS</h5>
             <hr>
         </div>
         <div class="row mb-3">
@@ -38,7 +38,7 @@
                     <th class="encabezado-morado">Estado</th>
                     <th class="encabezado-morado">Prioridad</th>
                     <th class="encabezado-morado">Opción</th>
-                    <th *ngIf="tipo_usuario=='administrador' ||permiso_usuario=='1'" class="encabezado-morado">Opciones de administrador</th>
+                    <th *ngIf="tipo_usuario=='administrador' ||permiso_usuario=='1'" class="encabezado-morado">Permiso de:</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -79,7 +79,6 @@
                       <div class="row">
                         <div class="col">
                           <button class="btn opciones-admin" (click)="editar_ticket(ticket.token)">Editar</button>
-                          <button class="btn opciones-admin" (click)="eliminar_ticket(ticket.token)">Eliminar</button>
                         </div>
                       </div>
                     </td>
@@ -97,4 +96,3 @@
         </div>
     </div>
 </div>
-  

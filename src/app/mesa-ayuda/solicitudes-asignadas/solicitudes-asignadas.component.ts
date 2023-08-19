@@ -1,16 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Ticket } from '../modelo-ticket';
 import { MesaAyudaService } from '../mesa-ayuda.service';
 import { LoginService } from 'src/app/login.service';
 import { MensajesService } from 'src/app/mensajes.service';
+import { Router } from '@angular/router';
+import { Ticket } from '../modelo-ticket';
 import { CRUDTicketsComponent } from '../crud-tickets/crud-tickets.component';
-import {Router } from '@angular/router';
+
 @Component({
-  selector: 'app-lista-solicitudes',
-  templateUrl: './lista-solicitudes.component.html',
-  styleUrls: ['./lista-solicitudes.component.scss']
+  selector: 'app-solicitudes-asignadas',
+  templateUrl: './solicitudes-asignadas.component.html',
+  styleUrls: ['./solicitudes-asignadas.component.scss']
 })
-export class ListaSolicitudesComponent  implements OnInit{
+export class SolicitudesAsignadasComponent  implements OnInit{
+  //Cambiar casi todo
   @ViewChild(CRUDTicketsComponent) crudTicketsComponent: CRUDTicketsComponent;
   cantidad_tickets:number | null;
   tickets:Ticket[] | null;

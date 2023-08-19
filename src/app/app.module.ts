@@ -28,13 +28,23 @@ import { CRUDTicketsComponent } from './mesa-ayuda/crud-tickets/crud-tickets.com
 import { InformacionUsuarioComponent } from './mesa-ayuda/informacion-usuario/informacion-usuario.component';
 import { FiltrosTicketsComponent } from './mesa-ayuda/filtros-tickets/filtros-tickets.component';
 import { MesaAyudaService } from './mesa-ayuda/mesa-ayuda.service';
+import { OpcionesMAComponent } from './mesa-ayuda/opciones-ma/opciones-ma.component';
+import { ListaTicketsComponent } from './mesa-ayuda/lista-tickets/lista-tickets.component';
+import { ReclamosComponent } from './mesa-ayuda/reclamos/reclamos.component';
+import { SolicitudesAsignadasComponent } from './mesa-ayuda/solicitudes-asignadas/solicitudes-asignadas.component';
+import { AdministrarUsuariosComponent } from './mesa-ayuda/administrar-usuarios/administrar-usuarios.component';
+import { AdministrarCategoriasComponent } from './mesa-ayuda/administrar-categorias/administrar-categorias.component';
+import { AdministrarItemsComponent } from './mesa-ayuda/administrar-items/administrar-items.component';
 
 const appRoutes:Routes=[
   {path: '',component: NoticiasGeneralesComponent},
   {path:'Noticias_UD',component: NoticiasUdComponent,canActivate: [LoginGuardian]},
   {path:'Noticias_Interes',component: NoticiasInteresComponent,canActivate: [LoginGuardian]},
   {path:'Preguntas_Frecuentes',component: PreguntasFrecuentesComponent,canActivate: [LoginGuardian]},
-  {path:'Mesa_Ayuda',component: MesaAyudaComponent, canActivate: [LoginGuardian]},
+  {path:'Mesa_Ayuda',component: MesaAyudaComponent /*Agregar guardian*/ },
+  {path:'Lista_Tickets',component: ListaTicketsComponent /*Agregar guardian*/ },
+  {path:'Lista_Solicitudes',component: ListaSolicitudesComponent /*Agregar guardian*/ },
+  {path:'Solicitudes_Asignadas',component:SolicitudesAsignadasComponent /*Agregar guardian*/ },
   {path:'login',component: LoginComponent},
   {path:'noticia/:id',component: OpcionesNoticiaComponent,canActivate: [LoginGuardian]},
   {path:'subir_noticia',component: SubirNoticiaComponent,canActivate: [LoginGuardian]},
@@ -59,7 +69,14 @@ const appRoutes:Routes=[
     ListaSolicitudesComponent,
     CRUDTicketsComponent,
     InformacionUsuarioComponent,
-    FiltrosTicketsComponent
+    FiltrosTicketsComponent,
+    OpcionesMAComponent,
+    ListaTicketsComponent,
+    ReclamosComponent,
+    SolicitudesAsignadasComponent,
+    AdministrarUsuariosComponent,
+    AdministrarCategoriasComponent,
+    AdministrarItemsComponent
   ],
   imports: [
     BrowserModule,
