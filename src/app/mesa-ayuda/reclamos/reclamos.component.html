@@ -83,7 +83,8 @@
                 <tr *ngFor="let queja of quejas; let i=index">
                   <td>{{ queja.asunto}}</td>
                   <td>{{ queja.visto==true ? "Visto":"Sin ver"}}</td>
-                  <td><button class="btn borde-morado" style="width: 100%;" (click)="ver_queja(queja.id_queja)">Ver detalles</button></td>
+                  <td><button class="btn borde-morado" style="width: 100%;" (click)="ver_queja(queja.id_queja)">Ver detalles</button>
+                    <button class="btn borde-morado mt-2" style="width: 100%;" (click)="ver_queja(queja.id_queja)">Eliminar</button></td>
                 </tr>
             </tbody>         
           </table>

@@ -28,36 +28,40 @@
         >
         </app-administrar-items>
         <div class="row justify-content-center">
-            <div class="col mb-3">
+            <div *ngIf="tipo_usuario=='estudiante'" class="col mb-3">
                 <button type="button" class="btn opcion" (click)="crearTicket()">
                     <img src="../../../assets/images/crear_ticket.png" alt="opción de ver Tickets"  class="img-fluid" style="max-width: 100px;">
                     <p class="fs-5">Crear ticket</p>
                 </button>
             </div>
-            <div class="col mb-3">
+            <div *ngIf="tipo_usuario=='estudiante'" class="col mb-3">
                 <button type="button" class="btn opcion" (click)="URL_listaTickets()">
                     <img src="../../../assets/images/ticket.png" alt="opción de ver Tickets"  class="img-fluid" style="max-width: 100px;">
                     <p class="fs-5">Ver estados de mis Tickets</p>
                 </button>
             </div>
-            <div class="col mb-3">
+            <div *ngIf="tipo_usuario=='estudiante'" class="col mb-3">
                 <button type="button" class="btn opcion" (click)="realizar_reclamo()">
                     <img src="../../../assets/images/lista_quejas.png" alt="opción de ver Tickets" class="img-fluid" style="max-width: 100px;">
                     <p class="fs-5">Realizar reclamo</p>
                 </button>
             </div>
-            <div class="col mb-3">
+            El tipo de usuario es: {{tipo_usuario}}
+        
+            <div *ngIf="tipo_usuario=='administrador'" class="col mb-3">
                 <button type="button" class="btn opcion" (click)="URL_listaSolicitudes()">
                     <img src="../../../assets/images/lista_solicitudes.png" alt="opción de ver Tickets"  class="img-fluid" style="max-width: 100px;">
-                    <p class="fs-5">Lista de solicitudes</p>
+                    <p class="fs-5">Lista de solicitudes {{tipo_usuario}}</p>
                 </button>
             </div>
+        
             <div class="col mb-3">
                 <button type="button" class="btn opcion" (click)="URL_solicitudesAsignadas()">
                     <img src="../../../assets/images/tickets_asignados.png" alt="opción de ver Tickets"  class="img-fluid" style="max-width: 100px;">
                     <p class="fs-5">Lista de solicitudes asignadas</p>
                 </button>
             </div>
+        
             <div class="col mb-3">
                 <button type="button" class="btn opcion" (click)="mostrar_listaReclamos()">
                     <img src="../../../assets/images/queja.png" alt="opción de ver Tickets"  class="img-fluid" style="max-width: 100px;">
@@ -82,6 +86,7 @@
                     <p class="fs-5">Administrar ítems</p>
                 </button>
             </div>
+        
         </div>
     </div>
 </div>

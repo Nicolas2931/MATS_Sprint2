@@ -42,7 +42,7 @@
                                 <td>{{ categoriasID[i]}}</td>
                                 <td>{{ itemsID[i]}}</td>
                                 <td>{{ ticket.asunto}}</td>
-                                <td>{{ responsablesID[i] }}</td>
+                                <td>{{ responsablesID[i] == "Sin asignar" ?  "Coordinación":responsablesID[i] }}</td>
                                 <td><input type="date" class="fecha" disabled="true"  [value]="ticket.fecha_solicitud ? ticket.fecha_solicitud.toISOString().substring(0, 10) : ''" /></td>
                                 <td>
                                     <ng-container *ngIf="ticket.fecha_limite; else noFechaLimite">

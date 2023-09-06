@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { LoginService } from 'src/app/login.service';
 
 @Component({
   selector: 'app-opciones-ma',
@@ -13,7 +14,9 @@ export class OpcionesMAComponent implements OnInit {
   ventana_administrar:boolean;
   ver_categorias:boolean;
   ver_items:boolean;
-  constructor(private router: Router) {}
+  ocultar=false;
+  tipo_usuario:string;
+  constructor(private router: Router, private loginService:LoginService) {}
 
   ngOnInit(): void {
     this.crear_ticket = false;
@@ -22,6 +25,7 @@ export class OpcionesMAComponent implements OnInit {
     this.ventana_administrar=false;
     this.ver_categorias=false;
     this.ver_items=false;
+    this. tipo_usuario=this.loginService.getTipoUsuario();
   }
 
   crearTicket() {
