@@ -19,7 +19,6 @@
                     <button type="button" class=" btn btn-danger" style="width:100%;" (click)="volver_MA()">VOLVER</button>
                 </div>
             </div>
-            
             <div class="row justify-content-center">
                 <div class="table-container">
                     <table class="table tabla-tickets">
@@ -42,15 +41,10 @@
                                 <td>{{ categoriasID[i]}}</td>
                                 <td>{{ itemsID[i]}}</td>
                                 <td>{{ ticket.asunto}}</td>
-                                <td>{{ responsablesID[i] == "Sin asignar" ?  "Coordinación":responsablesID[i] }}</td>
+                                <td>{{ responsablesID[i]?.name}}</td>
                                 <td><input type="date" class="fecha" disabled="true"  [value]="ticket.fecha_solicitud ? ticket.fecha_solicitud.toISOString().substring(0, 10) : ''" /></td>
                                 <td>
-                                    <ng-container *ngIf="ticket.fecha_limite; else noFechaLimite">
-                                        <input type="date" [value]="ticket.fecha_limite.toISOString().substring(0, 10)" class="fecha" disabled="true"/>
-                                    </ng-container>
-                                    <ng-template #noFechaLimite>
-                                        Sin asignar
-                                    </ng-template>
+                                    <input type="date" [value]="ticket.fecha_limite.toISOString().substring(0, 10)" class="fecha" disabled="true"/>
                                 </td>
                                 <td>
                                     <span style="font-weight:bold;">{{ estadosID[i] }}</span><br/>
@@ -58,7 +52,7 @@
                                     <img *ngIf="estadosID[i]=='En proceso'" src="../../../assets/images/trabajo-en-progreso.png" class="img-fluid" style="max-width: 40px;">
                                     <img *ngIf="estadosID[i]=='Completada'" src="../../../assets/images/correcto.png" class="img-fluid" style="max-width: 40px;">  
                                 </td>
-                                <td><button class="btn btn-primary" (click)="ver_ticket(ticket.token)">Ver detalles</button></td>
+                                <td><button class="btn btn-primary mt-3" (click)="ver_ticket(ticket.token)">Ver detalles</button></td>
                             </tr>
                     </tbody>
                 </table> 
@@ -69,7 +63,7 @@
             <div class="col d-flex flex-column align-items-center justify-content-center text-center">
                 <h5 class="sin_tickets mt-2">En la actualidad no tiene ningún Ticket registrado</h5>
                 <img src="../../../assets/images/advertencia.png" alt="Advertencia" class="img-fluid" style="max-width: 150px;">
-                <button type="button" class=" btn borde-morado" style="width:100%;" (click)="volver_MA()">VOLVER</button>
+                <button type="button" class=" btn boton-morado" style="width:100%;" (click)="volver_MA()">VOLVER</button>
             </div>
         </ng-template>
     </div>

@@ -5,12 +5,12 @@ export class Ticket{
     id_item:number | null;
     asunto:string;
     descripcion:string;
-    id_responsable:number | null;
+    id_responsable:number;
     fecha_solicitud:Date;
-    fecha_limite:Date | null;
+    fecha_limite:Date;
     id_estado:number;
-    id_prioridad:number | null;
-    constructor(token: number,id_usuario: number,id_categoria: number,id_item: number | null,asunto: string,descripcion: string,id_responsable: number | null,fecha_solicitud: Date,fecha_limite: Date | null,id_estado: number,id_prioridad: number | null) {
+    id_prioridad:number;
+    constructor(token: number,id_usuario: number,id_categoria: number,id_item: number | null,asunto: string,descripcion: string,id_responsable: number,fecha_solicitud: Date,fecha_limite: Date,id_estado: number,id_prioridad: number) {
         this.token = token;
         this.id_usuario = id_usuario;
         this.id_categoria = id_categoria;

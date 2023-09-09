@@ -46,41 +46,39 @@
                     <p class="fs-5">Realizar reclamo</p>
                 </button>
             </div>
-            El tipo de usuario es: {{tipo_usuario}}
-        
             <div *ngIf="tipo_usuario=='administrador'" class="col mb-3">
                 <button type="button" class="btn opcion" (click)="URL_listaSolicitudes()">
                     <img src="../../../assets/images/lista_solicitudes.png" alt="opción de ver Tickets"  class="img-fluid" style="max-width: 100px;">
-                    <p class="fs-5">Lista de solicitudes {{tipo_usuario}}</p>
+                    <p class="fs-5">Lista de solicitudes</p>
                 </button>
             </div>
-        
-            <div class="col mb-3">
+            <!--Esta opción solo se muestra si se tiene permisos de mesa de ayuda o se es profesor-->
+            <div *ngIf="permiso_usuario=='3' || tipo_usuario=='profesor'" class="col mb-3">
                 <button type="button" class="btn opcion" (click)="URL_solicitudesAsignadas()">
                     <img src="../../../assets/images/tickets_asignados.png" alt="opción de ver Tickets"  class="img-fluid" style="max-width: 100px;">
                     <p class="fs-5">Lista de solicitudes asignadas</p>
                 </button>
             </div>
         
-            <div class="col mb-3">
+            <div *ngIf="tipo_usuario=='administrador'" class="col mb-3">
                 <button type="button" class="btn opcion" (click)="mostrar_listaReclamos()">
                     <img src="../../../assets/images/queja.png" alt="opción de ver Tickets"  class="img-fluid" style="max-width: 100px;">
                     <p class="fs-5">Lista de reclamos</p>
                 </button>
             </div>
-            <div class="col mb-3">
+            <div *ngIf="tipo_usuario=='administrador'" class="col mb-3">
                 <button type="button" class="btn opcion" (click)="mostrar_AdmUsuarios()">
                     <img src="../../../assets/images/usuarios.png" alt="opción de ver Tickets"  class="img-fluid" style="max-width: 100px;">
                     <p class="fs-5">Administrar usuarios</p>
                 </button>
             </div>
-            <div class="col mb-3">
+            <div *ngIf="tipo_usuario=='administrador'" class="col mb-3">
                 <button type="button" class="btn opcion" (click)="mostrar_AdmCategorias()">
                     <img src="../../../assets/images/categorias.png" alt="opción de ver Tickets"  class="img-fluid" style="max-width: 100px;">
                     <p class="fs-5">Administrar categorías</p>
                 </button>
             </div>
-            <div class="col mb-3">
+            <div *ngIf="tipo_usuario=='administrador'" class="col mb-3">
                 <button type="button" class="btn opcion" (click)="mostrar_AdmItems()">
                     <img src="../../../assets/images/items.png" alt="opción de ver Tickets"  class="img-fluid" style="max-width: 100px;">
                     <p class="fs-5">Administrar ítems</p>

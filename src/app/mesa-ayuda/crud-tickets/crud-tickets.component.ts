@@ -8,6 +8,8 @@ import { responsable } from '../modelo-responsable';
 import { Estado } from '../modelo-estado';
 import { Prioridad } from '../modelo-prioridad';
 import { Comentario } from '../modelo-comentario';
+import { remitente } from '../modelo-remitente';
+import { LoginService } from 'src/app/login.service';
 
 @Component({
   selector: 'app-crud-tickets',
@@ -15,35 +17,37 @@ import { Comentario } from '../modelo-comentario';
   styleUrls: ['./crud-tickets.component.scss']
 })
 export class CRUDTicketsComponent implements OnInit{
-  //Variable del estado de las ventanas
+  //Variable del estado de las ventanas, si es TRUE se abre la ventana
   @Input() crear_ticket: boolean;
   @Input() ventana_VerTicket:boolean;
   @Input() ventana_editarTicket:boolean;
   //ID del ticket seleccionado, usado para ver, editar o eliminar
   @Input() idTicket: number;
-  //Métodos que emiten que la ventana se cierra
+  //Métodos que emiten que la ventana se cierre
   @Output() ventanaVerCerrada= new EventEmitter<void>();
   @Output() ventanaCrearCerrada = new EventEmitter<void>();
   @Output() ventanaEditCerrada = new EventEmitter<void>();
+  //Métodos que abren o cierran la ventana para agregar un comentario
   ventanaResponsable:boolean;
   ventanaComentario:boolean;
-  //Objeto de tipo Ticker para ver los detalles de este
+  //Objeto que almacena un Ticket
   ticket:Ticket | null;
-  //Variable que guarda las categorías registradas 
+  //Variables que guardan las categorías, estados y prioridades registradas 
   private categorias:Categoria[] | null;
   private estados:Estado[];
   private prioridades:Prioridad[];
   //Activa o desactiva el resto del formulario si se selecciono una categoría
+  //Sirve en el caso que una categoría no tenga ítems, para que no se los solicite al usuario
   mostrar_items: boolean;
   //Guarda los items de la categoría seleccionada
   private itemsPorCategoria: Item[] | null;
   //Variable que guarda el id de la categoría seleccionada
   id_categoriaSeleccionada:number | null;
-  //Guarda el id del item seleccionado
+  //Guardan el id del item, estado y prioridad seleccionada por el usuario
   id_itemseleccionado:number | null;
   id_estadoseleccionado:number | null;
   id_prioridadseleccionada:number | null;
-  //variables que guardan el Asunto y Descripción del Ticket
+  //Variables que guardan el Asunto y Descripción del Ticket
   asunto:string;
   descripcion:string;
   //Variable que indica si hubo error al crear el ticket
@@ -53,19 +57,25 @@ export class CRUDTicketsComponent implements OnInit{
   //Datos de un Ticket
   fecha_solicitud:string;
   fecha_limite:string;
-  txt_remitente:string;
+  remitente:remitente;
   txt_categoria:string;
   txt_item:string;
   txt_estado:string;
-  txt_prioridad:string | null;
-  txt_responsable:string | null;
-
+  //Variable que guarda la cadena de texto al buscar un responsable para asignarlo
   txt_buscarResponsable:string;
+  //Variable que guarda al responsable encontrado
   responsable:responsable | null;
+  //Variable que guarda a un usuario encontrado y si se confirma se asigna como responsable
+  responsable_editar:responsable | null;
+  //En caso de que se encuentre al responsable esta variable muestra su información siendo TRUE
   mostrar_responsable:boolean;
+  //Guarda la cadena de texto del comentario
   comentario:string;
+  //Guarda el conjunto de comentarios por el Ticket
   comentariosPorTicket: Comentario[] | null;
-  constructor(private servicio_MesaAyuda: MesaAyudaService,private servicio_mensajes:MensajesService,private changeDetectorRef: ChangeDetectorRef){
+  //Variable que guarda los permisos del usuario que inicio sesión
+  permiso_MA:boolean;
+  constructor(private servicio_MesaAyuda: MesaAyudaService,private servicio_mensajes:MensajesService,private loginServie:LoginService){
     this.ticket = null;
     this.categorias=null;
     this.mostrar_items=false;
@@ -76,14 +86,11 @@ export class CRUDTicketsComponent implements OnInit{
     this.descripcion="";
     this.error_crear=false;
     this.error_editar=false;
-    this.txt_remitente="";
     this.txt_categoria="";
     this.txt_item="";
     this.txt_estado="";
     this.fecha_solicitud="";
     this.fecha_limite="";
-    this.txt_prioridad=null;
-    this.txt_responsable=null;
     this.txt_buscarResponsable="";
     this.ventanaResponsable=false;
     this.responsable=null;
@@ -95,9 +102,14 @@ export class CRUDTicketsComponent implements OnInit{
     this.comentario="";
     this.error_comentario=false;
     this.comentariosPorTicket=null;
+    this.responsable_editar=null;
+    this.permiso_MA=false;
   }
   ngOnInit(): void {
     //Inicialización de las variables como vacías
+    if(this.loginServie.getPermisoUsuario()=='3'){
+      this.permiso_MA=true;
+    }
     this.ticket = null;
     this.categorias=null;
     this.mostrar_items=false;
@@ -107,22 +119,29 @@ export class CRUDTicketsComponent implements OnInit{
     this.asunto="";
     this.descripcion="";
     this.error_crear=false;
-    this.txt_remitente="";
+    this.error_editar=false;
     this.txt_categoria="";
     this.txt_item="";
     this.txt_estado="";
     this.fecha_solicitud="";
     this.fecha_limite="";
-    this.txt_prioridad=null;
-    this.txt_responsable=null;
-    this.error_editar=false;
     this.txt_buscarResponsable="";
     this.ventanaResponsable=false;
-    this.ventanaComentario=false;
+    this.responsable=null;
     this.mostrar_responsable=false;
-    this.estados=this.servicio_MesaAyuda.getEstados();
-    this.prioridades=this.servicio_MesaAyuda.getPrioridades();
+    this.estados=[];
+    this.prioridades=[];
+    this.id_estadoseleccionado=null;
+    this.id_prioridadseleccionada=null;
+    this.comentario="";
+    this.error_comentario=false;
     this.comentariosPorTicket=null;
+    this.responsable_editar=null;
+    //Luego de inicializar las variables como vacías se traen los estados, y prioridades registradas
+    //Los estados son 'Pendiente', 'En proceso'y 'Completada'
+    this.estados=this.servicio_MesaAyuda.getEstados();
+    //Las prioridades son 'Baja', 'Media'y 'Alta'
+    this.prioridades=this.servicio_MesaAyuda.getPrioridades();
     //Iniciar las categorías
     this.setCategorias(this.servicio_MesaAyuda.getCategorias());
   }
@@ -134,7 +153,6 @@ export class CRUDTicketsComponent implements OnInit{
   getCategorias(): Categoria[] | null{
     return this.categorias;
   }
-
   //Método Get y Set para el error al crear un Ticket
   setErrorCrear(valor:boolean):void{
     this.error_crear=valor;
@@ -149,7 +167,7 @@ export class CRUDTicketsComponent implements OnInit{
   getErrorEditar():boolean{
     return this.error_editar;
   }
-  //Método Get y Set para mostrar un ocultar los items de una categoría
+  //Método Get y Set para mostrar u ocultar los items de una categoría
   setMostrarItems(valor:boolean):void{
     this.mostrar_items=valor;
   }
@@ -163,11 +181,11 @@ export class CRUDTicketsComponent implements OnInit{
   getItemsPorCategoria(): Item[] | null{
     return this.itemsPorCategoria;
   }
-
   //Metodo que captura el ID de la categoría seleccionada en una variable
   cargar_categoria(event: any): void {
     if(event.target.value!="null"){
       this.id_categoriaSeleccionada= event.target.value;
+      this.id_itemseleccionado=null;
       this.cargarItems(this.id_categoriaSeleccionada);
     }
     else{
@@ -184,11 +202,9 @@ export class CRUDTicketsComponent implements OnInit{
         this.setItemsPorCategoria(itemsPorCategoria);   
       }
       else{
-        
         this.setMostrarItems(false);
         this.id_itemseleccionado=null;
         this.setItemsPorCategoria(itemsPorCategoria);  
-        console.log("Mostrar"+this.getMostrarItems());
       }
     }
   }
@@ -204,11 +220,16 @@ export class CRUDTicketsComponent implements OnInit{
   //Método para crear el ticket
   async crear():Promise<void>{
     if(this.id_categoriaSeleccionada!==null && ((this.mostrar_items==true && this.id_itemseleccionado!=null) || this.mostrar_items==false && this.id_itemseleccionado==null) && this.asunto.trim().length>0 && this.descripcion.trim().length>0){
-      if(await this.servicio_mensajes.msj_confirmar('¿Está seguro que desea registrar el nuevo Ticket?','Confirmar','Cancelar')){
-        this.servicio_MesaAyuda.crear_ticket(this.id_categoriaSeleccionada,this.id_itemseleccionado,this.asunto,this.descripcion);
-        this.cerrar_crearTicket();
-        this.servicio_mensajes.msj_exito('Se ha creado el Ticket!');
-        this.error_crear=false;
+      if(await this.servicio_mensajes.msj_confirmar('¿Está seguro que desea registrar el Ticket?','Confirmar','Cancelar')){
+        if(this.servicio_MesaAyuda.crear_ticket(this.id_categoriaSeleccionada,this.id_itemseleccionado,this.asunto,this.descripcion)){
+          this.cerrar_crearTicket();
+          this.servicio_mensajes.msj_exito('Se ha creado el Ticket!');
+          this.error_crear=false;
+        }
+        else{
+          this.cerrar_crearTicket();
+          this.servicio_mensajes.msj_errorPersonalizado("Ha ocurrido un error al registrar el Ticket, por favor inténtelo más tarde.")
+        }
       }
     }
     else{
@@ -223,25 +244,12 @@ export class CRUDTicketsComponent implements OnInit{
     if (this.ticket) {
       this.ventana_editarTicket=mostrar;
       this.fecha_solicitud= this.servicio_MesaAyuda.formatoDateparaInput(this.ticket?.fecha_solicitud);
-      if (this.ticket?.fecha_limite) {
-        this.fecha_limite = this.servicio_MesaAyuda.formatoDateparaInput(this.ticket?.fecha_limite);
-      } else {
-        this.fecha_limite = "Sin asignar";
-      }
-      
-      this.txt_remitente = this.servicio_MesaAyuda.getNombre_ID(this.ticket?.id_usuario);
+      this.fecha_limite = this.servicio_MesaAyuda.formatoDateparaInput(this.ticket?.fecha_limite);
+      this.remitente = this.servicio_MesaAyuda.getRemitente_ID(this.ticket?.id_usuario);
       this.txt_categoria = this.servicio_MesaAyuda.getCategoria_ID(this.ticket?.id_categoria);
       this.txt_item = this.servicio_MesaAyuda.getItem_ID(this.ticket?.id_item);
       this.txt_estado = this.servicio_MesaAyuda.getEstado_ID(this.ticket?.id_estado);
-      this.txt_prioridad = this.servicio_MesaAyuda.getPrioridad_ID(this.ticket?.id_prioridad);
       this.responsable = this.servicio_MesaAyuda.getResponsable_ID(this.ticket?.id_responsable);
-      if(this.responsable != null){
-        this.txt_responsable=this.responsable.name;
-      }
-      else{
-        this.txt_responsable="Sin asignar";
-      }
-       
       if(this.ventana_editarTicket){
         this.id_categoriaSeleccionada=this.ticket?.id_categoria;
         let items=this.servicio_MesaAyuda.getItemsPorCategoria(this.id_categoriaSeleccionada);
@@ -263,41 +271,28 @@ export class CRUDTicketsComponent implements OnInit{
     else{
       this.cerrar_verTicket();
       this.cerrar_editarTicket();
-      this.servicio_mensajes.msj_informar("No se encontro en Ticket con el ID:"+this.idTicket);  
+      this.servicio_mensajes.msj_informar("No se ha encontrado el Ticket con el ID:"+this.idTicket);  
     }
   }
   //Función para ediar un ticket
   async editar_Ticket(){
     if(this.id_categoriaSeleccionada!=null){
-      /*&& ((this.mostrar_items!=false && this.id_itemseleccionado!=null) || (this.mostrar_items==false && this.id_itemseleccionado==null)) && ((this.id_estadoseleccionado==2 || this.id_estadoseleccionado==3 && this.txt_responsable!="Sin asignar") || (this.id_estadoseleccionado==1 && this.responsable!=null) )
-    */if((this.getMostrarItems()==true && this.id_itemseleccionado!=null) || (this.getMostrarItems()==false && this.id_itemseleccionado==null)){
+      if((this.getMostrarItems()==true && this.id_itemseleccionado!=null) || (this.getMostrarItems()==false && this.id_itemseleccionado==null)){
         if(this.id_estadoseleccionado!=null){
-          if(((this.id_estadoseleccionado==2 || this.id_estadoseleccionado==3) && this.responsable!=null) || this.id_estadoseleccionado==1){
-            if(((this.id_estadoseleccionado==2 || this.id_estadoseleccionado==3) && this.id_prioridadseleccionada!=null) || this.id_estadoseleccionado==1){
               if(await this.servicio_mensajes.msj_confirmar('¿Está seguro que desea guardar los cambios', 'Confirmar', 'Cancelar')){
-                let id_responsable :number|null=null;
-                if(this.responsable?.id_usuario!=undefined){
-                  id_responsable=this.responsable?.id_usuario;
-                }
-                if(this.ticket!=null && this.servicio_MesaAyuda.editar_ticket(this.ticket?.token,this.ticket?.id_usuario,this.id_categoriaSeleccionada,this.id_itemseleccionado,this.ticket?.asunto,this.ticket?.descripcion,id_responsable, this.ticket?.fecha_solicitud,this.id_estadoseleccionado,this.id_prioridadseleccionada, this.comentariosPorTicket)){
+                if(this.responsable?.id_usuario!=undefined && this.ticket!=null && this.servicio_MesaAyuda.editar_ticket(this.ticket?.token,this.ticket?.id_usuario,this.id_categoriaSeleccionada,this.id_itemseleccionado,this.ticket?.asunto,this.ticket?.descripcion,this.responsable?.id_usuario, this.ticket?.fecha_solicitud,this.id_estadoseleccionado,this.id_prioridadseleccionada, this.comentariosPorTicket)){
                   this.cerrar_editarTicket();
+                  this.setErrorEditar(false);
+                  this.ngOnInit();
                   this.servicio_mensajes.msj_exito("Se han guardado los cambios!");
 
                 }
                 else{
-                  this.servicio_mensajes.msj_errorPersonalizado("No se han podido guardar los cambios");
+                  this.cerrar_editarTicket();
+                  this.setErrorEditar(false);
+                  this.servicio_mensajes.msj_errorPersonalizado("No se han podido guardar los cambios. Por favor, inténtelo más tarde.");
                 }
               }
-            }
-            else{
-              this.setErrorEditar(true);
-              this.servicio_mensajes.msj_errorPersonalizado("Si el estado del ticket está en proceso o completado, debe tener una prioridad asignada.");
-            }
-          }
-          else{
-            this.setErrorEditar(true);
-            this.servicio_mensajes.msj_errorPersonalizado("Si el estado del ticket está en proceso o completado, debe haber un responsable a cargo de él.");
-          }
         }
         else{
           this.setErrorEditar(true);
@@ -307,7 +302,7 @@ export class CRUDTicketsComponent implements OnInit{
       }
       else{
         this.setErrorEditar(true);
-        this.servicio_mensajes.msj_errorPersonalizado("Debe agregar un item al Ticket");
+        this.servicio_mensajes.msj_errorPersonalizado("Debe agregar un ítem al Ticket");
       }
     }
     else{
@@ -318,8 +313,8 @@ export class CRUDTicketsComponent implements OnInit{
 
   //Método que retorna los datos de un responsable
   buscar_responsable(){
-    this.responsable=this.servicio_MesaAyuda.buscar_responsable(this.txt_buscarResponsable);
-    if(this.responsable!=null){
+    this.responsable_editar=this.servicio_MesaAyuda.buscar_responsable(this.txt_buscarResponsable);
+    if(this.responsable_editar!=null){
       this.mostrar_responsable=true;
     }
     else{
@@ -331,23 +326,23 @@ export class CRUDTicketsComponent implements OnInit{
   //Método que asigna un responsable al usuario
   async asignar_responsable(){
     if(await this.servicio_mensajes.msj_confirmar('¿Está seguro?', 'Confirmar', 'Cancelar')){
-      if(this.responsable){
-        this.txt_responsable=this.responsable.name;
+      if(this.responsable_editar!=null && this.servicio_MesaAyuda.cambiar_responsable(this.idTicket, this.responsable_editar)){
+        this.responsable=this.responsable_editar;
         this.servicio_mensajes.msj_exito('Se ha añadido al responsable!');
+        this.cerrar_responsable();
+        this.txt_buscarResponsable="";
+        this.mostrar_responsable=false;
+      }
+      else{
+        this.servicio_mensajes.msj_errorPersonalizado("Ha ocurrido un error al modificar el responsable. Por favor, inténtelo más tarde.");
+        this.txt_buscarResponsable="";
+        this.mostrar_responsable=false;
         this.cerrar_responsable();
       }
     }
 
   }
-  //Método que quita a un responsable en caso de que ya se tenga
-  async quitar_responsable(){
-    if(await this.servicio_mensajes.msj_confirmar('¿Está seguro?', 'Confirmar', 'Cancelar')){
-      this.responsable=null;
-      this.txt_responsable="Sin asignar"
-      this.servicio_mensajes.msj_exito('Se ha quitado al responsable!');
-    }  
-    
-  }
+
   //Método que restorna los tres estados de una solicitud
   getEstados(){
     return this.estados;
@@ -373,41 +368,31 @@ export class CRUDTicketsComponent implements OnInit{
     }
   }
   //Método que carga los datos de un Ticket que se desea visualizar
-  verTicket() {
+  verTicket(id_ticket:number,mostrar:boolean) {
+    this.ventana_VerTicket = true;
+    this.idTicket=id_ticket;
     this.ticket = this.servicio_MesaAyuda.getTicket(this.idTicket);
     if (this.ticket) {
+      ///Verificar fechas
       this.fecha_solicitud= this.servicio_MesaAyuda.formatoDateparaInput(this.ticket?.fecha_solicitud);
-      if (this.ticket?.fecha_limite) {
-        this.fecha_limite = this.servicio_MesaAyuda.formatoDateparaInput(this.ticket?.fecha_limite);
-      } else {
-        this.fecha_limite = "Sin asignar";
-      }
+      this.fecha_limite = this.servicio_MesaAyuda.formatoDateparaInput(this.ticket?.fecha_limite);
       
-      this.txt_remitente = this.servicio_MesaAyuda.getNombre_ID(this.ticket?.id_usuario);
+      this.remitente = this.servicio_MesaAyuda.getRemitente_ID(this.ticket?.id_usuario);
       this.txt_categoria = this.servicio_MesaAyuda.getCategoria_ID(this.ticket?.id_categoria);
       this.txt_item = this.servicio_MesaAyuda.getItem_ID(this.ticket?.id_item);
       this.txt_estado = this.servicio_MesaAyuda.getEstado_ID(this.ticket?.id_estado);
-      this.txt_prioridad = this.servicio_MesaAyuda.getPrioridad_ID(this.ticket?.id_prioridad);
       this.responsable = this.servicio_MesaAyuda.getResponsable_ID(this.ticket?.id_responsable);
-      if(this.responsable != null){
-        this.txt_responsable=this.responsable.name;
-      }
-      else{
-        this.txt_responsable="Sin asignar";
-      }
       this.comentariosPorTicket=this.servicio_MesaAyuda.getComentarios(this.ticket?.token);
-      console.log("Los comentarios;"+this.comentariosPorTicket);
     }
     else{
       this.cerrar_verTicket();
-      this.servicio_mensajes.msj_informar("No se encontro en Ticket con el ID:"+this.idTicket);  
+      this.servicio_mensajes.msj_informar("No se ha encontrado el Ticket con el ID:"+this.idTicket);  
     }
   }
   async agregar_comentario():Promise<void>{
     if(this.comentario.trim().length > 0){
       if(await this.servicio_mensajes.msj_confirmar('¿Está seguro que desea agregar el comentario?', 'Confirmar', 'Cancelar')){
-        this.error_comentario=this.servicio_MesaAyuda.agregar_comentario(this.idTicket,this.comentario);
-        if(this.error_comentario==false){
+        if(this.servicio_MesaAyuda.agregar_comentario(this.idTicket,this.comentario)){
           this.cerrar_comentario();
           this.servicio_mensajes.msj_exito("Se ha añadido el comentario!");
         }

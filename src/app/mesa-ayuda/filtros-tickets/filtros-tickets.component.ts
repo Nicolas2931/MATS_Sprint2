@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { MesaAyudaService } from '../mesa-ayuda.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-filtros-tickets',
@@ -11,8 +12,12 @@ export class FiltrosTicketsComponent {
   prioridadSeleccionada: string = 'null';
   estadoSeleccionado: string = 'null';
   correo:string;
-  constructor() {
+  filtrarPorCorreo: boolean;
+  constructor(private router:Router) {
     this.correo="";
+    if(this.router.url === '/Lista_Solicitudes' || this.router.url === '/Solicitudes_Asignadas'){
+      this.filtrarPorCorreo=true;
+    } 
   }
 
   filtrar(): void {

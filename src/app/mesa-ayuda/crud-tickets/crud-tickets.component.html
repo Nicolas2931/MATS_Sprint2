@@ -7,10 +7,11 @@
           <hr/>
       </div>
       </div>
+      <!--Solo se podrá crear Tickets si hay categorías creadas-->
       <div *ngIf="getCategorias()!=null; else sincategorias ">
         <div class="row mb-3">
           <div class="col-md-4 mb-3">
-            <label>Seleccione la categoría:<span *ngIf="getErrorCrear()" class="obligatorio">* Seleccione al menos una categoría </span></label>
+            <label>Seleccione la categoría:<span *ngIf="getErrorCrear()" class="obligatorio">* Obligatorio </span></label>
           </div>
           <div class="col-md-8">
             <select [ngClass]="{'borde-rojo': getErrorCrear()}" class="form-select borde-morado" (change)="cargar_categoria($event)">
@@ -54,13 +55,13 @@
         </div>   
       </div>
       <ng-template #sincategorias>
-        <div class="row">
+        <div class="row vh-100">
           <div class="col d-flex flex-column align-items-center justify-content-center text-center">
             <h5 class="fs-3 text-muted">Debe existir al menos una categoría registrada para crear un ticket</h5>
             <img src="../../../assets/images/advertencia.png" alt="Advertencia" class="img-fluid" style="max-width: 100px;">
           </div>
         </div>
-      </ng-template>
+      </ng-template>      
       <div class="card-footer mt-auto">
         <div *ngIf="getCategorias()!=null">
           <div class="row">
@@ -83,9 +84,8 @@
 <div *ngIf="ventana_VerTicket" class="modal">
   <div class="card card-medium">
     <div class="row mb-3">
-      {{verTicket()}}
         <div class="col-md-12">
-          <h5 class="titulo fs-3">DETALLES DEL TICKET </h5>
+          <h5 class="titulo fs-3">DETALLES DEL TICKET</h5>
           <hr/>
         </div>
     </div>
@@ -120,7 +120,7 @@
         <h5 class="letra-morada">Remitente:</h5>
       </div>
       <div class="col-md-8">
-        <label>{{txt_remitente}}<span class="separador"> | </span> buscarcorreoxd@gmail.com</label>
+        <label>{{remitente.name}}<span class="separador"> | </span> {{remitente.correo}}</label>
       </div>
     </div>
     
@@ -142,12 +142,12 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row mb-3">
       <div class="col-md-4">
         <h5 class="letra-morada">Responsable: </h5>
       </div>
       <div class="col-md-8">
-        <label>{{txt_responsable}}</label>
+        <label style="margin-right:15px">{{responsable?.name}}<span class="separador"> | </span>{{responsable?.correo}}</label>
       </div>
     </div>
 
@@ -157,15 +157,6 @@
       </div>
       <div class="col-md-8">
         <label>{{txt_estado}}</label>
-      </div>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col-md-4">
-        <h5 class="letra-morada">Prioridad: </h5>
-      </div>
-      <div class="col-md-8">
-        <label>{{txt_prioridad}}</label>
       </div>
     </div>
     <div class="row mb-3">
@@ -259,7 +250,7 @@
         <h5 class="letra-morada">Remitente:</h5>
       </div>
       <div class="col-md-8">
-        <label>{{txt_remitente}}<span class="separador"> | </span> buscarcorreoxd@gmail.com</label>
+        <label>{{remitente.name}}<span class="separador"> | </span> {{remitente.correo}}</label>
       </div>
     </div>
     <div class="row mb-3">
@@ -267,7 +258,7 @@
         <h5 class="letra-morada">Categoría: <span *ngIf="getErrorEditar()==true"  [ngClass]="{'obligatorio': getErrorEditar()}">* Obligatorio</span></h5>
       </div>
       <div class="col-md-8">
-        <select [ngClass]="{'borde-rojo': getErrorEditar()}" class="form-select borde-morado" (change)="cargar_categoria($event)">
+        <select [disabled]="permiso_MA" [ngClass]="{'borde-rojo': getErrorEditar()}" class="form-select borde-morado" (change)="cargar_categoria($event)">
           <option selected value="null">Lista de categorías</option>
           <ng-container *ngFor="let cat of getCategorias()">
             <option [value]="cat.id_categoria" [selected]="cat.id_categoria==id_categoriaSeleccionada">{{cat.nombre}}</option>
@@ -282,7 +273,7 @@
           <h5 class="letra-morada">Item:  <span *ngIf="getErrorEditar()==true"  [ngClass]="{'obligatorio': getErrorEditar()}">* Obligatorio</span></h5>
         </div>
         <div class="col-md-8">
-          <select [ngClass]="{'borde-rojo':getErrorEditar()}" class="form-select borde-morado" (change)="cargar_item($event)">
+          <select [disabled]="permiso_MA" [ngClass]="{'borde-rojo':getErrorEditar()}" class="form-select borde-morado" (change)="cargar_item($event)">
             <option selected value="null">Item</option>
             <option *ngFor="let item of getItemsPorCategoria()" [value]="item.id_item" [selected]="item.id_item==id_itemseleccionado">{{item.nombre}}</option>
           </select>
@@ -293,10 +284,11 @@
       <div class="col-md-4">
         <h5 class="letra-morada">Responsable: </h5>
       </div>
-      <div class="col-md-8">
-        <label style="margin-right:15px">{{txt_responsable}}</label>
-        <button class="btn borde-morado" *ngIf="txt_responsable=='Sin asignar'" (click)="agregar_responsable()">Agregar</button>
-        <button class="btn borde-morado" *ngIf="txt_responsable!='Sin asignar'" (click)="quitar_responsable()">Quitar</button>
+      <div class="col-md-6 mb-2">
+        <label style="margin-right:15px">{{responsable?.name}}<span class="separador"> | </span>{{responsable?.correo}}</label>
+      </div>
+      <div *ngIf="permiso_MA==false" class="col-md-2">
+        <button class="btn boton_morado" style="width:100%;"  (click)="agregar_responsable()">Cambiar</button>
       </div>
     </div>
     <div class="row mb-3 mt-3">
@@ -317,7 +309,7 @@
         <h5 class="letra-morada">Prioridad: </h5>
       </div>
       <div class="col-md-8">
-        <select [ngClass]="{'borde-rojo': getErrorEditar()}" class="form-select borde-morado" (change)="cargar_prioridad($event)">
+        <select [disabled]="permiso_MA" [ngClass]="{'borde-rojo': getErrorEditar()}" class="form-select borde-morado" (change)="cargar_prioridad($event)">
           <ng-container *ngFor="let prioridad of getPrioridades()">
             <option [value]="prioridad.id_prioridad" [selected]="prioridad.id_prioridad==id_prioridadseleccionada">{{prioridad.nombre}}</option>
           </ng-container>
@@ -396,7 +388,7 @@
   <div class="card card-responsable" style="margin-top:100px;">
     <div class="row mb-3">
       <div class="col-md-12">
-        <h5 class="letra-morada">Digite el correo del usuario a buscar:</h5><br/>
+        <h4 class="letra-morada">Digite el correo del usuario a buscar:</h4><br/>
       </div>
       <div class="col-md-12">
         <div class="input-group">
@@ -409,27 +401,31 @@
     </div>
     <div *ngIf="mostrar_responsable">
       <div class="row mb-3 mt-3">
-        <div class="col-md-4">
-          <h5 class="letra-morada">Nombre:</h5>
+        <div class="col-md-3">
+          <p class="letra-morada"><b>Nombre:</b></p>
         </div>
-        <div class="col-md-8">
-          <label>{{responsable?.name}}</label>
+        <div class="col-md-9">
+          <label>{{responsable_editar?.name}}</label>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-4">
-          <h5 class="letra-morada">Correo:</h5>
+        <div class="col-md-3">
+          <p class="letra-morada"><b>Correo:</b></p>
         </div>
-        <div class="col-md-8">
-          <label>{{responsable?.correo}}</label>
+        <div class="col-md-9">
+          <label>{{responsable_editar?.correo}}</label>
         </div>
       </div>
       <div class="row mt-3">
-        <button class="btn borde-morado mt-3" style="text-decoration: none; width:100%;" (click)="asignar_responsable()">Asignar como responsable</button>
+        <div class="col-md-12">
+          <button class="btn borde-morado mt-3" style="text-decoration: none; width:100%;" (click)="asignar_responsable()">Asignar como responsable</button>
+        </div>
       </div>
     </div>
       <div class="row">
+        <div class="col-md-12">
           <button class="btn boton_morado mt-3" style="text-decoration: none; width:100%;" (click)="cerrar_responsable()">Cancelar</button>
+        </div>
       </div>
   </div>
 </div>
@@ -440,7 +436,7 @@
   <div class="card card-responsable" style="margin-top:100px;">
     <div class="row mb-3">
       <div class="col-md-4">
-        <h5 class="letra-morada">Comentario:<span *ngIf="error_comentario" [ngClass]="{'obligatorio': error_comentario}">* Obligatorio</span></h5>
+        <h5 class="letra-morada">Comentario:</h5><span *ngIf="error_comentario" [ngClass]="{'obligatorio': error_comentario}">* Obligatorio</span>
       </div>
       <div class="col-md-8">
         <textarea type="text" class="form-control" placeholder="ingrese el comentario" [(ngModel)]="comentario"></textarea>

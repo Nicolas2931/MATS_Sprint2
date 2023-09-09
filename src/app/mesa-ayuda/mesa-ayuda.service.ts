@@ -9,6 +9,9 @@ import { Prioridad } from './modelo-prioridad';
 import { Comentario } from './modelo-comentario';
 import { queja } from './modelo-queja';
 import { usuario } from './modelo-usuario';
+import { MensajesService } from '../mensajes.service';
+import { remitente } from './modelo-remitente';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -23,7 +26,9 @@ export class MesaAyudaService {
   comentarios:Comentario[] | null;
   //Variable que almacena las quejas realizadas por los usuarios
   quejas:queja[] | null;
-  constructor(private loginservice:LoginService) {
+  //Guarda al remitente de algún Ticket
+  remitente: remitente;
+  constructor(private loginservice:LoginService, private servicio_mensajes:MensajesService) {
     this.tickets=null;
     this.categorias=null;
     this.items=null;
@@ -37,26 +42,25 @@ export class MesaAyudaService {
   }
   //Función que trae todos los tickets del usuario
   getTickets_Usuario(correo:string):Ticket[]|null{
-    let usuario=this.loginservice.getToken();
     console.log("El correo del usuario al cual se le buscara sus Ticket es:"+correo);
-    this. tickets=  [
-      new Ticket(10, 111, 3, 7, 'Certificado Estudiantil', 'Estimados responsables del departamento de Gestión Académica \nEspero que se encuentren bien.\n Me permito la presente para solicitar de manera formal la emisión de un certificado estudiantil. Mi nombre es Sara y soy estudiante del programa de  Sistematización en la facultad Tecnológica.El motivo de mi solicitud es obtener un certificado que respalde mi condición de estudiante en esta institución. El certificado es necesario para  presentar una postulación para una beca.\nAgradecería mucho su colaboración en este proceso y cualquier información adicional que requieran de mi parte. \nQuedo a disposición para proporcionar cualquier dato o documentación que sea necesaria para agilizar el proceso de emisión del certificado.\nQuedo atenta a su respuesta y agradezco de antemano su atención y apoyo en esta solicitud.\nSaludos cordiales\nSara Miler\nsmiller@udistital.edu.co\n745-XXX-XXX', null, new Date('2023-08-15'), null, 1,null),
+    this.tickets=  [
+      new Ticket(10, 111, 3, 7, 'Certificado Estudiantil', 'Estimados responsables del departamento de Gestión Académica \nEspero que se encuentren bien.\n Me permito la presente para solicitar de manera formal la emisión de un certificado estudiantil. Mi nombre es Sara y soy estudiante del programa de  Sistematización en la facultad Tecnológica.El motivo de mi solicitud es obtener un certificado que respalde mi condición de estudiante en esta institución. El certificado es necesario para  presentar una postulación para una beca.\nAgradecería mucho su colaboración en este proceso y cualquier información adicional que requieran de mi parte. \nQuedo a disposición para proporcionar cualquier dato o documentación que sea necesaria para agilizar el proceso de emisión del certificado.\nQuedo atenta a su respuesta y agradezco de antemano su atención y apoyo en esta solicitud.\nSaludos cordiales\nSara Miler\nsmiller@udistital.edu.co\n745-XXX-XXX', 1, new Date('2023-08-15'), new Date('2023-08-30'), 1,1),
       new Ticket(11, 111, 4, null,'Error en la página web', 'El sitio web muestra un error al cargar', 203, new Date('2023-08-05'), new Date('2023-08-12'), 2, 1),
-      new Ticket(12, 111, 1, 2, 'Solicitud de hardware', 'Necesito una nueva computadora', null, new Date('2023-08-03'), null, 1,null),
+      new Ticket(12, 111, 1, 2, 'Solicitud de hardware', 'Necesito una nueva computadora', 1, new Date('2023-08-03'), new Date('2023-08-18'), 1,1),
     ];
     return this.tickets;
   }
-  //Función que trae todos los tickets del usuario
+  //Función que trae todos los tickets en general, por lo cual traer inicialmente los pendientes
   getTickets():Ticket[]|null{
     let usuario=this.loginservice.getToken();
     this. tickets=  [
-      new Ticket(1, 101, 1, 1, 'Problema de red', 'No se puede acceder a la red', null, new Date('2023-08-01'), null, 1, 2),
-      new Ticket(2, 102, 2, 4, 'Error en la aplicación', 'La aplicación se bloquea al iniciar', 201, new Date('2023-08-02'), new Date('2023-08-10'), 2, null),
-      new Ticket(3, 103, 1, 2, 'Solicitud de hardware', 'Necesito una nueva computadora', 202, new Date('2023-08-03'), null, 1, 3),
-      new Ticket(4, 104, 3, 7, 'Problema de impresión', 'No se imprimen los documentos', null, new Date('2023-08-04'), null, 1, 2),
+      new Ticket(1, 101, 1, 1, 'Problema de red', 'No se puede acceder a la red', 1, new Date('2023-08-01'), new Date('2023-08-16'), 1, 2),
+      new Ticket(2, 102, 2, 4, 'Error en la aplicación', 'La aplicación se bloquea al iniciar', 201, new Date('2023-08-02'), new Date('2023-08-10'), 2, 1),
+      new Ticket(3, 103, 1, 2, 'Solicitud de hardware', 'Necesito una nueva computadora', 202, new Date('2023-08-03'), new Date('2023-08-18'), 1, 3),
+      new Ticket(4, 104, 3, 7, 'Problema de impresión', 'No se imprimen los documentos', 1, new Date('2023-08-04'), new Date('2023-08-19'), 1, 2),
       new Ticket(5, 105, 2, 5, 'Error en la página web', 'El sitio web muestra un error al cargar', 203, new Date('2023-08-05'), new Date('2023-08-12'), 3, 1),
-      new Ticket(6, 106, 1, 3, 'Solicitud de software', 'Necesito instalar un nuevo programa', 204, new Date('2023-08-06'), null, 1, 3),
-      new Ticket(7, 107, 4, 8, 'Problema de correo electrónico', 'No recibo correos electrónicos', null, new Date('2023-08-07'), null, 1, 2),
+      new Ticket(6, 106, 1, 3, 'Solicitud de software', 'Necesito instalar un nuevo programa', 204, new Date('2023-08-06'), new Date('2023-08-21'), 1, 3),
+      new Ticket(7, 107, 4, 8, 'Problema de correo electrónico', 'No recibo correos electrónicos', 1, new Date('2023-08-07'), new Date('2023-08-22'), 1, 2),
       new Ticket(8, 108, 2, 6, 'Error en el formulario', 'El formulario de contacto no funciona', 205, new Date('2023-08-08'), new Date('2023-08-15'), 2, 1),
     ];
     return this.tickets;
@@ -163,9 +167,10 @@ export class MesaAyudaService {
   }
   //Método que permite al usuario editar su información personal
   editar_InformacionPersonal(nombre:string,correo:string):boolean{
-    let error=false;
+    let error=true;
     console.log("Nombre del usuario:",nombre);
     console.log("Correo del usuario:",correo);
+    //Retorna TRUE si se pudo y FALSE si no.
     return error;
   }
   //Función usada para filtrar la lista de solicitudes
@@ -175,23 +180,20 @@ export class MesaAyudaService {
   //Método que retorna unos tickets según los filtros aplicados
   filtrar(filtros: any):Ticket[] | null{
     let filtrosSeleccionados = filtros;
-    if(filtrosSeleccionados.prioridad!="null" || filtrosSeleccionados.estado!="null"){
-      console.log("El ID prioridad es:"+filtrosSeleccionados.prioridad);
-      console.log("El ID estado es:"+filtrosSeleccionados.estado);
-      console.log("El correo del usuario a buscar es:"+filtrosSeleccionados.correo);
-      //Retornar los tickets este es un ejemplo
-      let tickets=  [
-        new Ticket(1, 101, 1, 1, 'Problema de red', 'No se puede acceder a la red', null, new Date('2023-08-01'), null, 1, 2),
-        new Ticket(2, 102, 2, 3, 'Error en la aplicación', 'La aplicación se bloquea al iniciar', 201, new Date('2023-08-02'), new Date('2023-08-10'), 2, 1),
-        new Ticket(3, 103, 1, 2, 'Solicitud de hardware', 'Necesito una nueva computadora', 202, new Date('2023-08-03'), null, 1, 3)];
-      return tickets;
-    }
-    else{
-      return null;
-    }
-    
+    //Si llega NULL en prioridad significa que traiga de todas las prioridades
+    //Si llega NULL en estado significa que traiga todos los estados
+    //Si llega cadena vacía (con longitud cero '0') significa que el usuario no escribio correo para filtrar
+    console.log("El ID prioridad es:"+filtrosSeleccionados.prioridad);
+    console.log("El ID estado es:"+filtrosSeleccionados.estado);
+    console.log("El correo del usuario a buscar es:"+filtrosSeleccionados.correo.trim().length);
+    //Retornar los tickets este es un ejemplo
+    let tickets=  [
+    new Ticket(1, 101, 1, 1, 'Problema de red', 'No se puede acceder a la red', 1, new Date('2023-08-01'), new Date('2023-08-16'), 1, 2),
+    new Ticket(2, 102, 2, 3, 'Error en la aplicación', 'La aplicación se bloquea al iniciar', 201, new Date('2023-08-02'), new Date('2023-08-10'), 2, 1),
+    new Ticket(3, 103, 1, 2, 'Solicitud de hardware', 'Necesito una nueva computadora', 202, new Date('2023-08-03'), new Date('2023-08-18'), 1, 3)];
+    return tickets;
   }
-  //Método para buscar un responsable según una descripción
+  //Método para buscar un responsable según su correo
   buscar_responsable(correo: string): responsable | null {
     // Datos estáticos
     const usuarios: responsable[] = [
@@ -205,37 +207,45 @@ export class MesaAyudaService {
   
     return usuarioEncontrado || null;
   }
-  //Métodos que cambian los ID por los nombre
-  getNombre_ID(id:number):string{
-    let nombre="Juanito";
+  //Método que cambia al responsable por el ingresado
+  cambiar_responsable(id_ticket:number,res:responsable):boolean{
+    console.log("El ID del Ticket es:"+id_ticket);
+    console.log("El nuevo responsable es: "+res.name+ " \ncon correo: "+res.correo+" \ny ID:"+res.id_usuario);
+    //Retorna TRUE si se pudo y FALSE si no.
+    return true;
+  }
+  //Métodos que cambian los ID por los nombres
+  getRemitente_ID(id:number):remitente{
+    let rem:remitente;
+    rem=new remitente(100,"Juanito Perez","Juanito@gmail.com");
     if(id==101){
-      nombre="Laura";
+      rem=new remitente(101,"Laura Acuña","Laura@gmail.com");
     }
     else if(id==102){
-      nombre="Jaime";
+      rem=new remitente(102,"Jaime Lopez","Jaime@gmail.com");
     }  
     else if(id==103){
-      nombre="Yulixa";
+      rem=new remitente(103,"Yulixa Jimenez","Yulixa@gmail.com");
     }  
     else if(id==104){
-      nombre="Estefanya";
+      rem=new remitente(104,"Estefanya Hayala","Estefanya@gmail.com");
     }  
     else if(id==105){
-      nombre="Clauida";
+      rem=new remitente(105,"Claudia Martinez","Claudia@gmail.com");
     }  
     else if(id==106){
-      nombre="Davic";
+      rem=new remitente(106,"DaviD Rodriguez","David@gmail.com");
     }  
     else if(id==107){
-      nombre="Jeisson";
+      rem=new remitente(107,"Jeisson Castro","Jeisson@gmail.com");
     }  
     else if(id==108){
-      nombre="Daniela";
+      rem=new remitente(108,"Daniela Torres","Daniela@gmail.com");
     } 
     else if(id==111){
-      nombre="Sara Miller";
+      rem=new remitente(111,"Sara Miller","Sara@gmail.com");
     } 
-    return nombre;
+    return rem;
   }
   getCategoria_ID(id:number):string{
     let categoria:string="";
@@ -278,10 +288,14 @@ export class MesaAyudaService {
     }
     return item;
   }
-  getResponsable_ID(id:number | null):responsable | null{
+  //Método que busca un responsable por su ID
+  getResponsable_ID(id:number):responsable | null{
     let responsableEncontrado: responsable | null = null; // Inicializa con valor nulo
 // Se busca al responsable por ID y se retorna en el objeto Responsable
-    if (id == 201) {
+    if(id==1){
+      responsableEncontrado = new responsable(1, "Coordinación Tecnología en Sistematización Datos e Ingeniería en Telemática", "tecsistematizaciondatos@udistrital.edu.co");
+    }
+    else if (id == 201) {
       responsableEncontrado = new responsable(201, "Wanumen", "wanumen@gmail.com");
     }else if(id==202){
       responsableEncontrado = new responsable(202, "Sonia", "sonia@gmail.com");
@@ -308,6 +322,7 @@ export class MesaAyudaService {
     }
     return estado;
   }
+  //Método que trae los estados registrados
   getEstados(): Estado[] {
     const estados: Estado[] = [
       new Estado(1, 'Pendiente'),
@@ -329,7 +344,7 @@ getPrioridad_ID(id: number | null): string | null {
     return prioridad;
 }
 getPrioridades():Prioridad[]{
-  const prioridad: Prioridad[]=[new Prioridad(null,"Sin asignar"),
+  const prioridad: Prioridad[]=[
   new Prioridad(1,"Baja"),
   new Prioridad(2,"Media"),
   new Prioridad(3,"Alta")
@@ -371,10 +386,13 @@ agregar_comentario(token:number,comentario:string):boolean{
   else{
     this.comentarios=[comentario_nuevo];
   }
-  return false;
+  //Retorna TRUE si se pudo y FALSE si no se pudo agregar el comentario
+  return true;
 }
 //Método para editar un comentario
 editar_comentario(id_comentario:number,comentario:string):boolean{
+  console.log("Id del comentario: " + id_comentario);
+  console.log("Comentario nuevo: " + comentario);
   if (this.comentarios) {
     const comentarioEncontrado = this.comentarios.find(c => c.id_comentario === id_comentario);
     if (comentarioEncontrado) {
@@ -390,7 +408,7 @@ editar_comentario(id_comentario:number,comentario:string):boolean{
   }
 } 
 eliminar_comentario(id_comentario: number): boolean {
-  // Supongamos que this.comentarios es tu arreglo de comentarios existente
+  console.log("El ID del comentario a eliminar es:",id_comentario);
   if (this.comentarios) {
     const index = this.comentarios.findIndex(c => c.id_comentario === id_comentario);
     if (index !== -1) {
@@ -406,12 +424,12 @@ crear_ticket(id_categoria:number,id_item:number | null,asunto:string,descripcion
   //1.El Token no se tiene, porque se esta creando hasta el momento el ticket
   //2.Id_usuario-Invocar el método de conseguir ID usuario según el correo
   //3. Id_categoria,id_item,asunto y descripcion si se tienen
-  //4. ID de responsable inicia siendo null
+  //4. ID de responsable inicia siendo la coordinación
   /*
-  5.Ya se tiene el método de conseguir la fecha actual
-  6.la fecha limite empiza siendo null
+  5.Ya se tiene el método de conseguir la fecha actual aunque es mejor con el Back xd
+  6.La fecha limite empieza siendo 15 días la fecha actual
   7.El ID del estado empieza siendo "1" (pendiente)
-  8.El ID de la prioridad inicia como null
+  8.El ID de la prioridad inicia como baja
   */
   //Variable estática
   console.log("ID de la categoría",id_categoria);
@@ -419,9 +437,11 @@ crear_ticket(id_categoria:number,id_item:number | null,asunto:string,descripcion
   console.log("Asunto",asunto);
   console.log("Descripcion",descripcion);
   console.log("Fecha:",this.getFechaActual());
-  return false;
+  //Retorna TRUE si se creo el Ticket, FALSE si hubo algún error en el servidor
+  return true;
 }
 //Retorna true si se pudo editar
+//Falta agregar la validación acerca de que tenga un comentario nuevo al momento de marcar como completado el Ticket
 editar_ticket(token:number,id_usuario:number,id_categoria:number,id_item:number | null,asunto:string,descripcion:string, id_responsable:number | null, fecha_solicitud: Date, id_estado:number, id_prioridad:number | null, comentarios: Comentario[] | null):boolean{
   console.log("token:", token);
   console.log("id_usuario:", id_usuario);

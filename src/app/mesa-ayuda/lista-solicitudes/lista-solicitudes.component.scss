@@ -1,7 +1,22 @@
+.boton-morado{
+    background-color: rgb(76, 6, 122);
+    color: white;
+}
+.boton-morado:hover{
+    box-shadow: 0 0 0 0.2rem rgba(198, 75, 255, 0.25);
+    background-color: rgb(101, 35, 145); 
+}
 .tabla-tickets{
     border-collapse: collapse;
     border: 1px solid #000000;
 
+}
+.centrar_verticalmente{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
 }
 .card-container {
     margin: 0 auto;

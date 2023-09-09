@@ -16,6 +16,7 @@ export class OpcionesMAComponent implements OnInit {
   ver_items:boolean;
   ocultar=false;
   tipo_usuario:string;
+  permiso_usuario:string;
   constructor(private router: Router, private loginService:LoginService) {}
 
   ngOnInit(): void {
@@ -26,6 +27,7 @@ export class OpcionesMAComponent implements OnInit {
     this.ver_categorias=false;
     this.ver_items=false;
     this. tipo_usuario=this.loginService.getTipoUsuario();
+    this.permiso_usuario=this.loginService.getPermisoUsuario();
   }
 
   crearTicket() {
