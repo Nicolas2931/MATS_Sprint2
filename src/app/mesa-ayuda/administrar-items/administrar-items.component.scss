@@ -1,3 +1,4 @@
+
 .modal {
     position: fixed;
     top: 0;
@@ -10,16 +11,16 @@
     //align-items: center;
 }
 .card-medium {
-    width: 700px; /* Ajusta el ancho según tus necesidades */
-    margin: 0 auto; /* Centrar horizontalmente */
-    padding: 20px; /* Añade un espacio interno para mejorar el aspecto */
+    width: 700px; 
+    margin: 0 auto; 
+    padding: 20px; 
     overflow-y:auto;
     height: 700px;
     max-height: 90%;
     margin-top: 3%;
 }
 .card-little{
-    width: 700px; /* Ajusta el ancho según tus necesidades */
+    width: 700px; 
     margin: 0 auto; /* Centrar horizontalmente */
     padding: 20px; /* Añade un espacio interno para mejorar el aspecto */
     overflow-y:auto;
@@ -81,4 +82,11 @@ td{
 .form-control:focus{
     box-shadow: 0 0 0 0.2rem rgba(198, 75, 255, 0.25);
     border-color: rgb(101, 35, 145); 
+}
+.obligatorio{
+    color:rgb(172, 14, 14);
+}
+.borde-rojo{
+    outline-color:rgb(172, 14, 14); 
+    border-color: rgb(172, 14, 14);
 }

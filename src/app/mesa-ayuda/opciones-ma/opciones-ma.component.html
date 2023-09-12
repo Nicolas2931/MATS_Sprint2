@@ -53,7 +53,7 @@
                 </button>
             </div>
             <!--Esta opción solo se muestra si se tiene permisos de mesa de ayuda o se es profesor-->
-            <div *ngIf="permiso_usuario=='3' || tipo_usuario=='profesor'" class="col mb-3">
+            <div *ngIf="permiso_usuario=='3' || tipo_usuario=='profesor' || tipo_usuario=='administrador'" class="col mb-3">
                 <button type="button" class="btn opcion" (click)="URL_solicitudesAsignadas()">
                     <img src="../../../assets/images/tickets_asignados.png" alt="opción de ver Tickets"  class="img-fluid" style="max-width: 100px;">
                     <p class="fs-5">Lista de solicitudes asignadas</p>

@@ -81,14 +81,16 @@ export class MesaAyudaService {
     this.categorias=[new Categoria(1,"Solicitud"), new Categoria(2,"Quejas"), new Categoria(3,"Documentos"),new Categoria(4,"Está no tiene items :v")];
     return this.categorias;
   }
-  //Método para agregar una categoría
+  //---------------------------CRUD Categorías ------------------------------
+  //Método para agregar una categoría, retorna TRUE si se pudo, FALSE si no
   agregarCategoria(nombre:string):boolean{
-    console.log("La nueva categoria es"+nombre);
+    console.log("La nueva categoria es:"+nombre);
     return true;
   }
-  //Método para editar las categorias
-  editarCategoria(nombre:string):boolean {
-    console.log("Nombre de la categoría:"+nombre);
+  //Método para editar las categorias, retorna TRUE si se pudo, FALSE si no
+  editarCategoria(id_categoria:number,nombre:string):boolean {
+    console.log("El ID de la categoría a editar es:"+id_categoria);
+    console.log("Nombre de la categoría editado:"+nombre);
     return true;
   }
   //Método para eliminar una categoría de las solicitudes
@@ -96,6 +98,7 @@ export class MesaAyudaService {
     console.log("El ID de la categoría a eliminar es:"+id_categoria);
     return true;
   }  
+  //----------------------------------------------------------------
   //Método que retorna todos los items registrados
   getItems(): Item[] | null{
     this.items = [
@@ -111,6 +114,7 @@ export class MesaAyudaService {
     ];
     return this.items;
   }
+  //-----------------------------------CRUD de los ítems -----------------------
   //Método para agregar un item
   agregarItem(nombre:string, id_categoria:number):boolean {
     console.log("Nombre del ítem:"+nombre);
@@ -118,9 +122,10 @@ export class MesaAyudaService {
     return true;
   }
   //Método para editar los ítems
-  editarItem(nombre:string,id_categoria:number):boolean {
-    console.log("Nombre del ítem:"+nombre);
-    console.log("ID de la categoría:"+id_categoria);
+  editarItem(id_item:number,nombre:string,id_categoria:number):boolean {
+    console.log("El ID del ítem a editar es:"+id_item);
+    console.log("Nombre modificado del ítem:"+nombre);
+    console.log("ID de la categoría modificada:"+id_categoria);
     return true;
   }
   //Método para eliminar ítems de una categoria
@@ -158,7 +163,8 @@ export class MesaAyudaService {
       return null;
     }
     
-  }  
+  } 
+  //--------------------------------------------------------------------------------
   //Método que trae el nombre del usuario para la información personal
   getNombre_usuario():string{
     //Buscar el nombre del usuario según el método
@@ -477,7 +483,20 @@ formatoInputDateparaSQL(inputDate: string): string {
   return `${year}-${month}-${day}T00:00:00Z`;
 }
 //-----------------------------CRUD RECLAMOS
+//Método que trae todas las quejas, inicialmente trae las quejas que tengan un false (SIN VER) en su estado
   getQuejas(): queja[] | null{
+    this.quejas= [
+      new queja(1,"Queja de ejemplo 1", "Descripción de la queja 1", false),
+      new queja(3,"Queja de ejemplo 3", "Descripción de la queja 3", false),
+      new queja(5,"Queja de ejemplo 5", "Descripción de la queja 5", false)
+    ];
+    return this.quejas;
+  }
+  //Método que filtra los reclamos según el estado
+  //Si llega NULL por parametro significa que el usuario desea TODOS los reclamos,
+  //TRUE para los reclamos vistos y FALSE para los no visots
+  filtrar_Reclamos(estado:boolean | null): queja[] | null{
+    console.log("El estado a filtrar es:"+estado)
     this.quejas= [
       new queja(1,"Queja de ejemplo 1", "Descripción de la queja 1", false),
       new queja(2,"Queja de ejemplo 2", "Descripción de la queja 2", true),
@@ -487,10 +506,15 @@ formatoInputDateparaSQL(inputDate: string): string {
     ];
     return this.quejas;
   }
+
+  //Método que recibe el asunto y descripción de una queja para registrarla inicialmente con estado "NO VISTO",
   reclamar(asunto:string, descripcion:string):boolean{
+    console.log("El asunto de la nueva queja es:"+asunto);
+    console.log("Con descripción:"+descripcion);
     let id_quejaAleatorio = 10 + ( Math.random() * (20 - 10 + 1));
     let reclamo= new queja(id_quejaAleatorio,asunto,descripcion,false);
     this.quejas?.push(reclamo);
+    //Retorna TRUE si se registro de forma correcto, FALSE sí no se pudo
     return true;
   }
   getReclamo(id_reclamo:number): queja | null{
@@ -502,7 +526,12 @@ formatoInputDateparaSQL(inputDate: string): string {
       return null;
     } 
   }
+  //Función que cambia el estado de un reclamo
+  //Retorna TRUE si se pudo, FALSE sino
   cambiar_estadoReclamo(id_reclamo: number, estado: boolean): boolean {
+    console.log("El  ID del reclamo es:"+id_reclamo);
+    console.log("El nuevo estado es:"+estado);
+    //Basicamente lo de abajo se puede borrar porque solo funciona para datos estáticos
     if (this.quejas != null) {
       const quejaEncontrada = this.quejas.find(q => q.id_queja === id_reclamo);
       if (quejaEncontrada) {
@@ -513,13 +542,57 @@ formatoInputDateparaSQL(inputDate: string): string {
     }
     return false; // Si el arreglo de quejas es null
   }
+  //Método que elimina una queja según su ID
+  //Retorna TRUE si se pudo eliminar, FALSE si no.
+  eliminar_reclamo(id_reclamo:number):boolean{
+    console.log("El ID del reclamo a eliminar es:"+id_reclamo);
+    return true;
+  }
 
+  //Método que busca un usuario según su correo para administrarlo
   buscar_usuario(correo:string): usuario  | null{
-    if(correo="ejemplo@udistrital.edu.co"){
+    if(correo=="ejemplo@udistrital.edu.co"){
       let usu= new usuario(11,"Pepito perez","ejemplo@udistrital.edu.co","12345",3);
       return usu;
     }
     return null;
   }
+  //Validar permisos, retorna TRUE si todavía los tiene, false si no
+  //Pasar a Login service el valor nuevo de la Cookie
+  validar_permisosMA(correo:string):boolean{
+    console.log("El correo del usuario al cual se buscaran sus correos son:"+correo);
+    return false;
+  }
+  //----------------------------------CRUD de usuarios --------------------------
+  //Método que registra a un usuario, si tiene ID 3 es Estudiante, 2 profesor, NULL administrador
+  registrar_usuario(nombre:string,correo:string,password:string,id_tipo:number | null):boolean{
+    console.log("INFORMACIÓN DEL USUARIO");
+    console.log("Nombre:"+nombre);
+    console.log("Correo:"+correo);
+    console.log("Password:"+password);
+    console.log("ID tipo de usuario:"+id_tipo);
+    return true;
+  }
+  //Método que modifica a un usuario con la información ingresada
+  //Si llega NULL la contraseña significa que el usuario no la quiso cambiar
+  editar_usuario(id_usuario:number,nombre:string,correo:string,password:string | null,id_tipo:number | null, permiso_noticias:boolean, permiso_preguntas:boolean, permiso_MA:boolean):boolean{
+    console.log("INFORMACIÓN MODIFICADA DEL USUARIO");
+    console.log("ID del usuario:"+id_usuario);
+    console.log("Nombre nuevo:"+nombre);
+    console.log("Correo nuevo:"+correo);
+    console.log("Contraseña (opcional) nueva:"+password);
+    console.log("ID tipo de usuario:"+id_tipo);
+    //Se deben cambiar los permisos del usuario
+    console.log("Permiso de noticias:"+permiso_noticias);
+    console.log("Permiso de preguntas:"+permiso_preguntas);
+    console.log("Permiso de mesa de ayuda:"+permiso_MA);
+    return true;
+  }
+  //Método que limina a un usuario
+  eliminar_usuario(id_usuario:number):boolean{
+    console.log("ID del usuario a eliminar:"+id_usuario);
+    return true;
+  }
   
+  //------------------------------------------------------------------------------
 }

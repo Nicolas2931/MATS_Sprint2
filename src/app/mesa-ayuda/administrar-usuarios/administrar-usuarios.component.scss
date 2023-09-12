@@ -1,3 +1,9 @@
+#confirmar{
+    background-color: rgb(182, 9, 9);
+    color:white;
+    border-radius: 8px;
+    padding:5px;
+}
 .letra-morada{
     color:rgb(76, 6, 122); 
 }
@@ -38,21 +44,12 @@
     justify-content: center;
     //align-items: center;
 }
-.card-medium {
-    width: 700px; /* Ajusta el ancho según tus necesidades */
-    margin: 0 auto; /* Centrar horizontalmente */
-    padding: 20px; /* Añade un espacio interno para mejorar el aspecto */
-    overflow-y:auto;
-    height: 470px;
-    max-height: 90%;
-    margin-top: 3%;
-}
 .card-larga {
     width: 700px; /* Ajusta el ancho según tus necesidades */
     margin: 0 auto; /* Centrar horizontalmente */
     padding: 20px; /* Añade un espacio interno para mejorar el aspecto */
     overflow-y:auto;
-    height: 530px;
+    height: 700px;
     max-height: 90%;
     margin-top: 3%;
 }
@@ -81,6 +78,44 @@
     background-color: rgb(101, 35, 145); 
 }
 .imagen-mediana {
-    max-width: 100px; /* Ajusta el valor según el tamaño deseado */
+    max-width: 150px; /* Ajusta el valor según el tamaño deseado */
     height: auto;
+}
+.obligatorio{
+    color:rgb(172, 14, 14);
+}
+.borde-rojo{
+    outline-color:rgb(172, 14, 14); 
+    border-color: rgb(172, 14, 14);
+}
+.bloqueado:disabled{
+    background-color: rgb(221, 219, 219);
+}
+.form-check-input{
+    outline-color:rgb(121, 30, 182);
+    border-color:rgb(121, 30, 182);
+}
+.form-check-input:focus{
+    box-shadow: 0 0 0 0.2rem rgba(198, 75, 255, 0.25);
+}
+.form-check-input:checked {
+    background-color: rgb(121, 30, 182);
+    border-color:rgb(121, 30, 182);
+}
+  
+.form-check-input:checked + .form-check-label {
+    color:rgb(121, 30, 182);
+    font-weight: bold;
+}
+ul {
+    list-style-type: none;
+    li::before {
+      content: "\2023";
+      color:rgb(121, 30, 182);
+      display: inline-block;
+      width: 1em;
+      font-size: 1.5em; 
+      margin-right: 0.1em;
+    }
   }
+

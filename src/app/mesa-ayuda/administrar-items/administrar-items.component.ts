@@ -3,6 +3,7 @@ import { MesaAyudaService } from '../mesa-ayuda.service';
 import { MensajesService } from 'src/app/mensajes.service';
 import { Item } from '../modelo-item';
 import { Categoria } from '../modelo-categoriaMA';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-administrar-items',
@@ -10,37 +11,46 @@ import { Categoria } from '../modelo-categoriaMA';
   styleUrls: ['./administrar-items.component.scss']
 })
 export class AdministrarItemsComponent implements OnChanges {
-  
+  //Variables que abren o cierran la ventana para ver la lista de ítems.
   @Input() ver_items:boolean;
   @Output() cerrar_items= new EventEmitter<void>();
-  //Variable que guarda las categorías de las solicitudes
+  //Variable que guarda los ítems de las solicitudes
   items:Item[] | null;
+  //Variable que abre o cierra la ventana para editar un ítem
   editar_item:boolean;
-  //Categoria para editar
+  //ítem para editar
   item:Item | null;
   txt_item:string;
+  //ID de la categoría a la que pertenece el ítem
   id_categoria:number | null;
   //Variable que guarda las categorías de las solicitudes
   categorias:Categoria[] | null;
+  //Ventana que abre o cierra la ventana para agregar un ítem
   mostrar_agregar: boolean;
-  constructor(private servicio_MA:MesaAyudaService,private servicio_mensajes:MensajesService){
+  //Guarda TRUE o FALSE en caso de algún error al editar o agregar un ítem
+  error_item:boolean;
+  //Variable que almacena el número de ítems
+  cantidad_items:number;
+  constructor(private router: Router, private servicio_MA:MesaAyudaService,private servicio_mensajes:MensajesService){
     this.items=null;
     this.editar_item=false;
     this.item=null;
     this.txt_item="";
     this.categorias=null;
     this.mostrar_agregar=false;
+    this.error_item=false;
+    this.cantidad_items=0;
   }
+  //Si hay cambios en los arreglos de ítems o categorías los recarga
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['items'] && changes['categorias'] && changes['ver_items']) {
       this.items=this.servicio_MA.getItems();
       this.categorias=this.servicio_MA.getCategorias();
     }  
   }
+  //Métodos que inicilizan las variables.
   ngOnInit(): void {
     this.limpiar_variables();
-    this.items=this.servicio_MA.getItems();
-    this.categorias=this.servicio_MA.getCategorias();
   }
   limpiar_variables():void{
     this.items=null;
@@ -49,14 +59,23 @@ export class AdministrarItemsComponent implements OnChanges {
     this.txt_item="";
     this.categorias=null;
     this.mostrar_agregar=false;
+    this.error_item=false;
     this.items=this.servicio_MA.getItems();
     this.categorias=this.servicio_MA.getCategorias();
+    if(this.items!=null){
+      this.cantidad_items=this.items.length;
+    }
+    else{
+      this.cantidad_items=0;
+    }
   }
+  //Cierra la ventana con la lista de ítems
   cerrar(): void {
     this.ver_items=false;
     this.cerrar_items.emit();
     this.limpiar_variables();
   }
+  //Abre la ventana para editar un ítem
   mostrar_editar(item:Item):void{
     if(item!=null){
       this.item=item;
@@ -69,22 +88,27 @@ export class AdministrarItemsComponent implements OnChanges {
     }
     
   }
+  //Método para editar un ítem
   async editar(){
     if(this.txt_item.trim().length > 0 && this.id_categoria!=null){
+      this.error_item=false;
       if(await this.servicio_mensajes.msj_confirmar("¿Guardar cambios?", "Confirmar", "Cancelar")){
-        if(this.servicio_MA.editarItem(this.txt_item, this.id_categoria)){
+        if(this.item?.id_item!=undefined && this.servicio_MA.editarItem(this.item?.id_item,this.txt_item, this.id_categoria)){
           this.cerrar_editar();
           this.servicio_mensajes.msj_exito("Cambios guardados");
         }
         else{
-          this.servicio_mensajes.msj_errorPersonalizado("No se han guardado los cambios");
+          this.cerrar_editar();
+          this.servicio_mensajes.msj_errorPersonalizado("Ha ocurrido un error al guardar los cambios. Por favor, inténtelo más tarde.");
         }
       }
     }  
     else{
+      this.error_item=true;
       this.servicio_mensajes.msj_datosErroneos();
     }
   }
+  //Método que elimina un ítem
   async eliminar(item:Item){
     this.item=item;
     if(this.item){
@@ -98,10 +122,11 @@ export class AdministrarItemsComponent implements OnChanges {
       }
     }
     else{
-      this.servicio_mensajes.msj_errorPersonalizado("Ha ocurrido un error al buscar el ítem.")
+      this.servicio_mensajes.msj_errorPersonalizado("Ha ocurrido un error al buscar el registro del ítem.")
     }
     
   }
+  //Método que cambia el ID de la categoría por su nombre
   txt_categoria(id_categoria: number):string {
     return this.servicio_MA.getCategoria_ID(id_categoria);
   }
@@ -115,27 +140,33 @@ export class AdministrarItemsComponent implements OnChanges {
     }
   }
   cerrar_editar():void{
+    this.limpiar_variables();
     this.editar_item=false;
   }  
   mostrarAgregar():void{
+    this.id_categoria=null;
     this.mostrar_agregar=true;
   }
   cerrarAgregar():void{
+    this.limpiar_variables();
     this.mostrar_agregar=false;
   }  
   async agregar(nombre:string){
-    if(nombre.trim().length>0 && this.id_categoria!=null){
+    if(nombre.trim().length>0 && this.id_categoria!==null){
+      this.error_item=false;
       if(await this.servicio_mensajes.msj_confirmar("¿Está seguro de añadir el ítem?","Confirmar","Cancelar")){
         if(this.servicio_MA.agregarItem(nombre, this.id_categoria)){
           this.cerrarAgregar();
-          this.servicio_mensajes.msj_exito("Se ha añadido la categoría");
+          this.servicio_mensajes.msj_exito("Se ha añadido el ítem");
         }
         else{
-          this.servicio_mensajes.msj_errorPersonalizado("Ha ocurrido un error al agregar la categoría.")
+          this.cerrarAgregar();
+          this.servicio_mensajes.msj_errorPersonalizado("Ha ocurrido un error al agregar la ítem. Por favor, inténtelo más tarde.");
         }
       }
     }
     else{
+      this.error_item=true;
       this.servicio_mensajes.msj_datosErroneos();
     }
   }

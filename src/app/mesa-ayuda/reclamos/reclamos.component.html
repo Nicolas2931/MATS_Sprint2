@@ -3,27 +3,27 @@
     <div class="card card-medium">
       <div class="row mb-3">
         <div class="row">
-            <div class="col-md-12 mb-2">
+            <div class="col-md-12 mb-1">
                 <h5 class="titulo fs-3">RECLAMO</h5>
                 <hr/>
             </div>
-            <div class="col-md-12 mb-2">
+            <div class="col-md-12">
                 <p id="reclamo">Todos los reclamos son anónimos.</p>
             </div>
         </div>
         <div class="row mb-3">
             <div class="col-md-12">
-              <h3 class="letra-morada" style="text-align:center;">Asunto:<span *ngIf="error_crearReclamo" class="obligatorio">* Obligatorio </span></h3><br/>
+              <h3 class="letra-morada" style="text-align:center;">Asunto:</h3><span *ngIf="error_crearReclamo" class="obligatorio">* Obligatorio </span><br/>
             </div>
-            <div class="col-md-12">
+            <div class="col-md-12 mt-2">
               <textarea [ngClass]="{'borde-rojo':error_crearReclamo}"  type="text" class="form-control" [(ngModel)]="asunto" placeholder="Asunto del Reclamo..."></textarea>
             </div>
           </div>
         <div class="row mb-3">
             <div class="col-md-12">
-              <h3 class="letra-morada" style="text-align:center;">Descripción:<span *ngIf="error_crearReclamo" class="obligatorio">* Obligatorio </span></h3><br/>
+              <h3 class="letra-morada" style="text-align:center;">Descripción:</h3><span *ngIf="error_crearReclamo" class="obligatorio">* Obligatorio </span><br/>
             </div>
-            <div class="col-md-12">
+            <div class="col-md-12 mt-2">
                 <textarea [ngClass]="{'borde-rojo':error_crearReclamo}"  type="text" class="form-control" [(ngModel)]="descripcion" placeholder="Descripción..."></textarea>
             </div>
         </div>
@@ -59,13 +59,15 @@
           </div>
       </div>
       <div class="row mb-5">
-        <!--FALTA-->
-        <div class="col">
-          <select class="form-select borde-morado">
-            <option [value]="null" [selected]="true">Todos los reclamos</option>
-            <option [value]="null">Vistos</option>
-            <option [value]="null">Sin ver</option>
-          </select>
+        <div class="col-md-8">
+          <select class="form-select borde-morado" [(ngModel)]="estado_seleccionado">
+            <option [value]="null">Todos los reclamos</option>
+            <option [value]="true">Vistos</option>
+            <option [value]="false">Sin ver</option>
+          </select>          
+        </div>
+        <div class="col-md-4">
+          <button  class="btn boton_morado" style="width:100%" (click)="filtrar()">FILTRAR</button>
         </div>
       </div>
       <div class="row justify-content-center">
@@ -84,7 +86,7 @@
                   <td>{{ queja.asunto}}</td>
                   <td>{{ queja.visto==true ? "Visto":"Sin ver"}}</td>
                   <td><button class="btn borde-morado" style="width: 100%;" (click)="ver_queja(queja.id_queja)">Ver detalles</button>
-                    <button class="btn borde-morado mt-2" style="width: 100%;" (click)="ver_queja(queja.id_queja)">Eliminar</button></td>
+                    <button class="btn borde-morado mt-2" style="width: 100%;" (click)="eliminar_queja(queja.id_queja)">Eliminar</button></td>
                 </tr>
             </tbody>         
           </table>
@@ -94,17 +96,17 @@
     <ng-template #sin_quejas>
       <div class="row">
         <div class="col d-flex flex-column align-items-center justify-content-center text-center">
-          <h5 class="titulo mt-2">Actualmente no hay quejas registradas</h5>
+          <h5 class="fs-3 mt-2 mb-2">Actualmente no hay quejas registradas</h5>
           <img src="../../../assets/images/relajarse.png" alt="Advertencia" class="img-fluid" style="max-width: 150px;">
         </div>
         <div class="col-md-12 mt-4">
-          <button class="btn btn-danger" style="width: 100%;" (click)="cerrar_listaQuejas()">CERRAR</button>
+          <button class="btn boton_morado" style="width: 100%;" (click)="cerrar_listaQuejas()">CERRAR</button>
         </div>
       </div>
     </ng-template>
   </div>
 </div>    
-<!--Ventana con los detalles un reclamo-->
+<!--Ventana con los detalles de un reclamo-->
 <div *ngIf="detalles_reclamo" class="modal">
   <div class="card card-medium">
     <div class="row mb-3">  
@@ -114,26 +116,26 @@
       </div>
     </div>
     <div class="row mb-3">
-      <div class="col-md-6">
-        <label class="letra-morada" style=" font-weight:bold;">Asunto:</label>
+      <div class="col-md-4">
+        <h5 class="letra-morada">Asunto:</h5>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-8">
         <textarea disabled="true">{{reclamo?.asunto}}</textarea>
       </div>
     </div>
     <div class="row mb-3">
-      <div class="col-md-6">
-        <label class="letra-morada" style=" font-weight:bold;">Descripción:</label>
+      <div class="col-md-4">
+        <h5 class="letra-morada">Descripción:</h5>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-8">
         <textarea disabled="true">{{reclamo?.descripcion}}</textarea>
       </div>
     </div>
     <div class="row mb-5">
-      <div class="col-md-6">
-        <label class="letra-morada fs-4" style=" font-weight:bold;">Estado:</label>
+      <div class="col-md-4">
+        <h5 class="letra-morada">Estado:</h5>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-8">
         <select class="form-select borde-morado" [(ngModel)]="estado_reclamo" (change)="marcar_visto($event)">
           <option [value]="true" [selected]="estado_reclamo === true">Visto</option>
           <option [value]="false" [selected]="estado_reclamo === false">Sin ver</option>
@@ -143,10 +145,10 @@
 
     <div class="row">
       <div class="col-md-12 mb-2">
-        <button class="btn boton_morado" style="width: 100%;" (click)="guardar()">GUARDAR CAMBIOS</button>
+        <button class="btn borde-morado" style="width: 100%;" (click)="guardar()">Guardar</button>
       </div>
       <div class="col-md-12 mb-2">
-        <button class="btn btn-danger" style="width: 100%;" (click)="cerrar_verQueja()">CERRAR</button>
+        <button class="btn boton_morado" style="width: 100%;" (click)="cerrar_verQueja()">Cerrar</button>
       </div>
     </div>
   </div>

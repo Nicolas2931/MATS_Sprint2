@@ -10,6 +10,7 @@ import { Prioridad } from '../modelo-prioridad';
 import { Comentario } from '../modelo-comentario';
 import { remitente } from '../modelo-remitente';
 import { LoginService } from 'src/app/login.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-crud-tickets',
@@ -75,7 +76,7 @@ export class CRUDTicketsComponent implements OnInit{
   comentariosPorTicket: Comentario[] | null;
   //Variable que guarda los permisos del usuario que inicio sesión
   permiso_MA:boolean;
-  constructor(private servicio_MesaAyuda: MesaAyudaService,private servicio_mensajes:MensajesService,private loginServie:LoginService){
+  constructor(private router:Router,private servicio_MesaAyuda: MesaAyudaService,private servicio_mensajes:MensajesService,private loginServie:LoginService){
     this.ticket = null;
     this.categorias=null;
     this.mostrar_items=false;
@@ -107,7 +108,7 @@ export class CRUDTicketsComponent implements OnInit{
   }
   ngOnInit(): void {
     //Inicialización de las variables como vacías
-    if(this.loginServie.getPermisoUsuario()=='3'){
+    if(this.loginServie.getPermisoUsuario()=='3' || this.loginServie.getTipoUsuario()=="profesor"){
       this.permiso_MA=true;
     }
     this.ticket = null;
@@ -228,7 +229,7 @@ export class CRUDTicketsComponent implements OnInit{
         }
         else{
           this.cerrar_crearTicket();
-          this.servicio_mensajes.msj_errorPersonalizado("Ha ocurrido un error al registrar el Ticket, por favor inténtelo más tarde.")
+          this.servicio_mensajes.msj_errorPersonalizado("Ha ocurrido un error al registrar el Ticket. Por favor, inténtelo más tarde.");
         }
       }
     }
@@ -284,8 +285,13 @@ export class CRUDTicketsComponent implements OnInit{
                   this.cerrar_editarTicket();
                   this.setErrorEditar(false);
                   this.ngOnInit();
-                  this.servicio_mensajes.msj_exito("Se han guardado los cambios!");
-
+                  if(this.servicio_MesaAyuda.validar_permisosMA(this.loginServie.getToken())){
+                    this.servicio_mensajes.msj_exito("Se han guardado los cambios!");
+                  }
+                  else{
+                    this.servicio_mensajes.msj_exito("Felicitaciones, ha terminado con sus Tickets asignados!");
+                    this.router.navigate(['/Mesa_Ayuda']);
+                  }
                 }
                 else{
                   this.cerrar_editarTicket();

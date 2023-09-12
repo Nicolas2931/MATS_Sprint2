@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginService } from 'src/app/login.service';
+import { MesaAyudaService } from '../mesa-ayuda.service';
+import { MensajesService } from 'src/app/mensajes.service';
 
 @Component({
   selector: 'app-opciones-ma',
@@ -17,7 +19,7 @@ export class OpcionesMAComponent implements OnInit {
   ocultar=false;
   tipo_usuario:string;
   permiso_usuario:string;
-  constructor(private router: Router, private loginService:LoginService) {}
+  constructor(private router: Router, private loginService:LoginService, private servicio_MA:MesaAyudaService,private servicio_mensajes:MensajesService) {}
 
   ngOnInit(): void {
     this.crear_ticket = false;
@@ -39,13 +41,11 @@ export class OpcionesMAComponent implements OnInit {
   }
 
   realizar_reclamo() {
-    console.log("Entro :v");
     this.crear_reclamo = true;
   }
 
   CierreRealizarReclamo() {
     this.crear_reclamo = false;
-    console.log("Se cierra el reclamo: " + this.crear_reclamo);
   }
   mostrar_listaReclamos(){
     this.lista_reclamos=true;
@@ -77,7 +77,13 @@ export class OpcionesMAComponent implements OnInit {
     this.ver_categorias=false;
   }
   mostrar_AdmItems(){
-    this.ver_items=true;
+    if(this.servicio_MA.getCategorias()!=null){
+      this.ver_items=true;
+    }
+    else{
+      this.servicio_mensajes.msj_informar("Debe existir al menos una categoría para administrar los ítems.");
+    }
+    
   }
   cerrar_AdmItems(){
     this.ver_items=false;

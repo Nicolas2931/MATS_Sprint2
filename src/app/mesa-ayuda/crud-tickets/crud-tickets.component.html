@@ -258,7 +258,7 @@
         <h5 class="letra-morada">Categoría: <span *ngIf="getErrorEditar()==true"  [ngClass]="{'obligatorio': getErrorEditar()}">* Obligatorio</span></h5>
       </div>
       <div class="col-md-8">
-        <select [disabled]="permiso_MA" [ngClass]="{'borde-rojo': getErrorEditar()}" class="form-select borde-morado" (change)="cargar_categoria($event)">
+        <select [disabled]="permiso_MA"  class="form-select borde-morado" (change)="cargar_categoria($event)" [ngClass]="{'bloquear': permiso_MA}" [ngClass]="{'borde-rojo': getErrorEditar()}">
           <option selected value="null">Lista de categorías</option>
           <ng-container *ngFor="let cat of getCategorias()">
             <option [value]="cat.id_categoria" [selected]="cat.id_categoria==id_categoriaSeleccionada">{{cat.nombre}}</option>
@@ -273,7 +273,7 @@
           <h5 class="letra-morada">Item:  <span *ngIf="getErrorEditar()==true"  [ngClass]="{'obligatorio': getErrorEditar()}">* Obligatorio</span></h5>
         </div>
         <div class="col-md-8">
-          <select [disabled]="permiso_MA" [ngClass]="{'borde-rojo':getErrorEditar()}" class="form-select borde-morado" (change)="cargar_item($event)">
+          <select [disabled]="permiso_MA" [ngClass]="{'borde-rojo':getErrorEditar()}" class="form-select borde-morado" (change)="cargar_item($event)"  [ngClass]="{'bloquear': permiso_MA}">
             <option selected value="null">Item</option>
             <option *ngFor="let item of getItemsPorCategoria()" [value]="item.id_item" [selected]="item.id_item==id_itemseleccionado">{{item.nombre}}</option>
           </select>
@@ -306,10 +306,10 @@
     </div>
     <div class="row mb-3">
       <div class="col-md-4">
-        <h5 class="letra-morada">Prioridad: </h5>
+        <h5 class="letra-morada">Prioridad:<span *ngIf="getErrorEditar()==true"  [ngClass]="{'obligatorio': getErrorEditar()}">* Obligatorio</span> </h5>
       </div>
       <div class="col-md-8">
-        <select [disabled]="permiso_MA" [ngClass]="{'borde-rojo': getErrorEditar()}" class="form-select borde-morado" (change)="cargar_prioridad($event)">
+        <select [disabled]="permiso_MA" [ngClass]="{'borde-rojo': getErrorEditar()}" class="form-select borde-morado" (change)="cargar_prioridad($event)" [ngClass]="{'bloquear': permiso_MA}">
           <ng-container *ngFor="let prioridad of getPrioridades()">
             <option [value]="prioridad.id_prioridad" [selected]="prioridad.id_prioridad==id_prioridadseleccionada">{{prioridad.nombre}}</option>
           </ng-container>
