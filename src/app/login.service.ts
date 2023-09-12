@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { ServicioBackService } from './servicio-back.service';
 import Swal from 'sweetalert2';
+import { MensajesService } from './mensajes.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,15 +16,19 @@ export class LoginService {
   private tipo_usuario:any;
   //Permisos de el usuario: Variable usada para saber si el usuario podrá
   //subir,editar y eliminar noticias.
-  private permiso_usuario: number;
+  private permiso_noticias: boolean;
+  private permiso_preguntas: boolean;
+  private permiso_mesa_ayuda: boolean;
 
   private data: any;
   private id: number;
 
-  constructor(private route:Router, private cookies:CookieService, private cookie_usuario:CookieService, private cookie_permiso:CookieService, private servicioBackService: ServicioBackService, private cookie_id:CookieService) {
+  constructor(private route:Router, private cookies:CookieService, private cookie_usuario:CookieService, private cookie_permiso_noticias:CookieService, private cookie_permiso_preguntas:CookieService, private cookie_permiso_mesa_ayuda:CookieService, private servicioBackService: ServicioBackService, private cookie_id:CookieService, private servicioMensajes: MensajesService) {
     this.token="";
     this.tipo_usuario={};
-    this.permiso_usuario=0;
+    this.permiso_noticias = false;
+    this.permiso_preguntas = false;
+    this.permiso_mesa_ayuda = false;
   }
   //Variable que tiene la URL del Backend
   //***private apiUrl = environment.apiUrl;
@@ -34,11 +39,7 @@ export class LoginService {
         this.data = data;
         resolve();
       }, error => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Datos erróneos',
-        });
+        this.servicioMensajes.msj_datosErroneos();
         console.log(error.status);
       });
     }).then(() => {
@@ -49,7 +50,9 @@ export class LoginService {
         console.log(this.getIdUsuario());
         this.token = this.data.token;
         this.tipo_usuario = this.data.tipo_usuario;
-        this.permiso_usuario = this.data.permiso;
+        this.permiso_noticias = this.data.permiso_noticias;
+        this.permiso_preguntas = this.data.permiso_preguntas;
+        this.permiso_mesa_ayuda = this.data.permiso_mesa_ayuda;
       }else{
         console.log('pailas mi loco');
         this.token = '';
@@ -57,7 +60,9 @@ export class LoginService {
 
       this.cookies.set("token", this.token);
       this.cookie_usuario.set("tipo_usuario",this.tipo_usuario.perfil);
-      this.cookie_permiso.set("permiso_usuario", this.permiso_usuario.toString());
+      this.cookie_permiso_noticias.set("permiso_noticias", this.permiso_noticias.toString());
+      this.cookie_permiso_preguntas.set("permiso_preguntas", this.permiso_preguntas.toString());
+      this.cookie_permiso_mesa_ayuda.set("permiso_mesa_ayuda", this.permiso_mesa_ayuda.toString());
     })
   }
 
@@ -83,26 +88,46 @@ export class LoginService {
   getToken(){
     return this.cookies.get("token");
   }
-  
-  //Retorna el tipo de permiso del usuario
-  getPermisoUsuario(){
-    return this.cookie_permiso.get("permiso_usuario");
-  }
+
   //Métodos que modifican el valor de las cookies
   setTipoUsuario(tipo_usuario:string){
     this.cookie_usuario.set("tipo_usuario",tipo_usuario);
   }
-  setPermisoUsuario(permiso_usuario:string){
-    this.cookie_permiso.set("permiso_usuario",permiso_usuario);
+  
+  //Retorna el tipo de permiso del usuario
+  getPermisoNoticias(){
+    return this.cookie_permiso_noticias.get("permiso_noticias");
   }
+  setPermisoNoticias(permiso_usuario:string){
+    this.cookie_permiso_noticias.set("permiso_noticias",permiso_usuario);
+  }
+  
+  getPermisoPreguntas(){
+    return this.cookie_permiso_preguntas.get("permiso_preguntas");
+  }
+  setPermisoPreguntas(permiso_usuario:string){
+    this.cookie_permiso_preguntas.set("permiso_preguntas",permiso_usuario);
+  }
+  
+  getPermisoMesaAyuda(){
+    return this.cookie_permiso_mesa_ayuda.get("permiso_mesa_ayuda");
+  }
+  setPermisoMesaAyuda(permiso_usuario:string){
+    this.cookie_permiso_mesa_ayuda.set("permiso_mesa_ayuda",permiso_usuario);
+  }
+  
   //Al finalizar sesión se borran las cookies y se redirige al Home de la página
   logout(){
     this.token="";
     this.tipo_usuario="";
-    this.permiso_usuario=0;
+    this.permiso_noticias = false;
+    this.permiso_preguntas = false;
+    this.permiso_mesa_ayuda = false;
     this.cookies.set("token",this.token);
     this.cookie_usuario.set("tipo_usuario",this.tipo_usuario);
-    this.cookie_permiso.set("permiso_usuario", "");
+    this.cookie_permiso_noticias.set("permiso_noticias", "");
+    this.cookie_permiso_preguntas.set("permiso_preguntas", "");
+    this.cookie_permiso_mesa_ayuda.set("permiso_mesa_ayuda", "");
     this.route.navigate(['/']);
     location.reload();
   }

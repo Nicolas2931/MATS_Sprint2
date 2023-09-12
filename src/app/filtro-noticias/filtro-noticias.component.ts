@@ -33,7 +33,6 @@ export class FiltroNoticiasComponent implements OnInit{
   ngOnInit(): void {
     this.generarOpcionesSelect();
     this.tipo_usuario=this.login.getTipoUsuario();
-    console.log('algo', this.login.getPermisoUsuario());
     //this.permiso_usuario = this.login.getPermisoUsuario();
     
   }

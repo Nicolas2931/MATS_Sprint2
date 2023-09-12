@@ -16,7 +16,7 @@
                 <div class="table-responsive">
                 <table style="border:0;" class="table">
                   <tr>
-                    <td colspan="2" *ngIf="token != '' && (permiso_usuario == '1' || getTipoUsuario() == 'administrador'); else normal">
+                    <td colspan="2" *ngIf="token != '' && (permiso_usuario == 'true' || getTipoUsuario() == 'administrador'); else normal">
                       <button (click)="opcionNoticia(noticia.id, 'ver')" class="btn custom-bg-purple sombreado" style="margin-left: 5px; display: flex; align-items: center;">
                         <span style="flex: 1;" class="opciones">Ver</span>
                         <img src="../../assets/images/ver-lista.png" class="img-fluid" style="max-width: 40px; height:auto; margin-left:5px"/>
@@ -31,13 +31,13 @@
                       </td>
                     </ng-template>
                     <td>
-                      <button *ngIf="token != '' && (permiso_usuario != '1' || getTipoUsuario() != 'administrador')" class="btn custom-bg-purple sombreado" style="margin-left: 5px; display: flex; align-items: center;" (click)="apoyar(i, noticia.id)">
+                      <button *ngIf="token != '' && (permiso_usuario != 'true' || getTipoUsuario() != 'administrador')" class="btn custom-bg-purple sombreado" style="margin-left: 5px; display: flex; align-items: center;" (click)="apoyar(i, noticia.id)">
                         <span style="flex: 1;" class="opciones">Apoyar</span>
                         <img [src]="getImagenActual(i)" class="img-fluid" style="max-width: 40px; height:auto; margin-left:5px"/> 
                       </button>
                     </td> 
                   </tr>
-                  <tr *ngIf="getTipoUsuario()=='administrador' || permiso_usuario == '1'">
+                  <tr *ngIf="getTipoUsuario()=='administrador' || permiso_usuario == 'true'">
                     <td>
                       <button (click)="opcionNoticia(noticia.id, 'editar')" class="btn opciones_administrador" style="margin-left: 5px; display: flex; align-items: center;">
                         <span style="flex: 1;" class="opciones_admin">Editar</span>

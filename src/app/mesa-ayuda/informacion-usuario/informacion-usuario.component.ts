@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoginService } from 'src/app/login.service';
-import Swal from 'sweetalert2';
 import { MesaAyudaService } from '../mesa-ayuda.service';
+import { MensajesService } from 'src/app/mensajes.service';
 @Component({
   selector: 'app-informacion-usuario',
   templateUrl: './informacion-usuario.component.html',
@@ -14,8 +14,6 @@ export class InformacionUsuarioComponent implements OnInit{
   correo:string;
   //Variable que guarda el tipo de usuario
   tipo_usuario: string;
-  //Variable que guarda el permiso del usuario
-  permiso_usuario:string;
   //Variable que activa o desactiva la ventana emergente
   ventana_editar:boolean;
   //Variables que almacenan los cambios que se desean realizar a la información personal del usuario
@@ -23,62 +21,53 @@ export class InformacionUsuarioComponent implements OnInit{
   correo_editar:string;
   //Variable que guarda el error en caso de editar
   error:boolean;
-  constructor(private loginService:LoginService,private servicio_MesaAyuda:MesaAyudaService){
+  constructor(private loginService:LoginService,private servicio_MesaAyuda:MesaAyudaService, private servicio_mensajes:MensajesService){
     this.nombre="";
     this.correo="";
     this.tipo_usuario="";
-    this.permiso_usuario="";
     this.ventana_editar=false;
     this.error=false;
   }
   ngOnInit(): void {
-      //Cambiar
-      this.tipo_usuario=this.loginService.getTipoUsuario();
-      this.permiso_usuario=this.loginService.getPermisoUsuario();
-      this.nombre=this.servicio_MesaAyuda.getNombre_usuario();
-      this.correo=this.loginService.getIdUsuario();
+    this.nombre="";
+    this.correo="";
+    this.tipo_usuario="";
+    this.ventana_editar=false;
+    this.error=false;
+    this.tipo_usuario=this.loginService.getTipoUsuario();
+    this.servicio_MesaAyuda.getNombre_usuario().then(data => {
+      console.log("nombre: ", data);
+      this.nombre = data.name;
+    });
+    this.correo=this.loginService.getIdUsuario();
   }
   editar():void{
     this.ventana_editar=true;
     this.nombre_editar=this.nombre;
     this.correo_editar=this.correo;
   }
-  guardar(){
+  async guardar(){
     if(this.nombre_editar.trim().length>0 && this.correo_editar.trim().length>0){
-      Swal.fire({
-        title: '¿Está seguro que desea guardar los cambios?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Si, guardar',
-        cancelButtonText: 'Cancelar'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          //Mandar la información al servicio
-          this.error=this.servicio_MesaAyuda.editar_InformacionPersonal(this.nombre_editar,this.correo_editar);
-          if(this.error!=true){
-            Swal.fire('Los cambios han sido guardados!', '', 'success')
-            this.cerrar();
-          }
-          else{
-            this.error=false;
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Por favor, verifique que la información ingresada sea la adecuada',
-            })
-          }
-          
+      if(await this.servicio_mensajes.msj_confirmar('¿Está seguro que desea guardar los cambios?','Si, guardar','Cancelar')){
+        this.error=false;  
+        if(this.servicio_MesaAyuda.editar_InformacionPersonal(this.nombre_editar,this.correo_editar)){
+          this.servicio_mensajes.msj_exito('Los cambios han sido guardados!');
+          this.cerrar();
         }
-      })
+        else{
+          this.cerrar();
+          this.servicio_mensajes.msj_errorPersonalizado("Ha ocurrido un error al guardar los cambios. Por favor, inténtelo más tarde.");
+        }    
+      }
     }
     else{
+      this.servicio_mensajes.msj_datosErroneos();
       this.error=true;
     }  
   }  
   cerrar():void{
     this.ventana_editar=false;
+    this.ngOnInit();
   }
 
 }

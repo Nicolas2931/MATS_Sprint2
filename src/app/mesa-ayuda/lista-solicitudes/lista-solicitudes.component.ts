@@ -1,66 +1,122 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Ticket } from '../modelo-ticket';
 import { MesaAyudaService } from '../mesa-ayuda.service';
 import { LoginService } from 'src/app/login.service';
-
+import { MensajesService } from 'src/app/mensajes.service';
+import { CRUDTicketsComponent } from '../crud-tickets/crud-tickets.component';
+import {Router } from '@angular/router';
 @Component({
   selector: 'app-lista-solicitudes',
   templateUrl: './lista-solicitudes.component.html',
   styleUrls: ['./lista-solicitudes.component.scss']
 })
 export class ListaSolicitudesComponent  implements OnInit{
-  crear_ticket:boolean = false;
-  cantidad_tickets:number | null;
+  //Variable que permite acceder a los métodos del componente con el CRUD de los Tickets
+  @ViewChild(CRUDTicketsComponent) crudTicketsComponent: CRUDTicketsComponent;
+  //Total de Tickets cargados
+  cantidad_tickets:number;
+  //Arreglo que guarda todos los Tickets
   tickets:Ticket[] | null;
+  //Variable que guarda el ID de un Ticket para ver, editar o eliminar.
+  id_ticket:number;
+  //Variables que abren o cierran las ventanas de ver o editar
+  ventana_editarTicket:boolean=false;
+  ventana_verTicket:boolean=false;
   //------Variables de los Tickets----
   categoriasID: string[] = [];
   estadosID: string[] = [];
   itemsID: string[] = [];
-  usuariosID: string[] = [];
+  remitentesID: string[] = [];
   prioridadesID: (string | null)[] = [];
   responsablesID: (string | null)[] = [];
-  //Variable para tipo de usuario o permisos
+  //Variable para tipo de usuario
   tipo_usuario:string;
-  permiso_usuario:string;
-  constructor(private servicio_MesaAyuda:MesaAyudaService,private loginservice:LoginService){
+  constructor(private servicio_MesaAyuda:MesaAyudaService,private loginservice:LoginService,private servicio_mensajes:MensajesService, private router:Router){
     this.cantidad_tickets=0;
     this.tickets=null;
     this.tipo_usuario="";
-    this.permiso_usuario="";
   }
   ngOnInit(): void {
     this.tipo_usuario=this.loginservice.getTipoUsuario();
-    this.permiso_usuario=this.loginservice.getPermisoUsuario();
-      this.tickets=this.servicio_MesaAyuda.getTickets();
+    this.servicio_MesaAyuda.getTickets().then(data => {
+      console.log(data);
+      this.tickets = data
+
       if(this.tickets){
         this.cantidad_tickets=this.tickets.length;
         for(let i=0; i<this.tickets.length; i++){
-          this.categoriasID.push(this.servicio_MesaAyuda.getCategoria_ID(this.tickets[i].id_categoria));
+          this.servicio_MesaAyuda.getCategoria_ID(this.tickets[i].id_categoria).then(async (categoria) => {
+            this.categoriasID.push(categoria);
+            //usar asincronismo a lo loco aqui
+          });
           this.estadosID.push(this.servicio_MesaAyuda.getEstado_ID(this.tickets[i].id_estado));
-          this.itemsID.push(this.servicio_MesaAyuda.getItem_ID(this.tickets[i].id_item));
-          this.usuariosID.push(this.servicio_MesaAyuda.getNombre_ID(this.tickets[i].id_usuario));
-          let prioridad=this.servicio_MesaAyuda.getPrioridad_ID(this.tickets[i].id_prioridad)
-          if(prioridad!=null){
-            this.prioridadesID.push(prioridad);
-          }
-          else{
-            this.prioridadesID.push("");
-          }
-          let responsable=this.servicio_MesaAyuda.getResponsable_ID(this.tickets[i].id_responsable);
-          if(responsable!=null){
-            this.responsablesID.push(responsable);
-          }
-          else{
-            this.responsablesID.push("Sin asignar");
-          }       
+          this.servicio_MesaAyuda.getItem_ID(this.tickets[i].id_item).then(data => {
+            this.itemsID.push(data);
+          })
+          this.remitentesID.push(this.servicio_MesaAyuda.getRemitente_ID(this.tickets[i].id_usuario).name);
+          this.prioridadesID.push(this.servicio_MesaAyuda.getPrioridad_ID(this.tickets[i].id_prioridad));
+          this.servicio_MesaAyuda.getResponsable_ID(this.tickets[i].email_responsable)?.then(data => {
+            let res = data;
+            if(res!=null){
+              this.responsablesID.push(res.name);
+            }
+          });
+          
         }  
       }  
       else{
         this.cantidad_tickets=0;
       }
+
+    });
   }
-  //Método que abre la ventana para crear un ticket
-  crear(){
-    this.crear_ticket=true;
+  //Carga los tickets según los filtros
+  aplicarFiltros(filtros: any): void {
+    let tickets=this.servicio_MesaAyuda.filtrar(filtros)
+    if(this.servicio_MesaAyuda.filtrar(filtros)!=null){
+      this.tickets=tickets;
+    }
+    else{
+      this.servicio_mensajes.msj_informar("No se han encontrado Tickets que cumplan con los filtros.");
+    }
   }
+  //Método que envía el ID del Ticket que se desea visualizar, y activa la ventana emergente
+  ver_ticket(id_ticket:number):void {
+    this.crudTicketsComponent.verTicket(id_ticket, true);
+  }
+  //Método que retorna un Ticket según el ID seleccionado
+  async eliminar_ticket(id_ticket: number): Promise<void> {
+    const confirmado = await this.servicio_mensajes.msj_confirmar(
+      "¿Está seguro que desea eliminar el Ticket? Está acción es irreversible",
+      "Confirmar",
+      "Cancelar"
+    );
+    
+    if (confirmado) {
+      const eliminado = this.servicio_MesaAyuda.eliminar_ticket(id_ticket);
+      if (eliminado) {
+        //Invocar al método que recargue todos los Tickets
+        this.servicio_mensajes.msj_exito("Se ha eliminado el Ticket!");
+      } else {
+        this.servicio_mensajes.msj_exito("No se ha podido eliminar el Ticket!");
+      }
+    }
+  }
+  //Métodos que abren o cierran la ventana de editar y envía el ID del ticket en específico
+  editar_ticket(id_ticket:number):void {
+    this.crudTicketsComponent.getTicket(id_ticket,true);
+  }
+  CierreVentanaEdit(): void {
+    this.ventana_editarTicket = false;
+  }
+  //Método que cierra la ventana de Ver un Ticket
+  CierreVentanaVer(): void {
+    this.ventana_verTicket = false;
+  }
+  //Función que redirige al usuario a las opciones del módulo de mesa de ayuda
+  volver_MA(){
+    this.router.navigate(['/Mesa_Ayuda']);
+  }
+
+
 }

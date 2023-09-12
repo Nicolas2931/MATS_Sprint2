@@ -2,7 +2,7 @@
     <div class="card">
         <div class="row">
             <div class="col-md-12">
-                <h5>Información del usuario</h5>
+                <h5>Información del {{tipo_usuario}}</h5>
                 <br/>
             </div>
             <div class="col-md-1">
@@ -20,9 +20,9 @@
                 <label>{{correo}}</label>
             </div> 
         </div>
-        <div class="row mt-3">
+        <div class="row mt-4">
             <div class="col-md-3">
-                <button *ngIf="tipo_usuario=='administrador' ||permiso_usuario=='1'" class="btn borde-morado" (click)="editar()">EDITAR INFORMACIÓN PERSONAL</button>
+                <button *ngIf="tipo_usuario=='administrador'" class="btn borde-morado" (click)="editar()">EDITAR INFORMACIÓN PERSONAL</button>
             </div>
         </div>
     </div>

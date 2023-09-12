@@ -29,7 +29,7 @@
       </div>
     </div>
   </div>
-  <div class="container" *ngIf="usuario=='administrador' || permiso_usuario=='1'">
+  <div class="container" *ngIf="usuario=='administrador' || permiso_usuario=='true'">
     <app-lista-categorias [categorias]="categorias" (categoriaEditada)="editarCategoria($event)" 
     (categoriaEliminada)="eliminarCategoria($event)"
     (categoriaSubida)="subirCategoria()"></app-lista-categorias>
@@ -38,7 +38,7 @@
   </div>
   <div class="container">
     <div class="row mt-2">
-      <button *ngIf="usuario=='administrador' || permiso_usuario=='1'" type="button" class="btn borde-morado mb-3" id="agregar" (click)="subir_tarjeta()">SUBIR PREGUNTA FRECUENTE</button>
+      <button *ngIf="usuario=='administrador' || permiso_usuario=='true'" type="button" class="btn borde-morado mb-3" id="agregar" (click)="subir_tarjeta()">SUBIR PREGUNTA FRECUENTE</button>
     </div>
   </div>
     <!--Tarjetas-->
@@ -52,7 +52,7 @@
               <p class="card-text" style="text-align:center;">{{ truncarTexto(tarjeta.descripcion, 100) }}</p>
               <div class="container">
                 <div class="d-flex justify-content-center">    
-                  <button *ngIf="usuario!='administrador' && permiso_usuario!='1'; else administrador" class="btn fondo_morado boton_menu w-100" (click)="verMas(tarjeta.id_tarjeta)">Ver más
+                  <button *ngIf="usuario!='administrador' && permiso_usuario!='true'; else administrador" class="btn fondo_morado boton_menu w-100" (click)="verMas(tarjeta.id_tarjeta)">Ver más
                     <img src="../../assets/images/ver-lista.png" class="img-fluid" style="max-width: 40px; height:auto; margin-left:5px"/>
                   </button> 
                   <ng-template #administrador >

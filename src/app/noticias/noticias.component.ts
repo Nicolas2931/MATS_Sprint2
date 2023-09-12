@@ -92,13 +92,13 @@ export class NoticiasComponent implements OnInit{
     this.imagenActual = '../../assets/images/estrella.png';
     this.imagenNueva = '../../assets/images/estrella_activa.png';
     this.imagenOriginal = '../../assets/images/estrella.png';
-    this.permiso_usuario = this.loginService.getPermisoUsuario();
+    this.permiso_usuario = this.loginService.getPermisoNoticias();
     this.token = this.loginService.getToken();
     this.id_usuario = this.loginService.getIdUsuario();
     
 
     this.identificador=this.servicioNoticias.getIdentificador();
-    this.servicioNoticias.getNoticias(this.getTipoUsuario(),this.identificador, this.permiso_usuario).then((data) =>{
+    this.servicioNoticias.getNoticias(this.getTipoUsuario(),this.identificador, this.permiso_usuario, this.texto, this.getCantidadNoticias()).then((data) =>{
       this.noticias = data;
       
       //Carga inicial de la cantidad de noticias, si es menor a 50 ese será el tamaño, sino el tamaño será 50
@@ -139,7 +139,12 @@ export class NoticiasComponent implements OnInit{
       También se deberá cambiar el arreglo con las imagenes
       Y se deberá cargar la paginación
     */
-   this.texto = texto;
+    this.servicioNoticias.getNoticias(this.getTipoUsuario(), this.identificador, this.permiso_usuario, texto, this.getCantidadNoticias()).then(data => {
+      //console.log("data: ", this.getTipoUsuario(),this.identificador, this.permiso_usuario, texto, this.getCantidadNoticias());
+      this.noticias = data;
+      console.log(this.getCantidadNoticias(), texto);
+      this.texto = texto;
+    })
   }
 
   /*

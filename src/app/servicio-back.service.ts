@@ -12,9 +12,9 @@ export class ServicioBackService {
 
   constructor(private http: HttpClient) { }
 
-  public Apoyo(id_usuario: string, id_noticia: number){
+  public Apoyo(email: string, id_noticia: number){
     const form = {
-      "usuario": id_usuario,
+      "usuario": email,
       "noticia": id_noticia
     }    
     console.log(true);
@@ -35,8 +35,14 @@ export class ServicioBackService {
   public getAllNoticiasUD(): Observable<any> {
     return this.http.get<any>(this.urlApi + '/v1/noticias');
   }
+  public buscarAllNoticiasUD(cantidad: number, busqueda: string): Observable<any> {
+    return this.http.get<any>(this.urlApi + '/v1/noticias' + '?buscar=' + busqueda + '&cantidad=' + cantidad);
+  }
   public getAllNoticiasInteres(): Observable<any> {
     return this.http.get<any>(this.urlApi + '/v1/noticias?orden=likes');
+  }
+  public buscarAllNoticiasInteres(cantidad: number, busqueda: string): Observable<any> {
+    return this.http.get<any>(this.urlApi + '/v1/noticias?orden=likes' + '&buscar==' + busqueda + '&cantidad=' + cantidad);
   }
 
   public getUsuario(usuario: string, contraseña: string){
@@ -44,36 +50,56 @@ export class ServicioBackService {
       "email": usuario,
       "password": contraseña
     }
-
     return this.http.post<any>(this.urlApi + '/login', form);
   }
 
-  public getNoticiasGenerales(usuario: string, token: string){
-    if(usuario == 'administrador'){
-      return this.http.get<any>(this.urlApi + '/v1/tipo_usuario/1');
+  public getDatosUsuario(correo: string, token: string){
+    const headers = new HttpHeaders({
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get<any>(this.urlApi + '/v1/users/'+ correo, { headers });
+  }
+
+  public getNoticiasGenerales(usuario: string, token: string, cantidad: number, busqueda: string){
+    busqueda = busqueda ? busqueda : "";
+    if(usuario == 'administrador' || usuario == '' ){
+      return this.http.get<any>(this.urlApi + '/v1/tipo_usuario/1' + '?cantidad=' + cantidad + '&buscar=' + busqueda);
     }
 
-    return this.http.get<any>(this.urlApi + '/v1/tipo_usuario/1?usuario=' + token);
+    return this.http.get<any>(this.urlApi + '/v1/tipo_usuario/1?usuario=' 
+              + token + '&cantidad=' + cantidad + '&buscar=' + busqueda);
   }
 
-  public getNoticiasUD(token: string): Observable<any>{
+  public getNoticiasUD(token: string, cantidad: number, busqueda: string): Observable<any>{
 
     const headers = new HttpHeaders({
       'Accept': 'application/json',
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.get(this.urlApi + '/v1/users?noticias=true', { headers });
+    busqueda = busqueda ? busqueda : "";
+
+    return this.http.get(
+      this.urlApi + '/v1/users?noticias=true' + '&cantidad=' + cantidad + '&buscar=' + busqueda, 
+      { headers }
+    );
   }
 
-  public getNoticiasInteres(token: string): Observable<any>{
+  public getNoticiasInteres(token: string, cantidad: number, busqueda: string): Observable<any>{
 
     const headers = new HttpHeaders({
       'Accept': 'application/json',
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.get(this.urlApi + '/v1/users?noticias=true&orden=likes', { headers });
+    busqueda = busqueda ? busqueda : "";
+
+    return this.http.get(
+      this.urlApi + '/v1/users?noticias=true&orden=likes' + '&cantidad=' + cantidad + '&buscar=' + busqueda, 
+      { headers }
+    );
   }
 
   public setPDF(archivo: File, id_noticia: number){
@@ -112,32 +138,81 @@ export class ServicioBackService {
     return this.http.get<any>(this.urlApi + '/v1/categorias');
   }
 
+  public getCategoriasTarjeta(tarjeta: number){
+    return this.http.get<any>(this.urlApi + '/v1/categorias' + '?tarjeta=' + tarjeta);
+  }
+
   public createCategoria(nombre: string){
     const form = new FormData();
     form.append("nombre", nombre);
     return this.http.post<any>(this.urlApi + '/v1/categorias', form);
   }
 
-  public editCategoria(){
+  public editCategoria(id: number, nombre: string){
+    const form = {
+      "nombre": nombre
+    }
 
+    return this.http.put<any>(this.urlApi + '/v1/categorias/' + id, form);
   }
 
-  public deleteCategoria(){
-
+  public deleteCategoria(id: number){
+    return this.http.delete<any>(this.urlApi + '/v1/categorias/' + id);
   }
 
-  public getPreguntas(tipo_usuario: string, categoria: string): Observable<any>{
-    if(tipo_usuario != "" && categoria != ""){
-      return this.http.get<any>(this.urlApi + '/v1/tarjetas' + '?tipoUsuario=' + tipo_usuario + '&categoria=' + categoria);
+  public getPreguntas(tipo_usuario: string, categoria: number[], busqueda: string): Observable<any>{
+    const parametros = categoria.join(",");
+    
+    
+    if(tipo_usuario != "" && categoria.length != 0){
+      console.log(this.urlApi + '/v1/tarjetas' + '?tipoUsuario=' + tipo_usuario + '&categorias=' + parametros + '&buscar=' + busqueda);
+      return this.http.get<any>(this.urlApi + '/v1/tarjetas' + '?tipoUsuario=' + tipo_usuario + '&categorias=' + parametros + '&buscar=' + busqueda);
     }
     else if(tipo_usuario != ""){
-      return this.http.get<any>(this.urlApi + '/v1/tarjetas' + '?tipoUsuario=' + tipo_usuario);
+      return this.http.get<any>(this.urlApi + '/v1/tarjetas' + '?tipoUsuario=' + tipo_usuario + '&buscar=' + busqueda);
     }
-    else if(categoria != ""){
-      return this.http.get<any>(this.urlApi + '/v1/tarjetas' + '?categoria=' + categoria);
+    else if(categoria.length != 0){
+      return this.http.get<any>(this.urlApi + '/v1/tarjetas' + '?categorias=' + parametros + '&buscar=' + busqueda);
     }
-    return this.http.get<any>(this.urlApi + '/v1/tarjetas');
+    return this.http.get<any>(this.urlApi + '/v1/tarjetas' + '&buscar=' + busqueda);
   }
 
+  public buscarTiposUsuario_Tarjeta(id_tarjeta: number){
+    return this.http.get<any>(this.urlApi + '/v1/tarjetas/' + id_tarjeta);
+  }
 
+  public editarTarjeta(id_tarjeta:number,titulo:string,descripcion:string,id_usuario:number[], categorias:number[]){
+    const form = {
+      "titulo": titulo,
+      "descripcion": descripcion,
+      "usuarios": id_usuario,
+      "categorias": categorias
+    }
+
+    return this.http.put<any>('http://localhost:8000/api/v1/tarjetas/' + id_tarjeta, form);
+  }
+
+  public deleteTarjeta(id_tarjeta:number){
+    return this.http.delete(this.urlApi + '/v1/tarjetas/' + id_tarjeta);
+  }
+
+  public getTicketsUsuario(email: string){
+    
+    return this.http.get<any>(this.urlApi + '/v1/tickets' + '?user=' + email);
+  }
+
+  public getCategoriaTK(id: number){
+    return this.http.get<any>(this.urlApi + '/v1/categoriasTK/' + id);
+  }
+
+  public getItem(id: number | null){
+
+    return this.http.get<any>(this.urlApi + '/v1/items/' + id);
+  }
+
+  public getResponsableTicket(email: string){
+    
+    return this.http.get<any>(this.urlApi + '/v1/tickets' + "?responsable=" + email);
+  }
 }
+

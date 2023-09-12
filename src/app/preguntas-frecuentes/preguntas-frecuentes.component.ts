@@ -29,6 +29,8 @@ export class PreguntasFrecuentesComponent {
   //Usuario guarda el tipo de usuario que inicio sesión
   usuario:string;
   permiso_usuario:string;
+  totalCheckboxesActivos: number;
+  checkboxesActivos: Categoria[];
   constructor(private preguntasService: PreguntasFrecuentesService, private loginService: LoginService){
     this.categorias = [];
     this.Tarjetas = []; 
@@ -38,30 +40,39 @@ export class PreguntasFrecuentesComponent {
     this.ventana_editar=false;
     this.ventana_subir=false;
     this.usuario=this.loginService.getTipoUsuario();
-    this.permiso_usuario=this.loginService.getPermisoUsuario();
+    this.permiso_usuario=this.loginService.getPermisoPreguntas();
+    this.totalCheckboxesActivos = 0;
+    this.checkboxesActivos = [];
   }
   //Método para inicializar las variables.
   ngOnInit(): void {
     this.txt_lista="Seleccione las categorías";
     this.preguntasService.obtener_categorias().then((data) => {
       this.categorias = data;
-      this.preguntasService.obtener_tarjetas().then(data => {
+      this.preguntasService.obtener_tarjetas(this.loginService.getTipoUsuario(), [], "").then(data => {
         this.Tarjetas = data;
       });
-      console.log(data);
     });
     
   }
   //Método para buscar entre las tarjetas la que se adecue a lo ingresado por el usuario
   buscar(){
-    const checkboxesActivos= this.categorias.filter(categoria => categoria.seleccionado);
-    const totalCheckboxesActivos = checkboxesActivos.length;
-    if(totalCheckboxesActivos>0){
+    this.checkboxesActivos= this.categorias.filter(categoria => categoria.seleccionado);
+    this.totalCheckboxesActivos = this.checkboxesActivos.length;
+
+    const categorias: number[] = [];
+    for(const categoria of this.checkboxesActivos){
+      categorias.push(categoria.id);
+    }
+    console.log(categorias, this.txt_buscar, this.loginService.getTipoUsuario());
+    this.Tarjetas = this.preguntasService.buscar(categorias, this.txt_buscar, this.loginService.getTipoUsuario());
+
+    if(this.totalCheckboxesActivos>0){
       //Si hay algún checkbox activo se busca tambien por la categoría
-      for(var i=0; i<totalCheckboxesActivos; i++){
+      for(var i=0; i<this.totalCheckboxesActivos; i++){
         //Envíar el id de la categoría y la cadena 
         if(this.txt_buscar.trim().length>0){
-          console.log(checkboxesActivos[i].id+this.txt_buscar);
+          console.log(this.checkboxesActivos[i].id+this.txt_buscar);
         }
         else{
           //buscar solo las categorías
@@ -75,10 +86,15 @@ export class PreguntasFrecuentesComponent {
   }
   //Cada vez que se activa un checkbox se ejecuta el filtro
   activar() {
-    const checkboxesActivos = this.categorias.filter(categoria => categoria.seleccionado);
-    const totalCheckboxesActivos = checkboxesActivos.length;
-    if(totalCheckboxesActivos > 0) {
-      this.txt_lista = `Categorías seleccionadas (${totalCheckboxesActivos})`;
+    this.checkboxesActivos = this.categorias.filter(categoria => categoria.seleccionado);
+
+    for(const categoria of this.checkboxesActivos){
+      console.log(categoria.nombre);
+    }
+    
+    this.totalCheckboxesActivos = this.checkboxesActivos.length;
+    if(this.totalCheckboxesActivos > 0) {
+      this.txt_lista = `Categorías seleccionadas (${this.totalCheckboxesActivos})`;
     }
     else{
       this.txt_lista="Seleccione las categorías";
@@ -125,9 +141,11 @@ export class PreguntasFrecuentesComponent {
   Tarjeta:Tarjeta | null;
   CategoriasPorTarjeta:Categoria[];
   verMas(tarjetaId: number) {
-    this.CategoriasPorTarjeta=this.preguntasService.obtener_CategoriasPorTarjeta(tarjetaId);
-    this.Tarjeta=this.preguntasService.ver_tarjeta(tarjetaId);
-    this.mostrarVentana = true;
+    this.preguntasService.obtener_CategoriasPorTarjeta(tarjetaId).then(categorias => {
+      this.CategoriasPorTarjeta = categorias;
+      this.Tarjeta=this.preguntasService.ver_tarjeta(tarjetaId);
+      this.mostrarVentana = true;
+    });
   }
   //---------------------------------------LISTA DE CATEGORIAS--------------------
   /*ventanaCat_subir:boolean;
@@ -154,11 +172,13 @@ export class PreguntasFrecuentesComponent {
       showDenyButton:true,
       denyButtonText: 'Sí, eliminar',
       cancelButtonText:'Cancelar'
-    }).then((result) => {
+    }).then(async (result) => {
       /* Read more about isConfirmed, isDenied below */
       if (result.isDenied) {
         //Invoca el método de editar y verifica si no hubo error
-        this.error_categoria=this.preguntasService.eliminar_categoria(categoria.id);
+        await this.preguntasService.eliminar_categoria(categoria.id).then(error => {
+          this.error_categoria = error;
+        });
         if(this.error_categoria==false){
           //Se recargan las tarjetas de nuevo
           Swal.fire('La categoría se ha eliminado!', '', 'success')
@@ -170,7 +190,6 @@ export class PreguntasFrecuentesComponent {
             text: 'Ha ocurrido un error al eliminar la categoría',
           })
         }
-        
       }
     })
   }
@@ -197,6 +216,9 @@ export class PreguntasFrecuentesComponent {
           if(this.error_categoria==false) {
             Swal.fire('Se ha subido correctamente la categoria!', '', 'success')
             this.ventanaCat_subir=false;
+            this.preguntasService.obtener_categorias().then((data) => {
+              this.categorias = data;
+            });
           }
           else{
             Swal.fire({
@@ -227,15 +249,18 @@ export class PreguntasFrecuentesComponent {
         confirmButtonText: 'Guardar',
         denyButtonText: `No guardar`,
         cancelButtonText:'Cancelar'
-      }).then((result) => {
+      }).then(async (result) => {
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
           //Invoca el método de editar y verifica si no hubo error
-          this.error_categoria=this.preguntasService.editar_categoria(this.cat_CRUD.id, this.nombre_cat);
+          this.preguntasService.editar_categoria(this.cat_CRUD.id, this.nombre_cat).then(error => {
+            this.error_categoria = error;
+          });
+
           if(this.error_categoria==false){
             Swal.fire('Los cambios han sido guardados!', '', 'success')
             //Se recargan las tarjetas de nuevo
-            this.preguntasService.obtener_categorias().then(data => {
+            await this.preguntasService.obtener_categorias().then(data => {
               this.categorias = data;
               this.ventanaCat_editar=false;
             });
@@ -308,7 +333,7 @@ export class PreguntasFrecuentesComponent {
             if(this.error_subir==false) {
               Swal.fire('Se ha creado la pregunta frecuente!', '', 'success')
               //Se recargan las tarjetas de nuevo
-              this.preguntasService.obtener_tarjetas().then(data => {
+              this.preguntasService.obtener_tarjetas(this.loginService.getTipoUsuario(), [], "").then(data => {
                 this.Tarjetas = data;
               });
               this.ventana_subir=false; 
@@ -333,10 +358,10 @@ export class PreguntasFrecuentesComponent {
     }
   }
   activar_subir(){
-    const checkboxesActivos = this.categorias_subir.filter(categoria => categoria.seleccionado);
-    const totalCheckboxesActivos = checkboxesActivos.length;
-    if(totalCheckboxesActivos > 0) {
-      this.txt_subir = `Categorías seleccionadas (${totalCheckboxesActivos})`;
+    this.checkboxesActivos = this.categorias_subir.filter(categoria => categoria.seleccionado);
+    this.totalCheckboxesActivos = this.checkboxesActivos.length;
+    if(this.totalCheckboxesActivos > 0) {
+      this.txt_subir = `Categorías seleccionadas (${this.totalCheckboxesActivos})`;
     }
     else{
       this.txt_subir="Seleccione las categorías";
@@ -353,46 +378,56 @@ export class PreguntasFrecuentesComponent {
   profesores:boolean=false;
   error_editar:boolean=false;
   editar(tarjetaId: number) {
+    this.profesores = false;
+    this.estudiantes = false;
     this.tarjetaID=tarjetaId;
     /Primero verifica los usuarios a los que pertenece la tarjeta/
     let id_tipo:number[]=[];
-    id_tipo=this.preguntasService.getID_usuario_Tarjeta(tarjetaId);
-    if(id_tipo[0]==2){
-      this.profesores=true;
-    }
-    if(id_tipo[1]==3){
-      this.estudiantes=true;
-    }
+    this.preguntasService.getID_usuario_Tarjeta(tarjetaId).then(data => {
+      id_tipo = data;
+      console.log("data = ", id_tipo);
+      for(const tipo of id_tipo){
+        if(tipo == 2){
+          this.profesores=true;
+        }else if(tipo == 3){
+          this.estudiantes=true;
+        }
+      }
+    });
+
     this.preguntasService.obtener_categorias().then(data => {
       this.categoria_editar = data;  
-      const cat=this.preguntasService.obtener_CategoriasPorTarjeta(tarjetaId);
-      for(var i=0;i<this.categoria_editar.length;i++){
-        for(var j=0;j<cat.length;j++){
-          if(this.categoria_editar[i].id==cat[j].id){
-            this.categoria_editar[i].seleccionado=true;
-            break;
-          }
-        }  
-      }
-      const checkboxesActivos = this.categoria_editar.filter(categoria => categoria.seleccionado);
-      const totalCheckboxesActivos = checkboxesActivos.length;
-      this.txt_editar = `Categorías seleccionadas (${totalCheckboxesActivos})`;
+      let cat: Categoria[] = [];
+      this.preguntasService.obtener_CategoriasPorTarjeta(tarjetaId).then(categorias => {
+        cat = categorias;
+        for(var i=0;i<this.categoria_editar.length;i++){
+          for(var j=0;j<cat.length;j++){
+            if(this.categoria_editar[i].id==cat[j].id){
+              this.categoria_editar[i].seleccionado=true;
+              break;
+            }
+          }  
+        }
+        this.checkboxesActivos = this.categoria_editar.filter(categoria => categoria.seleccionado);
+        this.totalCheckboxesActivos = this.checkboxesActivos.length;
+        this.txt_editar = `Categorías seleccionadas (${this.totalCheckboxesActivos})`;
 
-      this.Tarjeta = this.preguntasService.ver_tarjeta(tarjetaId);
-      if (this.Tarjeta) {
-        this.titulo = this.Tarjeta.titulo;
-        this.descripcion = this.Tarjeta.descripcion;
-      }
+        this.Tarjeta = this.preguntasService.ver_tarjeta(tarjetaId);
+        if (this.Tarjeta) {
+          this.titulo = this.Tarjeta.titulo;
+          this.descripcion = this.Tarjeta.descripcion;
+        }
 
-      this.ventana_editar = true;
+        this.ventana_editar = true;
+      });
     });
     
   }
   activar_editar(){
-    const checkboxesActivos = this.categoria_editar.filter(categoria => categoria.seleccionado);
-    const totalCheckboxesActivos = checkboxesActivos.length;
-    if(totalCheckboxesActivos > 0) {
-      this.txt_editar = `Categorías seleccionadas (${totalCheckboxesActivos})`;
+    this.checkboxesActivos = this.categoria_editar.filter(categoria => categoria.seleccionado);
+    this.totalCheckboxesActivos = this.checkboxesActivos.length;
+    if(this.totalCheckboxesActivos > 0) {
+      this.txt_editar = `Categorías seleccionadas (${this.totalCheckboxesActivos})`;
     }
     else{
       this.txt_editar="Seleccione las categorías";
@@ -402,7 +437,7 @@ export class PreguntasFrecuentesComponent {
   guardar(){
     let id_usuario:number[]=[];
     if(this.profesores){
-      id_usuario[0] =2;
+      id_usuario[0]=2;
     }
     if(this.estudiantes){
       id_usuario[1]=3
@@ -418,18 +453,23 @@ export class PreguntasFrecuentesComponent {
           confirmButtonText: 'Guardar',
           denyButtonText: `No guardar`,
           cancelButtonText:'Cancelar'
-        }).then((result) => {       //<====================== AQUI HAY UNA FUNCUIÓN ASÍNCRONAAAA
+        }).then(async (result) => {       //<====================== AQUI HAY UNA FUNCUIÓN ASÍNCRONAAAA
           /* Read more about isConfirmed, isDenied below */
           if (result.isConfirmed) {
             //Invoca el método de editar y verifica si no hubo error
-            this.error_editar=this.preguntasService.editar_tarjeta(this.tarjetaID,this.titulo,this.descripcion,id_usuario,this.categoria_editar);
-            if(this.error_editar==false){
-              Swal.fire('Los cambios han sido guardados!', '', 'success')
-              //Se recargan las tarjetas de nuevo
-              this.preguntasService.obtener_tarjetas().then(data => {
-                this.Tarjetas = data;
-              });
-              this.ventana_editar=false;
+            await this.preguntasService.editar_tarjeta(this.tarjetaID,this.titulo,this.descripcion,id_usuario,this.categoria_editar).then(error => {
+              this.error_editar = error;
+            });
+              if(this.error_editar==false){
+                Swal.fire('Los cambios han sido guardados!', '', 'success')
+                //Se recargan las tarjetas de nuevo
+                await this.preguntasService.obtener_categorias().then(async (data) => {
+                  this.categorias = data;
+                  await this.preguntasService.obtener_tarjetas(this.loginService.getTipoUsuario(), [], "").then(data => {
+                    this.Tarjetas = data;
+                  });
+                  this.ventana_editar=false;
+                });
             }
             else{
               Swal.fire({

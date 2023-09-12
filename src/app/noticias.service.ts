@@ -29,11 +29,11 @@ export class NoticiasService {
     Modificar de acuerdo a las noticias
     que se obtendran.
   */
-  getNoticiasGenerales(usuario: string){
+  getNoticiasGenerales(usuario: string, cantidad: number, texto: string){
     //Pasar 1
     return new Promise<any>((resolve, reject) => {
       console.log(this.loginService.getToken(), usuario);
-      this.servicioBackService.getNoticiasGenerales(usuario, this.loginService.getToken()).subscribe((data) => {
+      this.servicioBackService.getNoticiasGenerales(usuario, this.loginService.getToken(), cantidad, texto).subscribe((data) => {
         resolve(data);
       })
     }).then((data) =>{
@@ -44,28 +44,36 @@ export class NoticiasService {
       console.log(this.noticias);
     });
   }
-  getNoticiasUD(token:string){
+  getNoticiasUD(token:string, cantidad: number, texto: string){
     //Paso 2 o 3
     return new Promise<any>((resolve, reject) => {
-      this.servicioBackService.getNoticiasUD(token).subscribe((data) => {
+      this.servicioBackService.getNoticiasUD(token, cantidad, texto).subscribe((data) => {
         resolve(data.data.noticias);
       });
     }).then((data) => {
       this.noticias = data;
     });    
   }
-  getNoticiasInteres(token:string){
+  getNoticiasInteres(token:string, cantidad: number, texto: string){
     return new Promise<any>((resolve, reject) => {
-      this.servicioBackService.getNoticiasInteres(token).subscribe((data) => {
+      this.servicioBackService.getNoticiasInteres(token, cantidad, texto).subscribe((data) => {
         resolve(data.data.noticias);
       });
     }).then((data) => {
+      console.log(data);
       this.noticias = data;
     });
   }
 
-  getAllNoticiasUD(){
+  getAllNoticiasUD(texto: string, cantidad: number){
     return new Promise<any>((resolve, reject) => {
+      console.log("cantidad: ", cantidad, "\ntexto: ", texto);
+      if(texto != "" && cantidad != 0){
+        this.servicioBackService.buscarAllNoticiasUD(cantidad, texto).subscribe(data => {
+          console.log(data.data);
+          resolve(data.data);
+        })
+      }
       this.servicioBackService.getAllNoticiasUD().subscribe((data) => {
         resolve(data.data);
       });
@@ -73,8 +81,13 @@ export class NoticiasService {
       this.noticias = data;
     });
   }
-  getAllNoticiasInteres(){
+  getAllNoticiasInteres(texto: string, cantidad: number){
     return new Promise<any>((resolve, reject) => {
+      if(texto != "" && cantidad != 0){
+        this.servicioBackService.buscarAllNoticiasInteres(cantidad, texto).subscribe((data) => {
+          resolve(data.data);
+        });
+      }
       this.servicioBackService.getAllNoticiasInteres().subscribe((data) => {
         resolve(data.data);
       });
@@ -89,7 +102,7 @@ export class NoticiasService {
     this.identificador = identificador;
   }
   //Método que obtiene las noticias según la pestaña en la cual se encuentrá el usuario
-  async getNoticias(usuario:string, identificador:string, permiso:string){
+  async getNoticias(usuario:string, identificador:string, permiso:string, texto: string, cantidad: number){
     /*
       if(identificador=="generales"){
         this.noticias=this.getNoticiasGenerales();
@@ -101,12 +114,14 @@ export class NoticiasService {
         this.noticias=this.getNoticiasInteres(usuario);
       }
     */
+      console.log("usuario: ", usuario, "\nidentificador: ", identificador, "\npermiso: ", "\ncantidad: ", cantidad, "\ntexto: ", texto);
+    
     if(!this.noticiasCargadas){
-      this.noticiasCargadas=true;
+      //this.noticiasCargadas=true;
       if(identificador=="Publico"){
         //En publico se traen las noticias de tipo publico
         
-        await this.getNoticiasGenerales(this.loginService.getTipoUsuario());
+        await this.getNoticiasGenerales(this.loginService.getTipoUsuario(), cantidad, texto);
         
        
         /* this.noticias.push(this.noticia1);
@@ -117,16 +132,17 @@ export class NoticiasService {
           Dependiendo de la pestaña traera unas noticias distintas al usuario
         */
       else if(identificador=="UD" && usuario != 'administrador'){
-        await this.getNoticiasUD(this.loginService.getToken());
+        await this.getNoticiasUD(this.loginService.getToken(), cantidad, texto);
       }
       else if(identificador=="Interes" && usuario != 'administrador'){
-        await this.getNoticiasInteres(this.loginService.getToken());
+        await this.getNoticiasInteres(this.loginService.getToken(), cantidad, texto);
       }
       else if(identificador=="UD" && (usuario == 'administrador' || permiso == '1')){
-        await this.getAllNoticiasUD();
+        console.log("usuario: ", usuario, "\nidentificador: ", identificador, "\npermiso: ", "\ncantidad: ", cantidad, "\ntexto: ", texto);
+        await this.getAllNoticiasUD(texto, cantidad);
       } 
       else if(identificador=="Interes" && (usuario == 'administrador' || permiso == '1')){
-        await this.getAllNoticiasInteres();
+        await this.getAllNoticiasInteres(texto, cantidad);
       }
     }
     return this.noticias;
@@ -230,7 +246,7 @@ export class NoticiasService {
     for(let i=0; i<noticia_tipo.length;i++){
       console.log(noticia_tipo[i]+"-"+id_noticia);
     }
-    this.getNoticias(this.loginService.getTipoUsuario(), this.identificador, this.loginService.getPermisoUsuario()).then((data) => {
+    this.getNoticias(this.loginService.getTipoUsuario(), this.identificador, this.loginService.getPermisoNoticias(), "", 0).then((data) => {
       this.noticias = data;
     });
 

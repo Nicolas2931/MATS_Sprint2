@@ -63,7 +63,7 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
     }else if(this.opcion=="ver"){
       this.desactivar=true;
     }
-    this.servicioNoticia.getNoticias(this.loginService.getTipoUsuario(),this.pagina, this.loginService.getTipoUsuario()).then((data) => {
+    this.servicioNoticia.getNoticias(this.loginService.getTipoUsuario(),this.pagina, this.loginService.getTipoUsuario(), "", 0).then((data) => {
       this.noticias = data;
 
       this.noticia=this.servicioNoticia.getNoticia(this.id_noticia);
