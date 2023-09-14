@@ -39,6 +39,7 @@ export class ListaTicketsComponent implements OnInit{
     //Se cargan los Tickets del usuario según su ID
     if(this.servicio_MesaAyuda.getTickets_Usuario(this.loginService.getIdUsuario())){
       this.tickets=this.servicio_MesaAyuda.getTickets_Usuario(this.loginService.getIdUsuario());
+      console.log("tickets: ", this.tickets)
       if(this.tickets!=null){
         this.cantidad_tickets=this.tickets.length;
       }

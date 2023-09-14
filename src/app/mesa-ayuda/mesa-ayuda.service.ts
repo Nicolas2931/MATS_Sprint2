@@ -565,6 +565,7 @@ reclamar(asunto:string, descripcion:string):boolean{
   let id_quejaAleatorio = 10 + ( Math.random() * (20 - 10 + 1));
   let reclamo= new queja(id_quejaAleatorio,asunto,descripcion,false);
   this.quejas?.push(reclamo);
+  this.servicioBackService.createReclamo(asunto, descripcion);
   //Retorna TRUE si se registro de forma correcto, FALSE sí no se pudo
   return true;
 }

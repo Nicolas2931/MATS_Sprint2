@@ -214,5 +214,15 @@ export class ServicioBackService {
     
     return this.http.get<any>(this.urlApi + '/v1/tickets' + "?responsable=" + email);
   }
+  
+  public createReclamo(asunto:string, descripcion:string){
+    const form = new FormData();
+    form.append("asunto", asunto);
+    form.append("descripcion", descripcion);
+    
+    console.log(this.urlApi + '/v1/quejas');
+
+    return this.http.post<any>(this.urlApi + '/v1/quejas', form);
+  }
 }
 
