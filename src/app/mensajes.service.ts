@@ -31,6 +31,11 @@ export class MensajesService {
   msj_exito(titulo:string){
     Swal.fire(titulo, '', 'success')
   }
+
+  msj_exito_async(titulo:string){
+    return Swal.fire(titulo, '', 'success')
+  }
+
   //Mensaje que informa
   msj_informar(descripcion:string){
     Swal.fire(descripcion, '', 'info');

@@ -145,8 +145,11 @@ export class CRUDTicketsComponent implements OnInit{
     //Las prioridades son 'Baja', 'Media'y 'Alta'
     this.prioridades=this.servicio_MesaAyuda.getPrioridades();
     //Iniciar las categorías
-    this.setCategorias(this.servicio_MesaAyuda.getCategorias());
-    console.log("Las categorias son:", this.getCategorias());
+    this.servicio_MesaAyuda.getCategorias().then(data => {
+      this.setCategorias(data);
+      console.log("Las categorias son:", this.getCategorias());
+    });
+    this.servicio_MesaAyuda.getItems();
     this.setErrorCrear(false);
   }
   //Asigna un valor a las categorías
@@ -244,56 +247,63 @@ export class CRUDTicketsComponent implements OnInit{
   //Método que carga los valores del Ticket para mostrarlos o editarlos
   getTicket(id:number,mostrar:boolean) {
     this.idTicket=id;
-    this.ticket = this.servicio_MesaAyuda.getTicket(this.idTicket);
-    if (this.ticket) {
-      this.ventana_editarTicket=mostrar;
-      this.fecha_solicitud= this.servicio_MesaAyuda.formatoDateparaInput(this.ticket?.fecha_solicitud);
-      this.fecha_limite = this.servicio_MesaAyuda.formatoDateparaInput(this.ticket?.fecha_limite);
-      if(this.ventana_editarTicket){
-        this.id_categoriaSeleccionada=this.ticket?.categoria.id_categoria;
-        let items=this.servicio_MesaAyuda.getItemsPorCategoria(this.id_categoriaSeleccionada);
-        if(items){
+    this.servicio_MesaAyuda.getTicket(this.idTicket).then(data => {
+      this.ticket = data;
+      if (this.ticket) {
+        this.ventana_editarTicket=mostrar;
+        this.fecha_solicitud= this.servicio_MesaAyuda.formatoDateparaInput(this.ticket?.fecha_solicitud);
+        this.fecha_limite = this.servicio_MesaAyuda.formatoDateparaInput(this.ticket?.fecha_limite);
+        if(this.ventana_editarTicket){
+          this.id_categoriaSeleccionada=this.ticket?.categoria.id_categoria;
+          let items=this.servicio_MesaAyuda.getItemsPorCategoria(this.id_categoriaSeleccionada);
+          if(items){
+            if(this.ticket?.item?.id_item==null){
+              this.id_itemseleccionado=null;
+            }
+            else{
+              this.id_itemseleccionado=this.ticket?.item?.id_item;
+            }
+            this.setItemsPorCategoria(items);
+            this.setMostrarItems(true);
+          }
+          else{
+            this.id_itemseleccionado=null;
+            this.setItemsPorCategoria(items);
+            this.setMostrarItems(false);
+          }
           if(this.ticket?.item?.id_item==null){
             this.id_itemseleccionado=null;
           }
           else{
             this.id_itemseleccionado=this.ticket?.item?.id_item;
           }
-          this.setItemsPorCategoria(items);
-          this.setMostrarItems(true);
+          this.responsable=this.ticket?.responsable;
+          this.setItemsPorCategoria(this.servicio_MesaAyuda.getItemsPorCategoria(this.ticket.categoria.id_categoria));
+          this.id_estadoseleccionado=this.ticket?.estado.id_estado;
+          this.id_prioridadseleccionada=this.ticket?.prioridad.id_prioridad;
+          this.servicio_MesaAyuda.getComentarios(this.ticket?.token).then(data => {
+            console.log(data);
+            this.comentariosPorTicket=data;
+          });
         }
-        else{
-          this.id_itemseleccionado=null;
-          this.setItemsPorCategoria(items);
-          this.setMostrarItems(false);
-        }
-        if(this.ticket?.item?.id_item==null){
-          this.id_itemseleccionado=null;
-        }
-        else{
-          this.id_itemseleccionado=this.ticket?.item?.id_item;
-        }
-        this.responsable=this.ticket?.responsable;
-        this.setItemsPorCategoria(this.servicio_MesaAyuda.getItemsPorCategoria(this.ticket.categoria.id_categoria));
-        this.id_estadoseleccionado=this.ticket?.estado.id_estado;
-        this.id_prioridadseleccionada=this.ticket?.prioridad.id_prioridad;
-        this.comentariosPorTicket=this.servicio_MesaAyuda.getComentarios(this.ticket?.token);
       }
-    }
-    else{
-      this.cerrar_verTicket();
-      this.cerrar_editarTicket();
-      this.servicio_mensajes.msj_informar("No se ha encontrado el Ticket con el ID:"+this.idTicket);  
-    }
+      else{
+        this.cerrar_verTicket();
+        this.cerrar_editarTicket();
+        this.servicio_mensajes.msj_informar("No se ha encontrado el Ticket con el ID:"+this.idTicket);  
+      }
+    });
+    
   }
   //Función para ediar un ticket
   async editar_Ticket(){
     if(this.id_categoriaSeleccionada!=null){
       if((this.getMostrarItems()==true && this.id_itemseleccionado!=null) || (this.getMostrarItems()==false && this.id_itemseleccionado==null)){
+        console.log(this.id_estadoseleccionado);
         if(this.id_estadoseleccionado!=null){
               if(await this.servicio_mensajes.msj_confirmar('¿Está seguro que desea guardar los cambios', 'Confirmar', 'Cancelar')){
                 console.log("El ID del responsable es:"+this.responsable?.id_usuario);
-                if(this.responsable?.id_usuario!=undefined && this.ticket!=null && this.servicio_MesaAyuda.editar_ticket(this.ticket?.token,this.ticket?.usuario.id_usuario,this.id_categoriaSeleccionada,this.id_itemseleccionado,this.ticket?.asunto,this.ticket?.descripcion,this.responsable?.id_usuario, this.ticket?.fecha_solicitud,this.id_estadoseleccionado,this.id_prioridadseleccionada, this.comentariosPorTicket)){
+                if(this.responsable?.id_usuario!=undefined && this.ticket!=null && this.servicio_MesaAyuda.editar_ticket(this.ticket?.token,this.ticket?.usuario.id_usuario,this.id_categoriaSeleccionada,this.id_itemseleccionado, this.ticket?.asunto,this.ticket?.descripcion,this.responsable?.correo, this.servicio_MesaAyuda.formatoDateparaInput(this.ticket?.fecha_solicitud),this.id_estadoseleccionado,this.id_prioridadseleccionada, this.comentariosPorTicket)){
                   this.cerrar_editarTicket();
                   this.setErrorEditar(false);
                   this.ngOnInit();
@@ -332,32 +342,37 @@ export class CRUDTicketsComponent implements OnInit{
 
   //Método que retorna los datos de un responsable
   buscar_responsable(){
-    this.responsable_editar=this.servicio_MesaAyuda.buscar_responsable(this.txt_buscarResponsable);
-    if(this.responsable_editar!=null){
-      this.mostrar_responsable=true;
-    }
-    else{
-      this.servicio_mensajes.msj_errorPersonalizado("No se encontro al usuario con el correo: "+this.txt_buscarResponsable);
-      this.txt_buscarResponsable="";
-      this.mostrar_responsable=false;
-    }
+    this.servicio_MesaAyuda.buscar_responsable(this.txt_buscarResponsable).then(data => {
+      this.responsable_editar = data;
+      if(this.responsable_editar!=null){
+        this.mostrar_responsable=true;
+      }
+      else{
+        this.servicio_mensajes.msj_errorPersonalizado("No se encontro al usuario con el correo: "+this.txt_buscarResponsable);
+        this.txt_buscarResponsable="";
+        this.mostrar_responsable=false;
+      }
+    });
+    
   }
   //Método que asigna un responsable al usuario
   async asignar_responsable(){
     if(await this.servicio_mensajes.msj_confirmar('¿Está seguro?', 'Confirmar', 'Cancelar')){
-      if(this.responsable_editar!=null && this.servicio_MesaAyuda.cambiar_responsable(this.idTicket, this.responsable_editar)){
-        this.responsable=this.responsable_editar;
-        this.servicio_mensajes.msj_exito('Se ha añadido al responsable!');
-        this.cerrar_responsable();
-        this.txt_buscarResponsable="";
-        this.mostrar_responsable=false;
-      }
-      else{
-        this.servicio_mensajes.msj_errorPersonalizado("Ha ocurrido un error al modificar el responsable. Por favor, inténtelo más tarde.");
-        this.txt_buscarResponsable="";
-        this.mostrar_responsable=false;
-        this.cerrar_responsable();
-      }
+      this.servicio_MesaAyuda.cambiar_responsable(this.idTicket, this.responsable_editar).then(editado => {
+        if(this.responsable_editar!=null && editado){
+          this.responsable=this.responsable_editar;
+          this.servicio_mensajes.msj_exito('Se ha añadido al responsable!');
+          this.cerrar_responsable();
+          this.txt_buscarResponsable="";
+          this.mostrar_responsable=false;
+        }
+        else{
+          this.servicio_mensajes.msj_errorPersonalizado("Ha ocurrido un error al modificar el responsable. Por favor, inténtelo más tarde.");
+          this.txt_buscarResponsable="";
+          this.mostrar_responsable=false;
+          this.cerrar_responsable();
+        }
+      });
     }
 
   }
@@ -387,10 +402,10 @@ export class CRUDTicketsComponent implements OnInit{
     }
   }
   //Método que carga los datos de un Ticket que se desea visualizar
-  verTicket(id_ticket:number,mostrar:boolean) {
+  verTicket(ticket: Ticket,mostrar:boolean) {
     this.ventana_VerTicket = mostrar;
-    this.idTicket=id_ticket;
-    this.ticket = this.servicio_MesaAyuda.getTicket(this.idTicket);
+    this.idTicket=ticket.token;
+    this.ticket = ticket;
     if (this.ticket) {
       ///Verificar fechas
       this.txt_categoria=this.ticket.categoria.nombre;
@@ -402,7 +417,10 @@ export class CRUDTicketsComponent implements OnInit{
       this.txt_estado=this.ticket.estado.nombre;
       this.fecha_solicitud= this.servicio_MesaAyuda.formatoDateparaInput(this.ticket?.fecha_solicitud);
       this.fecha_limite = this.servicio_MesaAyuda.formatoDateparaInput(this.ticket?.fecha_limite);
-      this.comentariosPorTicket=this.servicio_MesaAyuda.getComentarios(this.ticket?.token);
+      this.servicio_MesaAyuda.getComentarios(this.ticket?.token).then(data => {
+        console.log(data);
+        this.comentariosPorTicket=data;
+      });
     }
     else{
       this.cerrar_verTicket();
@@ -413,6 +431,7 @@ export class CRUDTicketsComponent implements OnInit{
     if(this.comentario.trim().length > 0){
       if(await this.servicio_mensajes.msj_confirmar('¿Está seguro que desea agregar el comentario?', 'Confirmar', 'Cancelar')){
         if(this.servicio_MesaAyuda.agregar_comentario(this.idTicket,this.comentario)){
+          this.comentariosPorTicket = this.servicio_MesaAyuda.comentarios;
           this.cerrar_comentario();
           this.servicio_mensajes.msj_exito("Se ha añadido el comentario!");
         }

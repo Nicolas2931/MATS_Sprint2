@@ -31,6 +31,7 @@ export class AdministrarItemsComponent implements OnChanges {
   error_item:boolean;
   //Variable que almacena el número de ítems
   cantidad_items:number;
+  nombresCategorias: string[];
   constructor(private router: Router, private servicio_MA:MesaAyudaService,private servicio_mensajes:MensajesService){
     this.items=null;
     this.editar_item=false;
@@ -40,13 +41,18 @@ export class AdministrarItemsComponent implements OnChanges {
     this.mostrar_agregar=false;
     this.error_item=false;
     this.cantidad_items=0;
+    this.nombresCategorias = [];
   }
   //Si hay cambios en los arreglos de ítems o categorías los recarga
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['items'] && changes['categorias'] && changes['ver_items']) {
-      this.items=this.servicio_MA.getItems();
-      this.categorias=this.servicio_MA.getCategorias();
-    }  
+      this.servicio_MA.getItems().then(data => {
+        this.items = data;
+      });
+      this.servicio_MA.getCategorias().then(data => {
+        this.categorias = data;
+      });
+    }
   }
   //Métodos que inicilizan las variables.
   ngOnInit(): void {
@@ -60,14 +66,20 @@ export class AdministrarItemsComponent implements OnChanges {
     this.categorias=null;
     this.mostrar_agregar=false;
     this.error_item=false;
-    this.items=this.servicio_MA.getItems();
-    this.categorias=this.servicio_MA.getCategorias();
-    if(this.items!=null){
-      this.cantidad_items=this.items.length;
-    }
-    else{
-      this.cantidad_items=0;
-    }
+    this.servicio_MA.getItems().then(async data => {
+      this.items = data;
+      await this.servicio_MA.getCategorias().then(data => {
+        this.categorias = data;
+        if(this.items!=null){
+          this.cantidad_items=this.items.length;
+        }
+        else{
+          this.cantidad_items=0;
+        }
+        console.log(this.items,this.categorias);
+      });
+    });
+    
   }
   //Cierra la ventana con la lista de ítems
   cerrar(): void {
@@ -93,7 +105,7 @@ export class AdministrarItemsComponent implements OnChanges {
     if(this.txt_item.trim().length > 0 && this.id_categoria!=null){
       this.error_item=false;
       if(await this.servicio_mensajes.msj_confirmar("¿Guardar cambios?", "Confirmar", "Cancelar")){
-        if(this.item?.id_item!=undefined && this.servicio_MA.editarItem(this.item?.id_item,this.txt_item, this.id_categoria)){
+        if(this.item?.id_item!=undefined && await this.servicio_MA.editarItem(this.item?.id_item,this.txt_item, this.id_categoria)){
           this.cerrar_editar();
           this.servicio_mensajes.msj_exito("Cambios guardados");
         }
@@ -113,7 +125,7 @@ export class AdministrarItemsComponent implements OnChanges {
     this.item=item;
     if(this.item){
       if(await this.servicio_mensajes.msj_confirmar("¿Está seguro de eliminar el ítem?", "Confirmar", "Cancelar")){
-        if(this.servicio_MA.eliminarItem(this.item.id_item)){
+        if(await this.servicio_MA.eliminarItem(this.item.id_item)){
           this.servicio_mensajes.msj_exito("Se ha eliminado el ítem");
         }
         else{
@@ -128,9 +140,11 @@ export class AdministrarItemsComponent implements OnChanges {
   }
   //Método que cambia el ID de la categoría por su nombre
   async txt_categoria(id_categoria: number){
-    await this.servicio_MA.getCategoria_ID(id_categoria).then(data => {
+    console.log(this.items);
+    /* await this.servicio_MA.getCategoria_ID(id_categoria).then(data => {
+      console.log(data);
       return data;
-    });
+    }); */
     return "algo";
   }
   //Metodo que captura el ID de la categoría seleccionada en una variable
@@ -158,7 +172,7 @@ export class AdministrarItemsComponent implements OnChanges {
     if(nombre.trim().length>0 && this.id_categoria!==null){
       this.error_item=false;
       if(await this.servicio_mensajes.msj_confirmar("¿Está seguro de añadir el ítem?","Confirmar","Cancelar")){
-        if(this.servicio_MA.agregarItem(nombre, this.id_categoria)){
+        if(await this.servicio_MA.agregarItem(nombre, this.id_categoria)){
           this.cerrarAgregar();
           this.servicio_mensajes.msj_exito("Se ha añadido el ítem");
         }

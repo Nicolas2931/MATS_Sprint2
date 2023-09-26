@@ -40,32 +40,40 @@ export class SolicitudesAsignadasComponent  implements OnInit{
   //Inicializar las variables
   ngOnInit(): void {
       this.permiso_usuario = this.loginServie.getPermisoMesaAyuda();
-      if(this.servicio_MesaAyuda.getTickets_Usuario(this.loginServie.getIdUsuario())){
-        this.tickets=this.servicio_MesaAyuda.getTickets_Usuario(this.loginServie.getIdUsuario());
-        if(this.tickets){
-          this.cantidad_tickets=this.tickets.length;
+      this.servicio_MesaAyuda.getTickets_Responsable(this.loginServie.getIdUsuario()).then(data => {
+        if(data){
+          this.tickets = data;
+          if(this.tickets){
+            this.cantidad_tickets=this.tickets.length;
+          }
+          else{
+            this.cantidad_tickets=0;
+          }
         }
         else{
           this.cantidad_tickets=0;
         }
-      }
-      else{
-        this.cantidad_tickets=0;
-      }
+      });
+      
   }
   //Carga los tickets según los filtros
   aplicarFiltros(filtros: any): void {
-    let tickets=this.servicio_MesaAyuda.filtrar(filtros)
-    if(this.servicio_MesaAyuda.filtrar(filtros)!=null){
-      this.tickets=tickets;
-    }
-    else{
-      this.servicio_mensajes.msj_informar("No se han encontrado Tickets que cumplan con los filtros.");
-    }
+    filtros.responsable = true;
+    console.log("filtros", filtros);
+    this.servicio_MesaAyuda.filtrar(filtros).then(data => {
+      let tickets = data;
+      if(data != null){
+        this.tickets=tickets;
+      }
+      else{
+        this.servicio_mensajes.msj_informar("No se han encontrado Tickets que cumplan con los filtros.");
+      }
+    });
+    
   }
   //Métodos que abren y cierran la ventana de VER UN TICKET
-  ver_ticket(id_ticket:number):void {
-    this.crudTicketsComponent.verTicket(id_ticket, true);
+  ver_ticket(ticket: Ticket):void {
+    this.crudTicketsComponent.verTicket(ticket, true);
   }
   
   editar_ticket(id_ticket:number):void {

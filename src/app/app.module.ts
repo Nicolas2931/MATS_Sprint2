@@ -36,6 +36,7 @@ import { AdministrarUsuariosComponent } from './mesa-ayuda/administrar-usuarios/
 import { AdministrarCategoriasComponent } from './mesa-ayuda/administrar-categorias/administrar-categorias.component';
 import { AdministrarItemsComponent } from './mesa-ayuda/administrar-items/administrar-items.component';
 import { CargaMasivaComponent } from './mesa-ayuda/carga-masiva/carga-masiva.component';
+import { DatePipe } from '@angular/common';
 
 const appRoutes:Routes=[
   {path: '',component: NoticiasGeneralesComponent},
@@ -85,9 +86,9 @@ const appRoutes:Routes=[
     AppRoutingModule,
     RouterModule.forRoot(appRoutes),
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
   ],
-  providers: [LoginService,CookieService,PreguntasFrecuentesService,LoginGuardian,NoticiasService,MesaAyudaService],
+  providers: [LoginService,CookieService,PreguntasFrecuentesService,LoginGuardian,NoticiasService,MesaAyudaService, DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

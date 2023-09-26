@@ -37,18 +37,21 @@ export class ReclamosComponent implements OnChanges {
     this.quejas=null;
     this.cantidad_quejas=0;
     this.reclamo=null;
+    this.estado_reclamo = false;
     this.estado_seleccionado=false;
   }
   //Método que verifica si hay cambios recargar las quejas cargadas
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['lista_reclamos'] && changes['lista_reclamos'].currentValue === true) {
-      this.quejas=this.Servicio_MA.getQuejas();
-      if(this.quejas!=null){
-        this.cantidad_quejas=this.quejas.length;
-      } 
-      else{
-        this.cantidad_quejas=0;
-      } 
+      this.Servicio_MA.getQuejas().then(data => {
+        this.quejas = data;
+        if(this.quejas!=null){
+          this.cantidad_quejas=this.quejas.length;
+        } 
+        else{
+          this.cantidad_quejas=0;
+        } 
+      });
     }
   }
   //Inicializa las variables
@@ -58,22 +61,28 @@ export class ReclamosComponent implements OnChanges {
       this.error_crearReclamo=false;
       this.operacion_existosa=false;
       this.detalles_reclamo=false;
-      this.quejas=this.Servicio_MA.getQuejas();
-      if(this.quejas!=null){
-        this.cantidad_quejas=this.quejas.length;
-      } 
-      else{
-        this.cantidad_quejas=0;
-      } 
+      this.Servicio_MA.getQuejas().then(data => {
+        this.quejas = data;
+        console.log(data);
+        if(this.quejas!=null){
+          this.cantidad_quejas=this.quejas.length;
+        } 
+        else{
+          this.cantidad_quejas=0;
+        } 
+      });
   }
   //Función para filtrar los reclamos según el estado seleccionado
   filtrar(){
-    if(this.Servicio_MA.filtrar_Reclamos(this.estado_seleccionado)){
-      this.quejas=this.Servicio_MA.filtrar_Reclamos(this.estado_seleccionado);
-    }
-    else{
-      this.mensajes.msj_informar("No se han encontrado reclamos que cumplan con el filtro.");
-    }
+    console.log("estado reclamo: ", this.estado_seleccionado)
+    this.Servicio_MA.filtrar_Reclamos(this.estado_seleccionado).then(data => {
+      if(data){
+        this.quejas = data;
+      }
+      else{
+        this.mensajes.msj_informar("No se han encontrado reclamos que cumplan con el filtro.");
+      }
+    });
   }
   //Función que registra la información de una queja
   async reclamar(){
@@ -115,6 +124,8 @@ export class ReclamosComponent implements OnChanges {
     this.reclamo=this.Servicio_MA.getReclamo(id_queja);
     if(this.reclamo!=null){
       this.detalles_reclamo=true;
+      console.log(Boolean(0));
+      console.log("reclamo visto: ", this.reclamo.visto, typeof(this.reclamo.visto))
       this.estado_reclamo=this.reclamo.visto;
     }
     else{
@@ -136,8 +147,10 @@ export class ReclamosComponent implements OnChanges {
   }
   //Método que cambia el estado de una queja
   async guardar(){
+    console.log(this.estado_reclamo);
     if(this.reclamo!=null){
       if(await this.mensajes.msj_confirmar("¿Guardar cambios?", "Sí, guardar", "Cancelar")){
+        console.log(typeof(this.estado_reclamo), this.estado_reclamo);
         if(this.Servicio_MA.cambiar_estadoReclamo(this.reclamo.id_queja,this.estado_reclamo)){
           this.cerrar_verQueja();
           this.mensajes.msj_exito("Se han guardado los cambios");

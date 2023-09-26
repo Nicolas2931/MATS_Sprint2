@@ -51,7 +51,7 @@
                                     <img *ngIf="ticket.estado.nombre=='En proceso'" src="../../../assets/images/trabajo-en-progreso.png" class="img-fluid" style="max-width: 40px;">
                                     <img *ngIf="ticket.estado.nombre=='Completada'" src="../../../assets/images/correcto.png" class="img-fluid" style="max-width: 40px;">
                                 </td>
-                                <td><button class="btn btn-primary mt-3" (click)="ver_ticket(ticket.token)">Ver detalles</button></td>
+                                <td><button class="btn btn-primary mt-3" (click)="ver_ticket(ticket)">Ver detalles</button></td>
                             </tr>
                     </tbody>
                 </table> 

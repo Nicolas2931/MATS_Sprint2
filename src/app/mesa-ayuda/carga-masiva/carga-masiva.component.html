@@ -34,7 +34,7 @@
             </div>
             <div class="col">
                 <label for="fileInput" class="custom-file-upload">
-                    <input id="fileInput" type="file" (change)="onFileSelected($event)" accept=".csv">
+                    <input id="fileInput" name="carga_usuarios" type="file" (change)="onFileSelected($event)" accept=".csv">
                 </label>
                 <div (drop)="onDrop($event)" (dragover)="onDragOver($event)" class="drop-zone">
                     <b class="letra-morada">Arrastra y suelta el archivo CSV aquí</b>
@@ -82,6 +82,36 @@
         <div class="col-md-12 mb-3">
             <label class="letra-morada" style="text-decoration:underline;">9. Respaldo del Archivo Original:</label><br/><br/>
             <label>Siempre guarda una copia del archivo original en tu sistema antes de realizar cualquier modificación.</label>
+        </div>
+        <div class="col-md-12 mb-3">
+            <label class="letra-morada" style="text-decoration:underline;">10. Cabeceras:</label><br/><br/>
+            <label>Las cabeceras que componen al archivo son:</label>
+            <table class="table tabla-categorias" style="margin-top: 10px;">
+                <thead>
+                    <tr>
+                        <th scope="col">Atributo</th>
+                        <th scope="col">Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>nombre</td>
+                        <td>nombre del estudiante</td>
+                    </tr>
+                    <tr>
+                        <td>email</td>
+                        <td>correo del estudiante</td>
+                    </tr>
+                    <tr>
+                        <td>password</td>
+                        <td>contraseña no encriptada para asignar</td>
+                    </tr>
+                    <tr>
+                        <td>tipo_usuario_id</td>
+                        <td>2 para profesor o 3 para estudiante</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
       </div>
     </div>

@@ -61,7 +61,7 @@ export class InformacionUsuarioComponent implements OnInit{
     if(this.nombre_editar.trim().length>0 && this.correo_editar.trim().length>0){
       if(await this.servicio_mensajes.msj_confirmar('¿Está seguro que desea guardar los cambios?','Si, guardar','Cancelar')){
         this.error=false;  
-        if(this.servicio_MesaAyuda.editar_InformacionPersonal(this.nombre_editar,this.correo_editar)){
+        if(await this.servicio_MesaAyuda.editar_InformacionPersonal(this.nombre_editar,this.correo_editar)){
           this.servicio_mensajes.msj_exito('Los cambios han sido guardados!');
           this.cerrar();
         }

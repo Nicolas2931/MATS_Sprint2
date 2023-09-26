@@ -184,7 +184,7 @@
             <div class="row mb-3">
               <div class="col-md-12">
                 <label class="letra-morada" style="font-weight:bold;">Fecha del comentario:
-                <input type="date" class="desactivar" disabled="true"  [value]="formatofecha(comentario.fecha)"/></label>
+                <input type="date" class="desactivar" disabled="true" [value]="comentario.fecha" /> <!-- [value]="formatofecha(comentario.fecha)" --></label>
               </div>
             </div>
             <hr/>
@@ -283,7 +283,7 @@
         <h5 class="letra-morada">Responsable: </h5>
       </div>
       <div class="col-md-6 mb-2">
-        <label style="margin-right:15px">{{ticket?.usuario?.name}}<span class="separador"> | </span>{{ticket?.usuario?.correo}}</label>
+        <label style="margin-right:15px">{{ticket?.responsable?.name}}<span class="separador"> | </span>{{ticket?.responsable?.correo}}</label>
       </div>
       <div *ngIf="permiso_MA==false" class="col-md-2">
         <button class="btn boton_morado" style="width:100%;"  (click)="agregar_responsable()">Cambiar</button>
@@ -308,6 +308,7 @@
       </div>
       <div class="col-md-8">
         <select [disabled]="permiso_MA" [ngClass]="{'borde-rojo': getErrorEditar()}" class="form-select borde-morado" (change)="cargar_prioridad($event)" [ngClass]="{'bloquear': permiso_MA}">
+          <option selected value="null">Lista de prioridades</option>
           <ng-container *ngFor="let prioridad of getPrioridades()">
             <option [value]="prioridad.id_prioridad" [selected]="prioridad.id_prioridad==id_prioridadseleccionada">{{prioridad.nombre}}</option>
           </ng-container>
@@ -332,38 +333,41 @@
       </div>
     </div>
     <div class="row mb-3">
-      <div *ngIf="comentariosPorTicket!=null">
+      <div >
         <div class="col-md-12">
           <h3 class="letra-morada" style="text-align:center;">Comentarios:</h3><br/>
         </div>
           <div class="col-md-12">
             <button class="btn borde-morado mb-3" style="text-decoration: none; width:100%;" (click)="ventana_comentario()">Agregar comentario</button>
           </div>
-        <div *ngFor="let comentario of comentariosPorTicket">
-          <div class="card mb-3" style="padding:20px">
-            <div class="row mb-3">
-              <div class="col-md-12">
-                <label class="letra-morada" style="font-weight:bold;">Fecha del comentario:
-                <input type="date" class="desactivar" disabled="true"  [value]="formatofecha(comentario.fecha)"/></label>
+        <div *ngIf="comentariosPorTicket!=null">
+          <div *ngFor="let comentario of comentariosPorTicket">
+            <div class="card mb-3" style="padding:20px">
+              <div class="row mb-3">
+                <div class="col-md-12">
+                  <label class="letra-morada" style="font-weight:bold;">Fecha del comentario:
+                  <input type="date" class="desactivar" disabled="true" [value]="comentario.fecha" /></label> <!-- [value]="formatofecha(comentario.fecha)" -->
+                </div>
               </div>
-            </div>
-            <hr/>
-            <div class="row">
-              <div class="col-md-12">
-                <label class="letra-morada" style="font-weight:bold;">Descripción:</label>
-                <textarea disabled="true"  class="form-control desactivar">{{comentario.comentario}}</textarea>
+              <hr/>
+              <div class="row">
+                <div class="col-md-12">
+                  <label class="letra-morada" style="font-weight:bold;">Descripción:</label>
+                  <textarea disabled="true"  class="form-control desactivar">{{comentario.comentario}}</textarea>
+                </div>
               </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-md-2 mb-3">
-                <button type="button" class="btn boton_morado" style="width:100%;" (click)="editar_comentario(comentario.id_comentario,comentario.comentario)">Editar</button>
-              </div>
-              <div class="col-md-2">
-                <button type="button" class="btn btn-danger" style="width:100%;" (click)="eliminar_comentario(comentario.id_comentario)">Eliminar</button>
+              <div class="row mb-3">
+                <div class="col-md-2 mb-3">
+                  <button type="button" class="btn boton_morado" style="width:100%;" (click)="editar_comentario(comentario.id_comentario,comentario.comentario)">Editar</button>
+                </div>
+                <div class="col-md-2">
+                  <button type="button" class="btn btn-danger" style="width:100%;" (click)="eliminar_comentario(comentario.id_comentario)">Eliminar</button>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        
       </div>
     </div>
     <div class="card-footer mt-auto">

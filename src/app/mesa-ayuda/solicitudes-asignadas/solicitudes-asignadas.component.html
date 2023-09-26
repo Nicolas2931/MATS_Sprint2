@@ -62,7 +62,7 @@
                       <img *ngIf="ticket.prioridad.nombre=='Media'" src="../../../assets/images/advertencia.png" class="img-fluid" style="max-width: 40px;">
                       <img *ngIf="ticket.prioridad.nombre=='Alta'" src="../../../assets/images/alerta.png" class="img-fluid" style="max-width: 40px;">
                     </td>
-                    <td><button class="btn btn-primary" (click)="ver_ticket(ticket.token)">Ver detalles</button></td>
+                    <td><button class="btn btn-primary" (click)="ver_ticket(ticket)">Ver detalles</button></td>
                     <td>
                       <div class="row">
                         <div class="col">

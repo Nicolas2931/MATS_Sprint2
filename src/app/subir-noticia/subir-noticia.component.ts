@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NoticiasService } from '../noticias.service';
 import { PDFNoticiaComponent } from '../pdf-noticia/pdf-noticia.component';
 import { ServicioBackService } from '../servicio-back.service';
+import { LoginService } from '../login.service';
 
 @Component({
   selector: 'app-subir-noticia',
@@ -22,7 +23,7 @@ export class SubirNoticiaComponent{
 
   //Variable que guarda
   error:boolean;
-  constructor(private router: Router,private servicioNoticia:NoticiasService, private routerURL: ActivatedRoute, private servicioBackService: ServicioBackService){
+  constructor(private router: Router,private servicioNoticia:NoticiasService, private routerURL: ActivatedRoute, private servicioBackService: ServicioBackService, private loginService: LoginService){
     this.estudiantes=false;
     this.profesores=false;
     this.todos=false;
@@ -77,6 +78,10 @@ export class SubirNoticiaComponent{
           this.guardarPDF(data.noticia.id);
           this.volver();
         });
+        this.servicioBackService.quitarPermisosNoticias(this.loginService.getIdUsuario()).subscribe(data => {
+          console.log(data);
+        });
+        this.loginService.setPermisoNoticias('false');
       }
       else{
         this.error=true;

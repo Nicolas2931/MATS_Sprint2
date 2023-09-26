@@ -38,15 +38,20 @@ export class ListaSolicitudesComponent  implements OnInit{
   }
   ngOnInit(): void {
     this.tipo_usuario=this.loginservice.getTipoUsuario();
-    if( this.servicio_MesaAyuda.getTickets()!=null){
-      this.tickets=this.servicio_MesaAyuda.getTickets();
-      if(this.tickets!=undefined){
-        this.cantidad_tickets=this.tickets?.length;
-      }
-      else{
+    this.servicio_MesaAyuda.getTickets().then(data => {
+      if( this.servicio_MesaAyuda.getTickets()!=null){
+        this.tickets = data;
+        if(this.tickets!=undefined){
+          this.cantidad_tickets=this.tickets?.length;
+        }
+        else{
+          this.cantidad_tickets=0;
+        }
+      }else{
         this.cantidad_tickets=0;
       }
-    }
+    })
+    
     /*
     this.servicio_MesaAyuda.getTickets().then(data => {
       console.log(data);
@@ -74,25 +79,27 @@ export class ListaSolicitudesComponent  implements OnInit{
           
         }  
       } */ 
-      else{
-        this.cantidad_tickets=0;
-      }
 
     }
   
   //Carga los tickets según los filtros
   aplicarFiltros(filtros: any): void {
-    let tickets=this.servicio_MesaAyuda.filtrar(filtros)
-    if(this.servicio_MesaAyuda.filtrar(filtros)!=null){
-      this.tickets=tickets;
-    }
-    else{
-      this.servicio_mensajes.msj_informar("No se han encontrado Tickets que cumplan con los filtros.");
-    }
+    filtros.responsable = true;
+    filtros.lista = true;
+    console.log("filtros", filtros);
+    this.servicio_MesaAyuda.filtrar(filtros).then(data => {
+      let tickets = data;
+      if(data != null){
+        this.tickets=tickets;
+      }else{
+        this.servicio_mensajes.msj_informar("No se han encontrado Tickets que cumplan con los filtros.");
+      }
+    });
+    
   }
   //Método que envía el ID del Ticket que se desea visualizar, y activa la ventana emergente
-  ver_ticket(id_ticket:number):void {
-    this.crudTicketsComponent.verTicket(id_ticket, true);
+  ver_ticket(ticket: Ticket):void {
+    this.crudTicketsComponent.verTicket(ticket, true);
   }
   //Método que retorna un Ticket según el ID seleccionado
   async eliminar_ticket(id_ticket: number): Promise<void> {
@@ -103,13 +110,20 @@ export class ListaSolicitudesComponent  implements OnInit{
     );
     
     if (confirmado) {
-      const eliminado = this.servicio_MesaAyuda.eliminar_ticket(id_ticket);
-      if (eliminado) {
-        //Invocar al método que recargue todos los Tickets
-        this.servicio_mensajes.msj_exito("Se ha eliminado el Ticket!");
-      } else {
-        this.servicio_mensajes.msj_exito("No se ha podido eliminar el Ticket!");
-      }
+      this.servicio_MesaAyuda.eliminar_ticket(id_ticket).then(data => {
+        console.log(data);
+        this.servicio_MesaAyuda.getTickets();
+        const eliminado = data;
+        if (eliminado) {
+          //Invocar al método que recargue todos los Tickets
+          this.servicio_mensajes.msj_exito_async("Se ha eliminado el Ticket!").then(data => {
+            window.location.reload();
+          });
+        } else {
+          this.servicio_mensajes.msj_errorPersonalizado("No se ha podido eliminar el Ticket!");
+        }
+
+      });
     }
   }
   //Métodos que abren o cierran la ventana de editar y envía el ID del ticket en específico

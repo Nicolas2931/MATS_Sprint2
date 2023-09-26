@@ -29,7 +29,7 @@
       </div>
     </div>
   </div>
-  <div class="container" *ngIf="usuario=='administrador' || permiso_usuario=='true'">
+  <div class="container" *ngIf="usuario=='administrador'"><!-- || permiso_usuario=='true' -->
     <app-lista-categorias [categorias]="categorias" (categoriaEditada)="editarCategoria($event)" 
     (categoriaEliminada)="eliminarCategoria($event)"
     (categoriaSubida)="subirCategoria()"></app-lista-categorias>

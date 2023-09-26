@@ -39,9 +39,19 @@ export class CargaMasivaComponent {
     async enviarArchivo() {
       if (this.csvFile) {
         if(await this.servicio_mensajes.msj_confirmar("¿Está seguro que desea subir el archivo?", "Confirmar", "Cancelar")){
-          this.servicio_mensajes.msj_exito("Se han registrado los usuario");
           const formData = new FormData();
-          formData.append('file', this.csvFile, this.csvFile.name);
+          formData.append('carga_usuarios', this.csvFile, this.csvFile.name);
+          
+          this.servicio_MA.cargarUsuarios(formData).subscribe(data => {
+            if(data.mensaje == "Usuarios insertados correctamente"){
+              this.servicio_mensajes.msj_exito("Se han registrado los usuarios");
+            }else{
+              this.servicio_mensajes.msj_errorPersonalizado("No se pudieron cargar los usuarios");
+            }
+          }, error => {
+            this.servicio_mensajes.msj_errorPersonalizado("No se pudieron cargar los usuarios, asegurese que no hayan estudiantes repetidos");
+          });
+        
           // Aquí deberías hacer la petición HTTP para enviar el archivo a Laravel
           this.cerrar();
 

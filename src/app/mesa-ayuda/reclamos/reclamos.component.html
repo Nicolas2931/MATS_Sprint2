@@ -61,9 +61,9 @@
       <div class="row mb-5">
         <div class="col-md-8">
           <select class="form-select borde-morado" [(ngModel)]="estado_seleccionado">
-            <option [value]="null">Todos los reclamos</option>
-            <option [value]="true">Vistos</option>
-            <option [value]="false">Sin ver</option>
+            <option [ngValue]="null">Todos los reclamos</option>
+            <option [ngValue]="true">Vistos</option>
+            <option [ngValue]="false">Sin ver</option>
           </select>          
         </div>
         <div class="col-md-4">

@@ -329,7 +329,8 @@ export class PreguntasFrecuentesComponent {
         cancelButtonText:'Cancelar'
       }).then((result) => {
         if (result.isConfirmed) {
-            this.error_subir=this.preguntasService.subir_tarjeta(this.titulo_subir,this.descripcion_subir,id_usuario,this.categorias_subir);
+          this.preguntasService.subir_tarjeta(this.titulo_subir,this.descripcion_subir,id_usuario,this.categorias_subir).then(data =>{
+            this.error_subir = data;
             if(this.error_subir==false) {
               Swal.fire('Se ha creado la pregunta frecuente!', '', 'success')
               //Se recargan las tarjetas de nuevo
@@ -337,14 +338,15 @@ export class PreguntasFrecuentesComponent {
                 this.Tarjetas = data;
               });
               this.ventana_subir=false; 
-            }
-            else{
+              this.permiso_usuario = 'false';
+            }else{
               Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
                 text: 'Por favor, verifique que la información ingresada sea la adecuada',
               })
-            }  
+            } 
+          });
         }
       })  
     }

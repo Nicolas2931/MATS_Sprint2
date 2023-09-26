@@ -37,7 +37,10 @@ export class AdministrarCategoriasComponent implements OnChanges {
   //Si hay cambios en el arreglo de categorías los recarga
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['categorias_MA']) {
-      this.categorias_MA=this.servicio_MA.getCategorias();
+      this.categorias_MA = null;
+      this.servicio_MA.getCategorias().then(data => {
+        this.categorias_MA = data;
+      });
     }  
   }
   // Métodos que Inicializan las variables
@@ -50,13 +53,16 @@ export class AdministrarCategoriasComponent implements OnChanges {
     this.categoria=null;
     this.txt_nombreCat="";
     this.error_categoria=false;
-    this.categorias_MA=this.servicio_MA.getCategorias();
-    if(this.categorias_MA!=null){
-      this.cantidad_categorias=this.categorias_MA.length;
-    }
-    else{
-      this.cantidad_categorias=0;
-    }
+    this.servicio_MA.getCategorias().then(data => {
+      this.categorias_MA = data;
+    
+      if(this.categorias_MA!=null){
+        this.cantidad_categorias=this.categorias_MA.length;
+      }
+      else{
+        this.cantidad_categorias=0;
+      }
+    });
   }
   //Cierra la ventana con la lista de categorías
   cerrar(): void {
@@ -81,7 +87,7 @@ export class AdministrarCategoriasComponent implements OnChanges {
     if(this.txt_nombreCat.trim().length > 0){
       this.error_categoria=false;
       if(await this.servicio_mensajes.msj_confirmar("¿Guardar cambios?", "Confirmar", "Cancelar")){
-        if(this.categoria?.id_categoria!=undefined && this.servicio_MA.editarCategoria(this.categoria?.id_categoria,this.txt_nombreCat)){
+        if(this.categoria?.id_categoria!=undefined && await this.servicio_MA.editarCategoria(this.categoria?.id_categoria,this.txt_nombreCat)){
           this.cerrar_editar();
           this.servicio_mensajes.msj_exito("Cambios guardados");
         }
@@ -101,7 +107,7 @@ export class AdministrarCategoriasComponent implements OnChanges {
     this.categoria=categoria;
     if(this.categoria){
       if(await this.servicio_mensajes.msj_confirmar("¿Está seguro de eliminar la categoría?", "Confirmar", "Cancelar")){
-        if(this.servicio_MA.eliminarCategoria(this.categoria.id_categoria)){
+        if(await this.servicio_MA.eliminarCategoria(this.categoria.id_categoria)){
           this.servicio_mensajes.msj_exito("Se ha eliminado la categoría");
         }
         else{
@@ -129,7 +135,7 @@ export class AdministrarCategoriasComponent implements OnChanges {
   async agregar(nombre:string){
     if(nombre.trim().length>0){
       if(await this.servicio_mensajes.msj_confirmar("¿Está seguro que desea añadir la categoría?","Confirmar","Cancelar")){
-        if(this.servicio_MA.agregarCategoria(nombre)){
+        if(await this.servicio_MA.agregarCategoria(nombre)){
           this.cerrarAgregar();
           this.servicio_mensajes.msj_exito("Se ha añadido la categoría");
         }

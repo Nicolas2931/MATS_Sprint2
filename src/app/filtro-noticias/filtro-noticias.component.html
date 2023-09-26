@@ -18,7 +18,7 @@
             </div>  
         </div>
         <div class="row mt-3">
-          <button *ngIf="tipo_usuario=='administrador' || permiso_usuario == '1'" type="button" class="btn borde-morado mb-3" id="agregar" (click)="subir_noticia()">SUBIR NOTICIA</button>
+          <button *ngIf="tipo_usuario=='administrador' || permiso_usuario" type="button" class="btn borde-morado mb-3" id="agregar" (click)="subir_noticia()">SUBIR NOTICIA</button>
         </div> 
       </div>
     </div>

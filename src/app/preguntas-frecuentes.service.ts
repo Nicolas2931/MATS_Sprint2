@@ -144,15 +144,32 @@ export class PreguntasFrecuentesService {
     return this.error_CRUD;
   }
   
-  subir_tarjeta(titulo:string,descripcion:string,id_usuario:number[], categorias:Categoria[]):boolean{
+  subir_tarjeta(titulo:string,descripcion:string,id_usuario:number[], categorias:Categoria[]):Promise<boolean>{
     //Se filtra para saber cuales categorias fueron seleccionadas
-    const categorias_ID = categorias.filter(categoria => categoria.seleccionado);
-    console.log("Titulo",titulo);
+    const listaCategorias = categorias.filter(categoria => categoria.seleccionado);
+    let categoriasID: number[] = []
+    for(const categoria of listaCategorias){
+      categoriasID.push(categoria.id);
+    }
+
+    return new Promise<boolean>((resolve, reject) => {
+      this.servicioBackService.crearTarjeta(titulo,descripcion,id_usuario, categoriasID).subscribe(data => {
+        console.log(data);
+        this.setError(false);
+        this.servicioBackService.quitarPermisosPreguntas(this.loginService.getIdUsuario()).subscribe(data => {
+          console.log(data);
+        });
+        this.loginService.setPermisoPreguntas('false');
+        resolve(this.getError());
+      });
+    });
+
+    /* console.log("Titulo",titulo);
     console.log("Descripción",descripcion);
     console.log("Id_usuario",id_usuario);
-    console.log("Categoria",categorias_ID);
+    console.log("Categoria",categoriasID);
     this.setError(false);
-    return this.getError();
+    return this.getError(); */
   }
   //Edita una tarjeta según los datos recibidos
   //Enviar un error igual a TRUE en caso de que ocurra algo inesperado.

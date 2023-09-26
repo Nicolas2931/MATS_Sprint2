@@ -20,7 +20,7 @@ export class FiltroNoticiasComponent implements OnInit{
   @Output() enviarTexto = new EventEmitter<string>();
   @Output() tam = new EventEmitter<string>();
   tipo_usuario:string;
-  permiso_usuario:string;
+  permiso_usuario: boolean;
   constructor(private login:LoginService, private router:Router, private servicioNoticias:NoticiasService){}
   cargar_cantidad(event:any) {
     const seleccion=event.target.value;
@@ -33,6 +33,7 @@ export class FiltroNoticiasComponent implements OnInit{
   ngOnInit(): void {
     this.generarOpcionesSelect();
     this.tipo_usuario=this.login.getTipoUsuario();
+    this.permiso_usuario = this.login.getPermisoNoticias() == 'true';
     //this.permiso_usuario = this.login.getPermisoUsuario();
     
   }

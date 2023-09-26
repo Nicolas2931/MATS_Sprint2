@@ -124,18 +124,21 @@ export class AdministrarUsuariosComponent implements OnInit{
   }
   //Método que busca un usuario según su correo institucional
   buscar():void {
-    this.usuario=this.servicio_MA.buscar_usuario(this.txt_buscar);
-    if(this.usuario!=null){
-      this.encontrado=true;
-      this.txt_nombre=this.usuario.nombre;
-      this.txt_correo=this.usuario.correo;
-      this.txt_password="";
-      this.id_tipo=this.usuario.id_tipo;
-    }
-    else{
-      this.encontrado=false;
-      this.servicio_mensajes.msj_informar("El correo del usuario ingresado no fue encontrado");
-    }
+    this.servicio_MA.buscar_usuario(this.txt_buscar).then(data => {
+      this.usuario = data;
+      if(this.usuario!=null){
+        this.encontrado=true;
+        this.txt_nombre=this.usuario.nombre;
+        this.txt_correo=this.usuario.correo;
+        this.txt_password="";
+        this.id_tipo=this.usuario.id_tipo;
+      }
+      else{
+        this.encontrado=false;
+        this.servicio_mensajes.msj_informar("El correo del usuario ingresado no fue encontrado");
+      }
+    });
+    
   }
   //Método que asigna el valor seleccionado en la lista desplegable a la variable
   cargar_tipoUsuario(event: any): void {
