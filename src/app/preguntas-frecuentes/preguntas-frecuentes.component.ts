@@ -313,10 +313,10 @@ export class PreguntasFrecuentesComponent {
   agregar(){
     let id_usuario:number[]=[];
     if(this.profesores_subir){
-      id_usuario[0] =2;
+      id_usuario.push(2);
     }
     if(this.estudiantes_subir){
-      id_usuario[1]=3
+      id_usuario.push(3);
     }
     if(this.titulo_subir.trim().length > 0 && this.descripcion_subir.trim().length > 0 && this.categorias_subir.length>0 && id_usuario.length>0) {
       Swal.fire({
