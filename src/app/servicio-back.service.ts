@@ -9,7 +9,7 @@ import { Comentario } from './mesa-ayuda/modelo-comentario';
 })
 export class ServicioBackService {
 
-  private urlApi = 'http://127.0.0.1:8000/api';
+  private urlApi = 'https://backendmats-production.up.railway.app/api'; //'http://127.0.0.1:8000/api';
 
   constructor(private http: HttpClient) { }
 
@@ -191,7 +191,7 @@ export class ServicioBackService {
       "categorias": categorias
     }
 
-    return this.http.post<any>('http://localhost:8000/api/v1/tarjetas', form);
+    return this.http.post<any>(this.urlApi + '/v1/tarjetas', form);
   }
 
   public editarTarjeta(id_tarjeta:number,titulo:string,descripcion:string,id_usuario:number[], categorias:number[]){
