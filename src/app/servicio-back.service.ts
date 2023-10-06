@@ -202,7 +202,7 @@ export class ServicioBackService {
       "categorias": categorias
     }
 
-    return this.http.put<any>('http://localhost:8000/api/v1/tarjetas/' + id_tarjeta, form);
+    return this.http.put<any>(this.urlApi + '/v1/tarjetas/' + id_tarjeta, form);
   }
 
   public deleteTarjeta(id_tarjeta:number){
@@ -489,6 +489,14 @@ export class ServicioBackService {
     });
 
     return this.http.delete<any>(this.urlApi + '/v1/items/' + id, { headers });
+  }
+
+  eliminarUsuario(token: string, id: number){
+    const headers = new HttpHeaders({
+      "Authorization": "Bearer " + token
+    });
+
+    return this.http.delete<any>(this.urlApi + '/v1/users/' + id, { headers });
   }
 
 }

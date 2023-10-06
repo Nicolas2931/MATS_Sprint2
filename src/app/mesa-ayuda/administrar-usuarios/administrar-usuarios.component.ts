@@ -220,7 +220,7 @@ export class AdministrarUsuariosComponent implements OnInit{
   //Método que elimina a un usuario
   async eliminar(){
     if(await this.servicio_mensajes.msj_confirmar("¿Está seguro que desea borrar el registro del usuario?", "Confirmar", "Cancelar")){
-      if(this.usuario?.id_usuario!=undefined && this.servicio_MA.eliminar_usuario(this.usuario?.id_usuario)){
+      if(this.usuario?.id_usuario!=undefined && await this.servicio_MA.eliminar_usuario(this.usuario?.id_usuario)){
         this.limpiar_variables();
         this.servicio_mensajes.msj_exito("Se ha eliminado el registro del usuario");
       }

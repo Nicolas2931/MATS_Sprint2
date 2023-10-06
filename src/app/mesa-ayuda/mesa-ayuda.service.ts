@@ -930,9 +930,17 @@ editar_usuario(id_usuario:number,nombre:string,correo:string,password:string | n
   return true;
 }
 //Método que limina a un usuario
-eliminar_usuario(id_usuario:number):boolean{
+eliminar_usuario(id_usuario:number):Promise<boolean>{
   console.log("ID del usuario a eliminar:"+id_usuario);
-  return true;
+
+  return new Promise<boolean>(resolve => {
+    this.servicioBackService.eliminarUsuario(this.loginservice.getToken(), id_usuario).subscribe(data => {
+      console.log(data);
+      return (data == "usuario eliminado");
+    });
+  });
+  
+
 }
 //Cambia la contraseña por una nueva
 cambiar_contraseña(correo:string, nueva_password:string):boolean {
