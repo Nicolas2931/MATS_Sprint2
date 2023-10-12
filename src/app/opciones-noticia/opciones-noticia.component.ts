@@ -26,7 +26,7 @@ export class OpcionesNoticiaComponent implements OnInit,AfterViewInit{
   pagina:string;
   opciones: string[];
 
-  public pdfUrl: string = `http://localhost:8000/api/v1/archivo/`;
+  public pdfUrl: string = /* `https://backendmats-production.up.railway.app/api/v1/archivo/`; */ 'http://127.0.0.1:8000/api/v1/archivo/';
 
   constructor(private route: Router, private routerURL: ActivatedRoute, private servicioNoticia: NoticiasService, private sanitizer: DomSanitizer, private loginService: LoginService, private servicioBackService: ServicioBackService){
     //Para borrar

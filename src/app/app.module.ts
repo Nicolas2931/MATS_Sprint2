@@ -48,7 +48,7 @@ const appRoutes:Routes=[
   {path:'Lista_Solicitudes',component: ListaSolicitudesComponent,canActivate: [LoginGuardian] },
   {path:'Solicitudes_Asignadas',component:SolicitudesAsignadasComponent,canActivate: [LoginGuardian] },
   {path:'login',component: LoginComponent},
-  {path:'noticia/:id',component: OpcionesNoticiaComponent,canActivate: [LoginGuardian]},
+  {path:'noticia/:id',component: OpcionesNoticiaComponent},
   {path:'subir_noticia',component: SubirNoticiaComponent,canActivate: [LoginGuardian]},
   {path:'**',component: PaginaErrorComponent}
 ];

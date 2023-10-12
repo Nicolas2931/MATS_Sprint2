@@ -25,7 +25,7 @@ export class NoticiasComponent implements OnInit{
   //Variable que guarda el número de la pagina en la cual se encuentra el usuario
   private num_pag:string;
   //Variable que guarda el número de noticias
-  private cantidad_noticias:number;
+  cantidad_noticias:number;
   //Variables que representan el rango que las noticias que se mostraran, ej inicio=1, fin=10, mostrará 
   //solo las primeras 10 noticias de las 50 existentes.
   private inicio:number;
@@ -132,6 +132,7 @@ export class NoticiasComponent implements OnInit{
   }
 
   //Método para realizar la busqueda
+  //Método para realizar la busqueda
   buscar(texto: string){
     /*Cambiar el arreglo de 'noticias'
       de a cuerdo al resultado obtenido
@@ -144,8 +145,18 @@ export class NoticiasComponent implements OnInit{
       this.noticias = data;
       console.log(this.getCantidadNoticias(), texto);
       this.texto = texto;
-    })
-  }
+      //Nuevo */
+      if(this.noticias.length>50){
+        this.cantidad_noticias=50;
+      }
+      else{
+        this.cantidad_noticias=this.noticias.length;
+      }
+      
+      this.cargarPaginacion();
+      this.cargarImagenes();
+    })
+  }
 
   /*
   Según la posición retorna la imágen para esa noticia

@@ -439,10 +439,10 @@ export class PreguntasFrecuentesComponent {
   guardar(){
     let id_usuario:number[]=[];
     if(this.profesores){
-      id_usuario[0]=2;
+      id_usuario.push(2);
     }
     if(this.estudiantes){
-      id_usuario[1]=3
+      id_usuario.push(3);
     }
     if(this.titulo.trim().length > 0 && this.descripcion.trim().length > 0 && this.categoria_editar.length>0 && id_usuario.length>0) {
       //Verificar si la información ta bien

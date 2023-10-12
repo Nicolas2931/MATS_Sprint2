@@ -140,7 +140,8 @@
                     <select class="form-select borde-morado" [(ngModel)]="id_tipo" [disabled]="bloquear" [ngClass]="{'bloqueado': bloquear}" style="width:100%;">
                         <option value="3" [selected]="id_tipo === 3">Estudiante</option>
                         <option value="2" [selected]="id_tipo === 2">Profesor</option>
-                        <option value="null" [selected]="id_tipo === null">Administrador</option>
+                        <!-- <option value="null" [selected]="id_tipo === null">Administrador</option> -->
+                        <option value="4" [selected]="id_tipo === 4">Administrador</option>
                     </select>
                 </div>
             </div>
@@ -277,6 +278,7 @@
                 <option selected value="3">Estudiante</option>
                 <option value="2">Profesor</option>
                 <option value="null">Administrador</option>
+                <!-- <option value="4">Administrador</option> -->
               </select> 
             </div>
         </div>

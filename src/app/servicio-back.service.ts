@@ -9,7 +9,7 @@ import { Comentario } from './mesa-ayuda/modelo-comentario';
 })
 export class ServicioBackService {
 
-  private urlApi = 'https://backendmats-production.up.railway.app/api'; //'http://127.0.0.1:8000/api';
+  private urlApi = /* 'https://backendmats-production.up.railway.app/api'; */ 'http://127.0.0.1:8000/api';
 
   constructor(private http: HttpClient) { }
 
@@ -201,6 +201,7 @@ export class ServicioBackService {
       "usuarios": id_usuario,
       "categorias": categorias
     }
+    console.log(id_usuario)
 
     return this.http.put<any>(this.urlApi + '/v1/tarjetas/' + id_tarjeta, form);
   }
@@ -364,6 +365,10 @@ export class ServicioBackService {
 
     return this.http.delete<any>(this.urlApi + '/v1/PermisosUsuarios/' + emailUsuario + '?permiso=' + 'preguntas');
   }
+  public validarPermisoMA(correo: string){
+
+    return this.http.delete<any>(this.urlApi + '/v1/PermisosUsuarios/' + correo + '?permiso=' + 'mesa_ayuda');
+  }
 
   public actualizarDatosUsuario(token: string, id_usuario:number,nombre:string,correo:string,password:string | null,id_tipo:number | null, permiso_noticias:boolean, permiso_preguntas:boolean, permiso_MA:boolean){
     const headers = new HttpHeaders({
@@ -491,10 +496,14 @@ export class ServicioBackService {
     return this.http.delete<any>(this.urlApi + '/v1/items/' + id, { headers });
   }
 
-  eliminarUsuario(token: string, id: number){
+  eliminarUsuario(token: string, id: number, tipoUsuario: string){
     const headers = new HttpHeaders({
       "Authorization": "Bearer " + token
     });
+
+    if(tipoUsuario == "administrador"){
+      return this.http.delete<any>(this.urlApi + '/v1/administradors/' + id, { headers });
+    }
 
     return this.http.delete<any>(this.urlApi + '/v1/users/' + id, { headers });
   }

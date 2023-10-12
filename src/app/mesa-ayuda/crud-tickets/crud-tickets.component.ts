@@ -307,11 +307,12 @@ export class CRUDTicketsComponent implements OnInit{
                   this.cerrar_editarTicket();
                   this.setErrorEditar(false);
                   this.ngOnInit();
-                  if(this.servicio_MesaAyuda.validar_permisosMA(this.loginServie.getToken())){
+                  if(await this.servicio_MesaAyuda.validar_permisosMA(this.loginServie.getIdUsuario())){
                     this.servicio_mensajes.msj_exito("Se han guardado los cambios!");
                   }
                   else{
                     this.servicio_mensajes.msj_exito("Felicitaciones, ha terminado con sus Tickets asignados!");
+                    this.loginServie.setPermisoMesaAyuda('false');
                     this.router.navigate(['/Mesa_Ayuda']);
                   }
 

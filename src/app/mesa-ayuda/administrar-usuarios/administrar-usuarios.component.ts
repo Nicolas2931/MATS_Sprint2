@@ -124,14 +124,23 @@ export class AdministrarUsuariosComponent implements OnInit{
   }
   //Método que busca un usuario según su correo institucional
   buscar():void {
-    this.servicio_MA.buscar_usuario(this.txt_buscar).then(data => {
-      this.usuario = data;
+    this.servicio_MA.buscar_usuario(this.txt_buscar).then((data: any) => {
+      console.table(data?.permisos);
+      this.usuario = data?.usuario;
       if(this.usuario!=null){
         this.encontrado=true;
         this.txt_nombre=this.usuario.nombre;
         this.txt_correo=this.usuario.correo;
         this.txt_password="";
         this.id_tipo=this.usuario.id_tipo;
+        this.cantidad_permisos = data?.permisos.length;
+        for(const permiso of data?.permisos){
+          switch(permiso.permiso_id){
+            case 1: this.permiso_noticias = true; break;
+            case 2: this.permiso_preguntas = true; break;
+            case 3: this.permiso_MA = true; break;
+          }
+        }
       }
       else{
         this.encontrado=false;
@@ -178,9 +187,9 @@ export class AdministrarUsuariosComponent implements OnInit{
   //Función que cambia los botones de guardar a editar
   cancelar(){
     //BUSCAR EN LOGIN SERVICE LOS PERMISOS Y ASIGNARLOS AQUÍ
-    this.permiso_noticias=true;
+    /* this.permiso_noticias=false;
     this.permiso_preguntas=false;
-    this.permiso_MA=true;
+    this.permiso_MA=false; */
     this.cantidad_permisos=0;
     if(this.permiso_noticias){
       this.cantidad_permisos++;

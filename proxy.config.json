@@ -1,0 +1,6 @@
+{
+    "/api/*": {
+        "target": "https://backendmats-production.up.railway.app",
+        "secure": false
+    }
+}

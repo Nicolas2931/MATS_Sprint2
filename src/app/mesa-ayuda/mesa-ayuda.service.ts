@@ -301,7 +301,7 @@ export class MesaAyudaService {
     //Buscar el nombre del usuario según el método
     return new Promise<string>((resolve, reject) => {
       this.servicioBackService.getDatosUsuario(this.loginservice.getIdUsuario(), this.loginservice.getToken()).subscribe(data => {
-        resolve(data[0]);
+        resolve(data.usuario[0]);
       });
     });
   }
@@ -861,18 +861,23 @@ eliminar_reclamo(id_reclamo:number):boolean{
 }
 
 //Método que busca un usuario según su correo para administrarlo
-buscar_usuario(correo:string): Promise<usuario  | null>{
+buscar_usuario(correo:string): Promise<any  | null>{
   console.log(correo);
 
-  return new Promise<usuario  | null>((resolve, reject) => {
+  return new Promise<any  | null>((resolve, reject) => {
     this.servicioBackService.getDatosUsuario(correo, this.loginservice.getToken()).subscribe(data => {
-      
-      if(data.length > 0){
-        const tipo = (data[0].tipo_usuario_id) ?? 4;
+      console.table(data.usuario[0]);
+      console.table(data.permisos);
+      if(data.usuario.length > 0){
+        const tipo = (data.usuario[0].tipo_usuario_id) ?? 4;
 
-        if(correo == data[0].email){
-          let usu= new usuario(data[0].id, data[0].name, data[0].email, "", tipo);
-          resolve(usu);
+        if(correo == data.usuario[0].email){
+          let usu= new usuario(data.usuario[0].id, data.usuario[0].name, data.usuario[0].email, "", tipo);
+          console.log(usu);
+          resolve({
+            usuario: usu,
+            permisos: data.permisos
+          });
         }
       }
       
@@ -883,9 +888,15 @@ buscar_usuario(correo:string): Promise<usuario  | null>{
 }
 //Validar permisos, retorna TRUE si todavía los tiene, false si no
 //Pasar a Login service el valor nuevo de la Cookie
-validar_permisosMA(correo:string):boolean{
+validar_permisosMA(correo: string):Promise<boolean>{
   console.log("El correo del usuario al cual se buscaran sus correos son:"+correo);
-  return false;
+
+  return new Promise<boolean>(resolve => {
+    this.servicioBackService.validarPermisoMA(correo).subscribe(data => {
+      console.log(data);
+      resolve(data.mensaje == "tickets pendientes");
+    });
+  });
 }
 //----------------------------------CRUD de usuarios --------------------------
 //Método que registra a un usuario, si tiene ID 3 es Estudiante, 2 profesor, NULL administrador
@@ -934,9 +945,9 @@ eliminar_usuario(id_usuario:number):Promise<boolean>{
   console.log("ID del usuario a eliminar:"+id_usuario);
 
   return new Promise<boolean>(resolve => {
-    this.servicioBackService.eliminarUsuario(this.loginservice.getToken(), id_usuario).subscribe(data => {
+    this.servicioBackService.eliminarUsuario(this.loginservice.getToken(), id_usuario, this.loginservice.getTipoUsuario()).subscribe(data => {
       console.log(data);
-      return (data == "usuario eliminado");
+      resolve(data.mensaje == "usuario eliminado");
     });
   });
   
