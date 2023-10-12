@@ -505,6 +505,7 @@ export class ServicioBackService {
       return this.http.delete<any>(this.urlApi + '/v1/administradors/' + id, { headers });
     }
 
+    
     return this.http.delete<any>(this.urlApi + '/v1/users/' + id, { headers });
   }
 
